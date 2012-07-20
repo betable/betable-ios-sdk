@@ -8,7 +8,7 @@ There are two ways you can get Betable iOS API up and working with your project:
 
 ### Adding the Framework
 
-In the framework directory of this repository is a folder called **Betable.framework**.  Download the directory and then drag and drop it onto your project. Then just `#import <Betable/Betable.h>` in whichever files you reference the Betable object form. (This is the method that the [sample app](https://github.com/betable/betable-ios-sample) uses.
+In the framework directory of this repository is a folder called **Betable.framework**.  Download the directory and then drag and drop it onto your project. Then just `#import <Betable/Betable.h>` in whichever files you reference the Betable object form. (This is the method that the [sample app](https://github.com/betable/betable-ios-sample) uses.)
 
 ### Adding the Raw Classes
 
