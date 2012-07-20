@@ -8,11 +8,11 @@ There are two ways you can get Betable iOS API up and working with your project:
 
 ### Adding the Framework
 
-Under the framework directory is a folder called **Betable.framework**.  Once you download the project you can drag and drop this on to your project and then just `#import <Betable/Betable.h>`.  Voila you can start using the Betable object. (This is the method the sample app uses)
+In the framework directory of this repository is a folder called **Betable.framework**.  Download the directory and then drag and drop it onto your project. Then just `#import <Betable/Betable.h>` in whichever files you reference the Betable object form.
 
 ### Adding the Raw Classes
 
-In the Betable directory are four files: Betable.h, Betable.m, JSONKit.h, JSONKit.m.  You simply drag these files into your project and the `#import "betable.h" where ever you wish to use the Betable object and you are done.
+In the Betable directory of this repository are four files: Betable.h, Betable.m, JSONKit.h, JSONKit.m.  You simply drag these files into your project and the `#import "betable.h" where ever you wish to use the Betable object and you are done.
 
 ## Betable Object
 
@@ -23,6 +23,12 @@ This is the object that serves as a wrapper for all calls to the Betable API.
     - (Betable*)initWithClientID:(NSString*)clientID clientSecret:(NSString*)clientSecret redirectURI:(NSString*)redirectURI;
 
 To create a betable object simply initilize it with your client ID, client Secret and redirectURI. All of these can be set at the [Developer Dashboard](http://developers.betable.com) when you create your game. We suggest that your redirect uri be `betable+<GAME_ID>://authorize`.  See Authorization below for more details on this.
+
+### Adding the Token
+    
+    self.accessToken = <USER'S ACCESS TOKEN>
+
+If you have previously acquired an access token for the user you can simply set it after the initialization, skipping the authorization and access token acquisition steps, and start calling betable api calls.
 
 ### Authorization
 
