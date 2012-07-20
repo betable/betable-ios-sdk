@@ -8,13 +8,21 @@
 
 /* Begin PBXBuildFile section */
 		A59FB2C615B9432300865CDC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A59FB2C415B9432300865CDC /* InfoPlist.strings */; };
+		A59FB2D115B9433000865CDC /* Betable.h in Headers */ = {isa = PBXBuildFile; fileRef = A59FB2CD15B9433000865CDC /* Betable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A59FB2D215B9433000865CDC /* Betable.m in Sources */ = {isa = PBXBuildFile; fileRef = A59FB2CE15B9433000865CDC /* Betable.m */; };
+		A59FB2D315B9433000865CDC /* JSONKit.h in Headers */ = {isa = PBXBuildFile; fileRef = A59FB2CF15B9433000865CDC /* JSONKit.h */; };
+		A59FB2D415B9433000865CDC /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = A59FB2D015B9433000865CDC /* JSONKit.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		A59FB2BF15B9432300865CDC /* Betable.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Betable.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A59FB2C315B9432300865CDC /* Betable-Info.plist */ = {isa = PBXFileReference; path = "Betable-Info.plist"; sourceTree = "<group>"; };
+		A59FB2C315B9432300865CDC /* Betable-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Betable-Info.plist"; sourceTree = "<group>"; };
 		A59FB2C515B9432300865CDC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		A59FB2C715B9432300865CDC /* Betable-Prefix.pch */ = {isa = PBXFileReference; path = "Betable-Prefix.pch"; sourceTree = "<group>"; };
+		A59FB2C715B9432300865CDC /* Betable-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Betable-Prefix.pch"; sourceTree = "<group>"; };
+		A59FB2CD15B9433000865CDC /* Betable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Betable.h; sourceTree = "<group>"; };
+		A59FB2CE15B9433000865CDC /* Betable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Betable.m; sourceTree = "<group>"; };
+		A59FB2CF15B9433000865CDC /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
+		A59FB2D015B9433000865CDC /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,6 +55,10 @@
 		A59FB2C115B9432300865CDC /* Betable */ = {
 			isa = PBXGroup;
 			children = (
+				A59FB2CD15B9433000865CDC /* Betable.h */,
+				A59FB2CE15B9433000865CDC /* Betable.m */,
+				A59FB2CF15B9433000865CDC /* JSONKit.h */,
+				A59FB2D015B9433000865CDC /* JSONKit.m */,
 				A59FB2C215B9432300865CDC /* Supporting Files */,
 			);
 			path = Betable;
@@ -69,6 +81,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A59FB2D115B9433000865CDC /* Betable.h in Headers */,
+				A59FB2D315B9433000865CDC /* JSONKit.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -179,6 +193,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A59FB2D215B9433000865CDC /* Betable.m in Sources */,
+				A59FB2D415B9433000865CDC /* JSONKit.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
