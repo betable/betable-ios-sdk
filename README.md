@@ -56,7 +56,7 @@ This is the final step in the OAuth protocol.  In the `onComplete` handler you w
 This method is used to place a bet for the user associated with this Betable object.
 
 * `gameID`: this is your gameID which is registered and can be checked at <https://developers.betable.com>
-* `data`: this is a dictionary that will converted to JSON and sent as the request body.  It contains all the important information about the bet being made.  For documentation on the format of this dictionary see <https://developers.betable.com/docs/api/reference/>.
+* `data`: this is a dictionary that will converted to JSON and sent as the request body.  It contains all the important information about the bet being made.  For documentation on the format of this dictionary see <https://developers.betable.com/docs#api-documentation>.
 * `onComplete`: this is a block that will be called in case of success.  Its only argument is a dictionary that contains Betable's JSON response.
 * `onFailure`: This is a block that will be called in case of error.  Its arguments are the `NSURLResponse` object, the string reresentation of the body, and the `NSError` that was raised.
 
