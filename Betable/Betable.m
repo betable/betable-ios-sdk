@@ -110,6 +110,36 @@ NSString const *BetableVersion = @"1.0";
                            }
      ];
 }
+- (void)unbackedToken:(NSString*)clientUserID onComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure {
+    NSURL *apiURL = [NSURL URLWithString:[Betable getTokenURL]];
+    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:apiURL] autorelease];
+    NSString *authStr = [NSString stringWithFormat:@"%@:%@", clientID, clientSecret];
+    NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+    NSString *authValue = [NSString stringWithFormat:@"Basic %@", [Betable base64forData:authData]];
+    [request setAllHTTPHeaderFields:[NSDictionary dictionaryWithObject:authValue forKey:@"Authorization"]];
+    
+    [request setHTTPMethod:@"POST"];
+    NSString *body = [NSString stringWithFormat:@"grant_type=client_credentials&redirect_uri=%@&client_user_id=%@",
+                      [self urlEncode:redirectURI],
+                      clientUserID];
+    
+    [request setHTTPBody:[body dataUsingEncoding:NSUTF8StringEncoding]];
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:self.queue
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+                               NSString *responseBody = [[NSString alloc] initWithData:data
+                                                                              encoding:NSUTF8StringEncoding];
+                               [responseBody autorelease];
+                               if (error) {
+                                   onFailure(response, responseBody, error);
+                               } else {
+                                   NSDictionary *data = (NSDictionary*)[responseBody objectFromJSONString];
+                                   self.accessToken = [data objectForKey:@"access_token"];
+                                   onComplete(self.accessToken);
+                               }
+                           }
+     ];
+}
 - (void)checkAccessToken {
     if (self.accessToken == nil) {
         [NSException raise:@"User is not authorized"
@@ -122,6 +152,30 @@ NSString const *BetableVersion = @"1.0";
          onFailure:(BetableFailureHandler)onFailure {
     [self checkAccessToken];
     NSURL *apiURL = [self getAPIWithURL:[Betable getBetURL:gameID]];
+    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:apiURL] autorelease];
+    [request setHTTPMethod:@"POST"];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [request setHTTPBody:[data JSONData]];
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:self.queue
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+                               NSString *responseBody = [[NSString alloc] initWithData:data
+                                                                              encoding:NSUTF8StringEncoding];
+                               [responseBody autorelease];
+                               if (error) {
+                                   onFailure(response, responseBody, error);
+                               } else {
+                                   NSDictionary *data = (NSDictionary*)[responseBody objectFromJSONString];
+                                   onComplete(data);
+                               }
+                           }];
+}
+- (void)unbackedBetForGame:(NSString*)gameID
+          withData:(NSDictionary*)data
+        onComplete:(BetableCompletionHandler)onComplete
+         onFailure:(BetableFailureHandler)onFailure {
+    [self checkAccessToken];
+    NSURL *apiURL = [self getAPIWithURL:[Betable getUnbackedBetURL:gameID]];
     NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:apiURL] autorelease];
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
@@ -195,6 +249,9 @@ NSString const *BetableVersion = @"1.0";
 }
 + (NSString*) getAccountURL{
     return [NSString stringWithFormat:@"%@%@/account", BetableAPIURL, BetableVersion];
+}
++ (NSString*) getUnbackedBetURL:(NSString*)gameID {
+    return [NSString stringWithFormat:@"%@%@/games/%@/unbacked-bet", BetableAPIURL, BetableVersion, gameID];
 }
 - (NSString*)urlEncode:(NSString*)string {
     NSString *encoded = (NSString*)CFURLCreateStringByAddingPercentEscapes(NULL,
