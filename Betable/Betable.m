@@ -32,6 +32,7 @@
 NSString const *BetableAPIURL = @"https://api.betable.com/";
 NSString const *BetableAuthorizeURL = @"https://www.betable.com/authorize";
 NSString const *BetableVersion = @"1.0";
+NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 
 @interface Betable ()
 - (NSString *)urlEncode:(NSString*)string;
@@ -75,7 +76,18 @@ NSString const *BetableVersion = @"1.0";
                          [self urlEncode:clientID],
                          [self urlEncode:redirectURI],
                          UUID];
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:authURL]];
+    NSString *nativeAuthURL = [NSString stringWithFormat:urlFormat,
+                               BetableNativeAuthorizeURL,
+                               [self urlEncode:clientID],
+                               [self urlEncode:redirectURI],
+                               UUID];
+    
+    if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:nativeAuthURL]] == YES) {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:nativeAuthURL]];
+    } else {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:authURL]];
+    }
+    
     
     CFRelease(UUIDRef);
     CFRelease(UUIDSRef);

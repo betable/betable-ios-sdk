@@ -71,6 +71,10 @@ typedef void (^BetableFailureHandler)(NSURLResponse *response, NSString *respons
         onComplete:(BetableAccessTokenHandler)onComplete
          onFailure:(BetableFailureHandler)onFailure;
 
+// You can create an auth token for an unbacked bet (virtual currency).  Rather,
+// than calling authorize first and receiving a token back in
+// application:handleOpenURL: you will receive an unbacked-bet access token in
+// the onComplete callback.
 - (void)unbackedToken:(NSString*)clientUserID
             onComplete:(BetableAccessTokenHandler)onComplete
             onFailure:(BetableFailureHandler)onFailure;

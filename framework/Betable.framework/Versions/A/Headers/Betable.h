@@ -71,6 +71,14 @@ typedef void (^BetableFailureHandler)(NSURLResponse *response, NSString *respons
         onComplete:(BetableAccessTokenHandler)onComplete
          onFailure:(BetableFailureHandler)onFailure;
 
+// You can create an auth token for an unbacked bet (virtual currency).  Rather,
+// than calling authorize first and receiving a token back in
+// application:handleOpenURL: you will receive an unbacked-bet access token in
+// the onComplete callback.
+- (void)unbackedToken:(NSString*)clientUserID
+            onComplete:(BetableAccessTokenHandler)onComplete
+            onFailure:(BetableFailureHandler)onFailure;
+
 // This method is used to place a bet for the user associated with this Betable
 // object.
 //
@@ -121,11 +129,34 @@ typedef void (^BetableFailureHandler)(NSURLResponse *response, NSString *respons
 - (void)userWalletOnComplete:(BetableCompletionHandler)onComplete
                    onFailure:(BetableFailureHandler)onFailure;
 
+// This method is used to place an unbacked-bet for the user associated with this Betable
+// object.
+//
+//      |gameID|: This is your gameID which is registered and can be checked at
+//          http://developers.betable.com
+//      |data|: This is a dictionary that will converted to JSON and added
+//          request as the body. It contains all the important information about
+//          the bet being made. For documentation on the format of this
+//          dictionary see https://developers.betable.com/docs/api/reference/
+//      |onComplete|: This is a block that will be called if the server returns
+//          the request with a successful response code. It will be passed a
+//          dictionary that contains all of the JSON data returned from the
+//          betable server.
+//      |onFailure|: This is a block that will be called if the server returns
+//          with an error. It gets passed the NSURLResponse object, the string
+//          reresentation of the body, and the NSError that was raised.
+//          betable server.
+- (void)unbackedBetForGame:(NSString*)gameID
+                  withData:(NSDictionary*)data
+                onComplete:(BetableCompletionHandler)onComplete
+                 onFailure:(BetableFailureHandler)onFailure;
+
 // All of the betable server endpoint urls.
 + (NSString*)getTokenURL;
 + (NSString*)getBetURL:(NSString*)gameID;
 + (NSString*)getWalletURL;
 + (NSString*)getAccountURL;
++ (NSString*)getUnbackedBetURL:(NSString*)gameID;
 
 @property (retain, nonatomic) NSString *accessToken;
 @property (retain, nonatomic) NSString *clientSecret;
