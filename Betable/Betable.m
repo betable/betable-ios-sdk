@@ -29,6 +29,8 @@
 #import <Foundation/Foundation.h>
 #import "Betable.h"
 #import "JSONKit.h"
+#import "BetableAuthViewController.h"
+
 NSString const *BetableAPIURL = @"https://api.betable.com/";
 NSString const *BetableAuthorizeURL = @"https://www.betable.com/authorize";
 NSString const *BetableVersion = @"1.0";
@@ -91,6 +93,21 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     
     CFRelease(UUIDRef);
     CFRelease(UUIDSRef);
+}
+- (void)authorizeInApp {
+    CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
+    CFStringRef UUIDSRef = CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
+    NSString* UUID = [NSString stringWithFormat:@"%@", UUIDSRef];
+    NSString* urlFormat = @"%@?client_id=%@&redirect_uri=%@&state=%@&response_type=code";
+    NSString *authURL = [NSString stringWithFormat:urlFormat,
+                         BetableAuthorizeURL,
+                         [self urlEncode:clientID],
+                         [self urlEncode:redirectURI],
+                         UUID];
+    if( webView == nil ){
+        BetableAuthViewController *vc = [[BetableAuthViewController alloc] initWithURLString:authURL];
+        [[[[UIApplication sharedApplication] keyWindow] rootViewController] presentModalViewController:vc animated:YES];
+    }
 }
 - (void)token:(NSString*)code onComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure {
     NSURL *apiURL = [NSURL URLWithString:[Betable getTokenURL]];

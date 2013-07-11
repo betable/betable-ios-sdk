@@ -37,6 +37,7 @@ typedef void (^BetableFailureHandler)(NSURLResponse *response, NSString *respons
     NSString *redirectURI;
     NSString *accessToken;
     NSOperationQueue *queue;
+    UIWebView *webView;
 }
 - (Betable*)initWithClientID:(NSString*)clientID clientSecret:(NSString*)clientSecret redirectURI:(NSString*)redirectURI;
 
@@ -57,6 +58,8 @@ typedef void (^BetableFailureHandler)(NSURLResponse *response, NSString *respons
 // From your UIApplicationDelegate method application:handleOpenURL: you can
 // handle the response.
 - (void)authorize;
+
+- (void)authorizeInApp;
 
 // Once you have your access code from the application:handleOpenURL: of your
 // UIApplicationDelegate after betable redirects to your app uri you can pass
