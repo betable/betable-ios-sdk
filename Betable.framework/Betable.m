@@ -83,7 +83,6 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 
 @end
 
-
 @interface Betable ()
 - (NSString *)urlEncode:(NSString*)string;
 - (NSURL*)getAPIWithURL:(NSString*)urlString;

@@ -8,6 +8,41 @@
 
 #import "BetableWebViewController.h"
 
+
+@interface UIImage (BetableBundle)
++ (UIImage*)frameworkImageNamed:(NSString*)file;
++ (NSBundle *)frameworkBundle;
+@end
+
+@implementation UIImage (BetableBundle)
++ (UIImage*)frameworkImageNamed:(NSString*)file {
+    NSArray *nameParts = [file componentsSeparatedByString:@"."];
+    
+    NSString *fileName = nameParts[0];
+    NSString *fileExtension = nameParts[1];
+    if ([[UIScreen mainScreen] respondsToSelector:@selector(displayLinkWithTarget:selector:)] &&
+        ([UIScreen mainScreen].scale == 2.0)) {
+        fileName = [fileName stringByAppendingString:@"@2x"];
+        return [UIImage imageWithContentsOfFile:[[UIImage frameworkBundle] pathForResource:fileName ofType:fileExtension]];
+    } else {
+        return [UIImage imageWithContentsOfFile:[[UIImage frameworkBundle] pathForResource:fileName ofType:fileExtension]];
+    }
+}
+
+// Load the framework bundle.
++ (NSBundle *)frameworkBundle {
+    static NSBundle* frameworkBundle = nil;
+    static dispatch_once_t predicate;
+    dispatch_once(&predicate, ^{
+        NSString* mainBundlePath = [[NSBundle mainBundle] resourcePath];
+        NSString* frameworkBundlePath = [mainBundlePath stringByAppendingPathComponent:@"Betable.bundle"];
+        frameworkBundle = [NSBundle bundleWithPath:frameworkBundlePath];
+    });
+    return frameworkBundle;
+}
+@end
+
+
 @interface BetableWebViewController ()
 
 @property (nonatomic, strong) NSString *url;
@@ -44,7 +79,7 @@
     [self.view addSubview:self.betableLoader];
     
     UIImageView *betableLogo = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 300, 63)];
-    betableLogo.image = [UIImage imageNamed:@"betable_player.png"];
+    betableLogo.image = [UIImage frameworkImageNamed:@"betable_player.png"];
     betableLogo.center = CGPointMake(self.betableLoader.frame.size.width/2, self.betableLoader.frame.size.height/2+20);
     [self.betableLoader addSubview:betableLogo];
     
