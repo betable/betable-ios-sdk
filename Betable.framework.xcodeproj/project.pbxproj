@@ -23,13 +23,13 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		A5368211178F90A20009F3EB /* BetableResources-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A536820C178F90A20009F3EB /* BetableResources-Info.plist */; };
 		A5B6015A178F6EA000F162BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B60159178F6EA000F162BF /* Foundation.framework */; };
 		A5B60170178F6F1B00F162BF /* Betable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B6016B178F6F1B00F162BF /* Betable.m */; };
 		A5B60172178F6F1B00F162BF /* BetableWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B6016F178F6F1B00F162BF /* BetableWebViewController.m */; };
 		A5B60175178F6F7E00F162BF /* Betable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B6016A178F6F1B00F162BF /* Betable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5B60177178F702600F162BF /* BetableWebViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B6016E178F6F1B00F162BF /* BetableWebViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5B60187178F762400F162BF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B60186178F762400F162BF /* CoreFoundation.framework */; };
-		A5B6018D178F762400F162BF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A5B6018B178F762400F162BF /* InfoPlist.strings */; };
 		A5B60192178F767A00F162BF /* betable_player.png in Resources */ = {isa = PBXBuildFile; fileRef = A5B60168178F6F1B00F162BF /* betable_player.png */; };
 		A5B60193178F767A00F162BF /* betable_player@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A5B60169178F6F1B00F162BF /* betable_player@2x.png */; };
 		A5B601C1178F8B9900F162BF /* BetableHandlers.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B601C0178F8B9900F162BF /* BetableHandlers.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -65,6 +65,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A536820C178F90A20009F3EB /* BetableResources-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "BetableResources-Info.plist"; sourceTree = "<group>"; };
+		A536820D178F90A20009F3EB /* BetableResources-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BetableResources-Prefix.pch"; sourceTree = "<group>"; };
 		A5B60156178F6EA000F162BF /* libBetable.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libBetable.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5B60159178F6EA000F162BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A5B6015D178F6EA000F162BF /* Betable.framework-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Betable.framework-Prefix.pch"; sourceTree = "<group>"; };
@@ -76,9 +78,6 @@
 		A5B6016F178F6F1B00F162BF /* BetableWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableWebViewController.m; sourceTree = "<group>"; };
 		A5B60185178F762400F162BF /* Betable.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Betable.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5B60186178F762400F162BF /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
-		A5B6018A178F762400F162BF /* BetableResources-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "BetableResources-Info.plist"; sourceTree = "<group>"; };
-		A5B6018C178F762400F162BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		A5B6018E178F762400F162BF /* BetableResources-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BetableResources-Prefix.pch"; sourceTree = "<group>"; };
 		A5B601C0178F8B9900F162BF /* BetableHandlers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableHandlers.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -164,9 +163,8 @@
 		A5B60189178F762400F162BF /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				A5B6018A178F762400F162BF /* BetableResources-Info.plist */,
-				A5B6018B178F762400F162BF /* InfoPlist.strings */,
-				A5B6018E178F762400F162BF /* BetableResources-Prefix.pch */,
+				A536820C178F90A20009F3EB /* BetableResources-Info.plist */,
+				A536820D178F90A20009F3EB /* BetableResources-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -256,9 +254,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5B6018D178F762400F162BF /* InfoPlist.strings in Resources */,
 				A5B60192178F767A00F162BF /* betable_player.png in Resources */,
 				A5B60193178F767A00F162BF /* betable_player@2x.png in Resources */,
+				A5368211178F90A20009F3EB /* BetableResources-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -326,17 +324,6 @@
 		};
 /* End PBXTargetDependency section */
 
-/* Begin PBXVariantGroup section */
-		A5B6018B178F762400F162BF /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				A5B6018C178F762400F162BF /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
 		A5B60162178F6EA000F162BF /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -394,7 +381,7 @@
 		A5B60165178F6EA000F162BF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				DSTROOT = /tmp/Betable_framework.dst;
@@ -403,6 +390,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = Betable;
 				PUBLIC_HEADERS_FOLDER_PATH = Headers;
+				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_STYLE = "non-global";
 			};
@@ -411,7 +399,7 @@
 		A5B60166178F6EA000F162BF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				DSTROOT = /tmp/Betable_framework.dst;
@@ -420,6 +408,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = Betable;
 				PUBLIC_HEADERS_FOLDER_PATH = Headers;
+				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_STYLE = "non-global";
 			};
@@ -495,6 +484,7 @@
 				A5B60166178F6EA000F162BF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		A5B6017B178F74E700F162BF /* Build configuration list for PBXAggregateTarget "Framework" */ = {
 			isa = XCConfigurationList;
@@ -503,6 +493,7 @@
 				A5B6017D178F74E700F162BF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		A5B6018F178F762400F162BF /* Build configuration list for PBXNativeTarget "BetableResources" */ = {
 			isa = XCConfigurationList;
@@ -511,6 +502,7 @@
 				A5B60191178F762400F162BF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

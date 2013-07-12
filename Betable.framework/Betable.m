@@ -50,10 +50,11 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
                                                          error:&error];
     if (!jsonData) {
         return nil;
-    } else {
-        [NSException raise:@"JSON is not formated correctly"
-                    format:@"The JSON returned from the server was improperly formated"];
+    } else if (!error) {
+        return jsonData;
     }
+    [NSException raise:@"JSON is not formated correctly"
+                format:@"The JSON returned from the server was improperly formated"];
     return nil;
 }
 
@@ -102,7 +103,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
         clientSecret = nil;
         redirectURI = nil;
         accessToken = nil;
-        self.queue = [[[NSOperationQueue alloc] init] autorelease];
+        self.queue = [[NSOperationQueue alloc] init];
     }
     return self;
 }
@@ -152,15 +153,15 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     BOOL fragmentSame = ((![redirect fragment] && ![url fragment]) || [[[redirect fragment] lowercaseString] isEqualToString:[[url fragment] lowercaseString]]);
     if (schemeSame && hostSame && fragmentSame) {
         //If the command is the same as the redirect, then do the authorize.
-        NSMutableDictionary *params = [[[NSMutableDictionary alloc] init] autorelease];
+        NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
         for (NSString *param in [[url query] componentsSeparatedByString:@"&"]) {
             NSArray *elts = [param componentsSeparatedByString:@"="];
             if([elts count] < 2) continue;
             [params setObject:[elts objectAtIndex:1] forKey:[elts objectAtIndex:0]];
         }
         [self token:[params objectForKey:@"code"]
-         onComplete:[[onComplete copy] autorelease]
-          onFailure:[[onFailure copy] autorelease]
+         onComplete:[onComplete copy]
+          onFailure:[onFailure copy]
          ];
         [self.currentWebView.presentingViewController dismissViewControllerAnimated:YES completion:nil];
     }
@@ -168,7 +169,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 
 - (void)token:(NSString*)code onComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure {
     NSURL *apiURL = [NSURL URLWithString:[Betable getTokenURL]];
-    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:apiURL] autorelease];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:apiURL];
     NSString *authStr = [NSString stringWithFormat:@"%@:%@", clientID, clientSecret];
     NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
     NSString *authValue = [NSString stringWithFormat:@"Basic %@", [Betable base64forData:authData]];
@@ -185,7 +186,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
                                NSString *responseBody = [[NSString alloc] initWithData:data
                                                                               encoding:NSUTF8StringEncoding];
-                               [responseBody autorelease];
+
                                if (error) {
                                    if (![NSThread isMainThread]) {
                                        dispatch_async(dispatch_get_main_queue(), ^{
@@ -208,7 +209,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 
 - (void)unbackedToken:(NSString*)clientUserID onComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure {
     NSURL *apiURL = [NSURL URLWithString:[Betable getTokenURL]];
-    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:apiURL] autorelease];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:apiURL];
     NSString *authStr = [NSString stringWithFormat:@"%@:%@", clientID, clientSecret];
     NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
     NSString *authValue = [NSString stringWithFormat:@"Basic %@", [Betable base64forData:authData]];
@@ -225,7 +226,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
                                NSString *responseBody = [[NSString alloc] initWithData:data
                                                                               encoding:NSUTF8StringEncoding];
-                               [responseBody autorelease];
+
                                if (error) {
                                    onFailure(response, responseBody, error);
                                } else {
@@ -248,7 +249,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
          onFailure:(BetableFailureHandler)onFailure {
     [self checkAccessToken];
     NSURL *apiURL = [self getAPIWithURL:[Betable getBetURL:gameID]];
-    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:apiURL] autorelease];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:apiURL];
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     [request setHTTPBody:[data JSONData]];
@@ -257,7 +258,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
                                NSString *responseBody = [[NSString alloc] initWithData:data
                                                                               encoding:NSUTF8StringEncoding];
-                               [responseBody autorelease];
+
                                if (error) {
                                    onFailure(response, responseBody, error);
                                } else {
@@ -272,7 +273,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
          onFailure:(BetableFailureHandler)onFailure {
     [self checkAccessToken];
     NSURL *apiURL = [self getAPIWithURL:[Betable getUnbackedBetURL:gameID]];
-    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:apiURL] autorelease];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:apiURL];
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     [request setHTTPBody:[data JSONData]];
@@ -281,7 +282,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
                                NSString *responseBody = [[NSString alloc] initWithData:data
                                                                               encoding:NSUTF8StringEncoding];
-                               [responseBody autorelease];
+
                                if (error) {
                                    onFailure(response, responseBody, error);
                                } else {
@@ -294,14 +295,14 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
                     onFailure:(BetableFailureHandler)onFailure{
     [self checkAccessToken];
     NSURL *apiURL = [self getAPIWithURL:[Betable getAccountURL]];
-    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:apiURL] autorelease];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:apiURL];
     [request setHTTPMethod:@"GET"];
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:self.queue
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
                                NSString *responseBody = [[NSString alloc] initWithData:data
                                                                               encoding:NSUTF8StringEncoding];
-                               [responseBody autorelease];
+
                                if (error) {
                                    onFailure(response, responseBody, error);
                                } else {
@@ -314,14 +315,14 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
                    onFailure:(BetableFailureHandler)onFailure {
     [self checkAccessToken];
     NSURL *apiURL = [self getAPIWithURL:[Betable getWalletURL]];
-    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:apiURL] autorelease];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:apiURL];
     [request setHTTPMethod:@"GET"];
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:self.queue
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
                                NSString *responseBody = [[NSString alloc] initWithData:data
                                                                               encoding:NSUTF8StringEncoding];
-                               [responseBody autorelease];
+
                                if (error) {
                                    onFailure(response, responseBody, error);
                                } else {
@@ -350,12 +351,12 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     return [NSString stringWithFormat:@"%@%@/games/%@/unbacked-bet", BetableAPIURL, BetableVersion, gameID];
 }
 - (NSString*)urlEncode:(NSString*)string {
-    NSString *encoded = (NSString*)CFURLCreateStringByAddingPercentEscapes(NULL,
+    NSString *encoded = (NSString*)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
                                                                (CFStringRef)string,
                                                                NULL,
                                                                (CFStringRef)@"!*'\"();:@&=+$,/?%#[]% ",
-                                                               CFStringConvertNSStringEncodingToEncoding(NSASCIIStringEncoding));
-    return [encoded autorelease];
+                                                               CFStringConvertNSStringEncodingToEncoding(NSASCIIStringEncoding)));
+    return encoded;
 }
 - (NSURL*)getAPIWithURL:(NSString*)urlString {
     urlString = [NSString stringWithFormat:@"%@?access_token=%@", urlString, self.accessToken];
@@ -389,15 +390,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
         output[theIndex + 3] = (i + 2) < length ? table[(value >> 0)  & 0x3F] : '=';
     }
     
-    return [[[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding] autorelease];
+    return [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
 }
 
-- (void)dealloc {
-    self.accessToken = nil;
-    self.clientSecret = nil;
-    self.clientID = nil;
-    self.redirectURI = nil;
-    self.queue = nil;
-    [super dealloc];
-}
 @end

@@ -157,12 +157,12 @@
 + (NSString*)getAccountURL;
 + (NSString*)getUnbackedBetURL:(NSString*)gameID;
 
-@property (retain, nonatomic) NSString *accessToken;
-@property (retain, nonatomic) NSString *clientSecret;
-@property (retain, nonatomic) NSString *clientID;
-@property (retain, nonatomic) NSString *redirectURI;
-@property (retain, nonatomic) NSOperationQueue *queue;
-@property (retain, nonatomic) BetableWebViewController *currentWebView;
+@property (strong, nonatomic) NSString *accessToken;
+@property (strong, nonatomic) NSString *clientSecret;
+@property (strong, nonatomic) NSString *clientID;
+@property (strong, nonatomic) NSString *redirectURI;
+@property (strong, nonatomic) NSOperationQueue *queue;
+@property (strong, nonatomic) BetableWebViewController *currentWebView;
 
 
 @end

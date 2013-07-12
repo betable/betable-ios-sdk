@@ -1,0 +1,8 @@
+//
+// Prefix header for all source files of the 'BetableResources' target in the 'BetableResources' project
+//
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+#endif

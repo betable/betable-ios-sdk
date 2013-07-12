@@ -10,11 +10,11 @@
 
 @interface BetableWebViewController ()
 
-@property (nonatomic, retain) NSString *url;
+@property (nonatomic, strong) NSString *url;
 @property (nonatomic, copy) BetableCancelHandler onCancel;
-@property (nonatomic, retain) UIWebView *webView;
-@property (nonatomic, retain) UIView *betableLoader;
-@property (nonatomic, retain) UIActivityIndicatorView *spinner;
+@property (nonatomic, strong) UIWebView *webView;
+@property (nonatomic, strong) UIView *betableLoader;
+@property (nonatomic, strong) UIActivityIndicatorView *spinner;
 
 @end
 
@@ -70,14 +70,6 @@
         self.onCancel();
     }
     self.onCancel = nil;
-}
-
-- (void)dealloc {
-    self.url = nil;
-    self.webView = nil;
-    self.betableLoader = nil;
-    self.onCancel = nil;
-    [super dealloc];
 }
 
 #pragma mark - Web View Delegate
