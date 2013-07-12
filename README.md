@@ -1,16 +1,8 @@
 # Betable iOS SDK
 
-## Setting It Up With Your Project
-
-There are two ways you can get Betable iOS SDK up and working with your project: adding the framework to your project or adding the raw classes.
-
-### Adding the Framework
+## Adding the Framework
 
 In the `framework` directory of this repository is a folder called `Betable.framework`.  Download the directory and then drag and drop it onto your project.  Then just `#import <Betable/Betable.h>` in whichever files you reference the Betable object form.  (This is the method that the [`betable-ios-sample`](https://github.com/betable/betable-ios-sample) app uses.)
-
-### Adding the Raw Classes
-
-In the `Betable` directory of this repository are four files: `Betable.h`, `Betable.m`, `JSONKit.h`, `JSONKit.m`: you simply drag these files into your project and the `#import "betable.h"` wherever you wish to use the `Betable` object and you are done.
 
 ## `Betable` Object
 
@@ -30,19 +22,17 @@ If you have previously acquired an access token for the user you can simply set 
 
 ### Authorization
 
-    - (void)authorize;
+    - (void)authorizeInViewController:(UIViewController*)viewController onCancel:(BetableCancelHandler)onCancel;
 
-This method should be called when no access token exists for the current user.  It will initiate the OAuth protocol.  It will bounce the user to the Safari app that is native on the device.  After the person authorizes your app at <https://betable.com>, Betable will redirect them to your redirect URI which can be registered at <https://developers.betable.com> after configuring your game.
+This method should be called when no access token exists for the current user.  It will initiate the OAuth protocol.  It will open a UIWebView in portrait and direct it to the Betable signup/login page.  After the person authorizes your app at <https://betable.com>, Betable will redirect them to your redirect URI which can be registered at <https://developers.betable.com> after configuring your game.
 
 The redirect URI should have a protocol that opens your app.  See [Apple's documentation](http://developer.apple.com/library/ios/#documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/AdvancedAppTricks/AdvancedAppTricks.html#//apple_ref/doc/uid/TP40007072-CH7-SW50) for details.  It is suggested that your URL scheme be <code>betable+<em>game_id</em></code> and that your redirect URI be <code>betable+<em>game_id</em>://authorize</code>.  After login in your `UIApplicationDelegate`'s method `application:handleOpenURL:` you can handle the request, which will be formed as <code>betable+<em>game_id</em>://authorize?code=<em>code</em>&state=<em>state</em></code>.
 
 ### Getting the Access Token
 
-    - (void)token:(NSString*)code
-       onComplete:(BetableAccessTokenHandler)onComplete
-        onFailure:(BetableFailureHandler)onFailure;
+- (void)handleAuthorizeURL:(NSURL*)url onAuthorizationComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure;
 
-Once you have the code from the `application:handleOpenURL:` of your `UIApplicationDelegate` after Betable redirects to your app's redirect URI you can pass the code to the `token:onComplete:onFailure` method of your `Betable` object.
+Once your app recieves the redirect uri in `application:handleOpenURL:` of your `UIApplicationDelegate` you can pass the uri to the `handleAuthorizeURL:onAuthorizationComplete:onFailure` method of your `Betable` object.
 
 This is the final step in the OAuth protocol.  In the `onComplete` handler you will recieve your access token for the user associated with this `Betable` object.  You will want to store this with the user so you can make future requests on their behalf.
 

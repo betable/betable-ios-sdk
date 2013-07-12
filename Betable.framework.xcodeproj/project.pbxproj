@@ -385,6 +385,8 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				DSTROOT = /tmp/Betable_framework.dst;
+				EXECUTABLE_EXTENSION = a;
+				EXECUTABLE_PREFIX = lib;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Betable.framework/Betable.framework-Prefix.pch";
 				OTHER_LDFLAGS = "-ObjC";
@@ -393,6 +395,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_STYLE = "non-global";
+				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
 		};
@@ -403,6 +406,8 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				DSTROOT = /tmp/Betable_framework.dst;
+				EXECUTABLE_EXTENSION = a;
+				EXECUTABLE_PREFIX = lib;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Betable.framework/Betable.framework-Prefix.pch";
 				OTHER_LDFLAGS = "-ObjC";
@@ -411,6 +416,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_STYLE = "non-global";
+				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
 		};
