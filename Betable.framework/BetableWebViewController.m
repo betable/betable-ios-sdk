@@ -43,10 +43,11 @@
 @end
 
 
-@interface BetableWebViewController ()
+@interface BetableWebViewController () {
+    BOOL _finishedLoading;
+}
 
 @property (nonatomic, strong) NSString *url;
-@property (nonatomic, copy) BetableCancelHandler onCancel;
 @property (nonatomic, strong) UIWebView *webView;
 @property (nonatomic, strong) UIView *betableLoader;
 @property (nonatomic, strong) UIActivityIndicatorView *spinner;
@@ -55,27 +56,35 @@
 
 @implementation BetableWebViewController
 
-- (BetableWebViewController*)initWithURL:(NSString*)url onClose:(BetableCancelHandler)onCancel {
+- (BetableWebViewController*)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onCancel {
     self = [self init];
     if (self) {
         self.url = url;
         self.onCancel = onCancel;
+        [self preloadWebview];
     }
     return self;
 }
 
-- (void)viewDidLoad {
-    self.view.frame = [[UIScreen mainScreen] bounds];
+- (void)preloadWebview {
+    CGRect frame = [[UIScreen mainScreen] bounds];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:self.url]];
-    self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
     [self.webView loadRequest:request];
     self.webView.hidden = YES;
     self.webView.delegate = self;
+    NSLog(@"Happening");
+}
+
+- (void)viewDidLoad {
+    self.view.frame = [[UIScreen mainScreen] bounds];
+
     [self.view addSubview:self.webView];
-    
+
     [super viewDidLoad];
     self.betableLoader = [[UIView alloc] initWithFrame:CGRectMake(0, -20, self.view.frame.size.width, self.view.frame.size.height+20)];
     self.betableLoader.backgroundColor = [UIColor colorWithRed:238.0/255.0 green:243.0/255.0 blue:347.9/255.0 alpha:1.0];
+    
     [self.view addSubview:self.betableLoader];
     
     UIImageView *betableLogo = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 300, 63)];
@@ -97,6 +106,15 @@
     closeButton.titleLabel.font = [UIFont boldSystemFontOfSize:32];
     [closeButton addTarget:self action:@selector(closeWindow) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:closeButton];
+    
+    //If we have already loaded then don't show the betableLoader and show the webview
+    if (_finishedLoading) {
+        self.webView.hidden = NO;
+        self.betableLoader.hidden = YES;
+    } else {
+        self.webView.hidden = YES;
+        self.betableLoader.hidden = NO;
+    }
 }
 
 - (void)closeWindow {
@@ -112,6 +130,7 @@
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
     self.webView.hidden = NO;
     [self.spinner stopAnimating];
+    _finishedLoading = YES;
     [UIView animateWithDuration:.2 animations:^{
         CGRect frame = self.betableLoader.frame;
         frame.origin.y = -10;

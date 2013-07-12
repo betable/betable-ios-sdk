@@ -56,7 +56,7 @@
 //
 // From your UIApplicationDelegate method application:handleOpenURL: you can
 // handle the response.
-- (void)authorizeInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose;
+- (void)authorizeInViewController:(UIViewController*)viewController onCancel:(BetableCancelHandler)onClose;
 
 
 // Once you have your access code from the application:handleOpenURL: of your

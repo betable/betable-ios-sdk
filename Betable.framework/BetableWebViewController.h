@@ -11,6 +11,8 @@
 
 @interface BetableWebViewController : UIViewController <UIWebViewDelegate>
 
-- (BetableWebViewController*)initWithURL:(NSString*)url onClose:(BetableCancelHandler)onClose;
+@property (nonatomic, copy) BetableCancelHandler onCancel;
+
+- (BetableWebViewController*)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onClose;
 
 @end

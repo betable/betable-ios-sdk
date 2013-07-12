@@ -112,10 +112,12 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
         self.clientID = aClientID;
         self.clientSecret = aClientSecret;
         self.redirectURI = aRedirectURI;
+        [self setupAuthorizeWebView];
     }
     return self;
 }
-- (void)authorizeInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
+
+- (void)setupAuthorizeWebView {
     CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
     CFStringRef UUIDSRef = CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
     NSString* UUID = [NSString stringWithFormat:@"%@", UUIDSRef];
@@ -134,14 +136,16 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     
     if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:nativeAuthURL]] == YES) {
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:nativeAuthURL]];
-    } else { 
-        self.currentWebView = [[BetableWebViewController alloc] initWithURL:authURL onClose:onClose];
-        [viewController presentViewController:self.currentWebView animated:YES completion:nil];
-
+    } else {
+        self.currentWebView = [[BetableWebViewController alloc] initWithURL:authURL onCancel:nil];
     }
-    
     CFRelease(UUIDRef);
     CFRelease(UUIDSRef);
+}
+
+- (void)authorizeInViewController:(UIViewController*)viewController onCancel:(BetableCancelHandler)onCancel {
+    self.currentWebView.onCancel = onCancel;
+    [viewController presentViewController:self.currentWebView animated:YES completion:nil];
 }
 
 - (void)handleAuthorizeURL:(NSURL*)url onAuthorizationComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure {
