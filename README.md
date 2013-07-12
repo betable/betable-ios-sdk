@@ -2,7 +2,9 @@
 
 ## Adding the Framework
 
-In the `framework` directory of this repository is a folder called `Betable.framework`.  Download the directory and then drag and drop it onto your project.  Then just `#import <Betable/Betable.h>` in whichever files you reference the Betable object form.  (This is the method that the [`betable-ios-sample`](https://github.com/betable/betable-ios-sample) app uses.)
+In the `framework` directory of this repository is a folder called `Betable.framework` and one called `Betable.bundle`.  Download these directories and then drag and drop it onto your project (Usually into the frameworks folder).  Then just `#import <Betable/Betable.h>` in whichever files you reference the Betable object form.  (This is the method that the [`betable-ios-sample`](https://github.com/betable/betable-ios-sample) app uses.)
+
+If you want to change the code and build a new framework, simply build the Framework target in this project and the folders will be built to the proper build locations (usually ~/Library/Developer/Xcode/DerivedData/Betable.framework-<hash>/Build/Products/Debug-iphoneos/).  Simply drag those files into your project from there or you can link to them so you can continue development on both the framework and your project at the same time.
 
 ## `Betable` Object
 

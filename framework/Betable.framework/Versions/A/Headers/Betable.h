@@ -25,11 +25,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 
-typedef void (^BetableAccessTokenHandler)(NSString *accessToken);
-typedef void (^BetableCompletionHandler)(NSDictionary *data);
-typedef void (^BetableFailureHandler)(NSURLResponse *response, NSString *responseBody, NSError *error);
+#import <Betable/BetableWebViewController.h>
+#import <Betable/BetableHandlers.h>
+
+@class BetableWebViewController;
 
 @interface Betable : NSObject {
     NSString *clientID;
@@ -56,20 +56,19 @@ typedef void (^BetableFailureHandler)(NSURLResponse *response, NSString *respons
 //
 // From your UIApplicationDelegate method application:handleOpenURL: you can
 // handle the response.
-- (void)authorize;
+- (void)authorizeInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose;
+
 
 // Once you have your access code from the application:handleOpenURL: of your
 // UIApplicationDelegate after betable redirects to your app uri you can pass
-// the token in here with your handlers for successfully or unsuccessfully
+// the uri into this method with your handlers for successfully or unsuccessfully
 // recieving an access token.
 //
 // NOTE: This is the final step of oauth.  In the onComplete handler you will
 // recieve your access token for the user associated with this Betable object.
 // You will want to store this with the user so you can make future calls on
 // be half of said user.
-- (void)token:(NSString*)code
-        onComplete:(BetableAccessTokenHandler)onComplete
-         onFailure:(BetableFailureHandler)onFailure;
+- (void)handleAuthorizeURL:(NSURL*)url onAuthorizationComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure;
 
 // You can create an auth token for an unbacked bet (virtual currency).  Rather,
 // than calling authorize first and receiving a token back in
@@ -158,11 +157,12 @@ typedef void (^BetableFailureHandler)(NSURLResponse *response, NSString *respons
 + (NSString*)getAccountURL;
 + (NSString*)getUnbackedBetURL:(NSString*)gameID;
 
-@property (retain, nonatomic) NSString *accessToken;
-@property (retain, nonatomic) NSString *clientSecret;
-@property (retain, nonatomic) NSString *clientID;
-@property (retain, nonatomic) NSString *redirectURI;
-@property (retain, nonatomic) NSOperationQueue *queue;
+@property (strong, nonatomic) NSString *accessToken;
+@property (strong, nonatomic) NSString *clientSecret;
+@property (strong, nonatomic) NSString *clientID;
+@property (strong, nonatomic) NSString *redirectURI;
+@property (strong, nonatomic) NSOperationQueue *queue;
+@property (strong, nonatomic) BetableWebViewController *currentWebView;
 
 
 @end
