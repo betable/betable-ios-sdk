@@ -28,11 +28,60 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import "Betable.h"
-#import "JSONKit.h"
+#import "BetableWebViewController.h"
+
 NSString const *BetableAPIURL = @"https://api.betable.com/";
 NSString const *BetableAuthorizeURL = @"https://www.betable.com/authorize";
 NSString const *BetableVersion = @"1.0";
 NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
+
+
+@interface NSDictionary (BetableJSON)
+
+
+- (NSData*)JSONData;
+
+@end
+@implementation NSDictionary (BetableJSON)
+- (NSData*)JSONData {
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:self
+                                                       options:0
+                                                         error:&error];
+    if (!jsonData) {
+        return nil;
+    } else {
+        [NSException raise:@"JSON is not formated correctly"
+                    format:@"The JSON returned from the server was improperly formated"];
+    }
+    return nil;
+}
+
+@end
+@interface NSString (BetableJSON)
+
+
+- (NSObject*)objectFromJSONString;
+
+@end
+@implementation NSString (BetableJSON)
+
+- (NSObject*)objectFromJSONString {
+    NSData *JSONdata = [self dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *jsonError = nil;
+    if (JSONdata != nil) {
+        NSObject *object = [NSJSONSerialization JSONObjectWithData:JSONdata options:0 error:&jsonError];
+        if (jsonError == nil) {
+            return object;
+        }
+        [NSException raise:@"JSON is not formated correctly"
+                    format:@"The JSON returned from the server was improperly formated"];
+    }
+    return nil;
+}
+
+@end
+
 
 @interface Betable ()
 - (NSString *)urlEncode:(NSString*)string;
@@ -44,7 +93,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 
 @implementation Betable
 
-@synthesize accessToken, clientID, clientSecret, redirectURI, queue;
+@synthesize accessToken, clientID, clientSecret, redirectURI, queue, currentWebView;
 
 - (Betable*)init {
     self = [super init];
@@ -66,7 +115,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     }
     return self;
 }
-- (void)authorize {
+- (void)authorizeInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
     CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
     CFStringRef UUIDSRef = CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
     NSString* UUID = [NSString stringWithFormat:@"%@", UUIDSRef];
@@ -82,16 +131,41 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
                                [self urlEncode:redirectURI],
                                UUID];
     
+    
     if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:nativeAuthURL]] == YES) {
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:nativeAuthURL]];
-    } else {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:authURL]];
+    } else { 
+        self.currentWebView = [[BetableWebViewController alloc] initWithURL:authURL onClose:onClose];
+        [viewController presentViewController:self.currentWebView animated:YES completion:nil];
+
     }
-    
     
     CFRelease(UUIDRef);
     CFRelease(UUIDSRef);
 }
+
+- (void)handleAuthorizeURL:(NSURL*)url onAuthorizationComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure {
+    NSURL *redirect = [NSURL URLWithString:self.redirectURI];
+    //First check that we should be handling this
+    BOOL schemeSame = [[[redirect scheme] lowercaseString] isEqualToString:[[url scheme] lowercaseString]];
+    BOOL hostSame = [[[redirect host] lowercaseString] isEqualToString:[[url host] lowercaseString]];
+    BOOL fragmentSame = ((![redirect fragment] && ![url fragment]) || [[[redirect fragment] lowercaseString] isEqualToString:[[url fragment] lowercaseString]]);
+    if (schemeSame && hostSame && fragmentSame) {
+        //If the command is the same as the redirect, then do the authorize.
+        NSMutableDictionary *params = [[[NSMutableDictionary alloc] init] autorelease];
+        for (NSString *param in [[url query] componentsSeparatedByString:@"&"]) {
+            NSArray *elts = [param componentsSeparatedByString:@"="];
+            if([elts count] < 2) continue;
+            [params setObject:[elts objectAtIndex:1] forKey:[elts objectAtIndex:0]];
+        }
+        [self token:[params objectForKey:@"code"]
+         onComplete:[[onComplete copy] autorelease]
+          onFailure:[[onFailure copy] autorelease]
+         ];
+        [self.currentWebView.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    }
+}
+
 - (void)token:(NSString*)code onComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure {
     NSURL *apiURL = [NSURL URLWithString:[Betable getTokenURL]];
     NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:apiURL] autorelease];
@@ -113,15 +187,25 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
                                                                               encoding:NSUTF8StringEncoding];
                                [responseBody autorelease];
                                if (error) {
-                                   onFailure(response, responseBody, error);
+                                   if (![NSThread isMainThread]) {
+                                       dispatch_async(dispatch_get_main_queue(), ^{
+                                           onFailure(response, responseBody, error);
+                                       });
+                                   }
                                } else {
                                    NSDictionary *data = (NSDictionary*)[responseBody objectFromJSONString];
-                                   self.accessToken = [data objectForKey:@"access_token"];
-                                   onComplete(self.accessToken);
+                                   NSString *newAccessToken = [data objectForKey:@"access_token"];
+                                   self.accessToken = newAccessToken;
+                                   if (![NSThread isMainThread]) {
+                                       dispatch_async(dispatch_get_main_queue(), ^{
+                                           onComplete(accessToken);
+                                       });
+                                   }
                                }
                            }
      ];
 }
+
 - (void)unbackedToken:(NSString*)clientUserID onComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure {
     NSURL *apiURL = [NSURL URLWithString:[Betable getTokenURL]];
     NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:apiURL] autorelease];
