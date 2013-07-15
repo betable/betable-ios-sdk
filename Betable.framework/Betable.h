@@ -31,13 +31,8 @@
 
 @class BetableWebViewController;
 
-@interface Betable : NSObject {
-    NSString *clientID;
-    NSString *clientSecret;
-    NSString *redirectURI;
-    NSString *accessToken;
-    NSOperationQueue *queue;
-}
+@interface Betable : NSObject
+
 - (Betable*)initWithClientID:(NSString*)clientID clientSecret:(NSString*)clientSecret redirectURI:(NSString*)redirectURI;
 
 // This method is called when no access token exists for the current user. It
@@ -56,7 +51,7 @@
 //
 // From your UIApplicationDelegate method application:handleOpenURL: you can
 // handle the response.
-- (void)authorizeInViewController:(UIViewController*)viewController onCancel:(BetableCancelHandler)onClose;
+- (void)authorizeInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel;
 
 
 // Once you have your access code from the application:handleOpenURL: of your
@@ -68,7 +63,7 @@
 // recieve your access token for the user associated with this Betable object.
 // You will want to store this with the user so you can make future calls on
 // be half of said user.
-- (void)handleAuthorizeURL:(NSURL*)url onAuthorizationComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure;
+- (void)handleAuthorizeURL:(NSURL*)url;
 
 // You can create an auth token for an unbacked bet (virtual currency).  Rather,
 // than calling authorize first and receiving a token back in
@@ -163,6 +158,8 @@
 @property (strong, nonatomic) NSString *redirectURI;
 @property (strong, nonatomic) NSOperationQueue *queue;
 @property (strong, nonatomic) BetableWebViewController *currentWebView;
+@property (strong, nonatomic) BetableAccessTokenHandler onAuthorize;
+@property (strong, nonatomic) BetableFailureHandler onFailure;
 
 
 @end

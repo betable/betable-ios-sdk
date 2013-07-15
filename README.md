@@ -24,19 +24,33 @@ If you have previously acquired an access token for the user you can simply set 
 
 ### Authorization
 
-    - (void)authorizeInViewController:(UIViewController*)viewController onCancel:(BetableCancelHandler)onCancel;
+    - (void)authorizeInViewController:(UIViewController*)viewController onAuthorize:(BetableAccessTokenHandler)onAuthorize onFailure(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel;
 
-This method should be called when no access token exists for the current user.  It will initiate the OAuth protocol.  It will open a UIWebView in portrait and direct it to the Betable signup/login page.  After the person authorizes your app at <https://betable.com>, Betable will redirect them to your redirect URI which can be registered at <https://developers.betable.com> after configuring your game.
+This method should be called when no access token exists for the current user.  It will initiate the OAuth protocol.  It will open a UIWebView in portrait and direct it to the Betable signup/login page.  After the person authorizes your app at <https://betable.com>, Betable will redirect them to your redirect URI which can be registered at <https://developers.betable.com> after configuring your game. This will be handled by the `Betable` object's `handleAuthroizeURL:` method inside of your applicaiton delegate's `application:handleURLOpen:`.
 
-The redirect URI should have a protocol that opens your app.  See [Apple's documentation](http://developer.apple.com/library/ios/#documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/AdvancedAppTricks/AdvancedAppTricks.html#//apple_ref/doc/uid/TP40007072-CH7-SW50) for details.  It is suggested that your URL scheme be <code>betable+<em>game_id</em></code> and that your redirect URI be <code>betable+<em>game_id</em>://authorize</code>.  After login in your `UIApplicationDelegate`'s method `application:handleOpenURL:` you can handle the request, which will be formed as <code>betable+<em>game_id</em>://authorize?code=<em>code</em>&state=<em>state</em></code>.
+The redirect URI should have a protocol that opens your app.  See [Apple's documentation](http://developer.apple.com/library/ios/#documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/AdvancedAppTricks/AdvancedAppTricks.html#//apple_ref/doc/uid/TP40007072-CH7-SW50) for details.  It is suggested that your URL scheme be <code>betable+<em>game_id</em></code> and that your redirect URI be <code>betable+<em>game_id</em>://authorize</code>.  After the user has authorized your app, the authroize view will invoke your app'a `application:handleOpenURL:` in your `UIApplicationDelegate`.  Inside that method you need to call the `Betable` objects `handleAuthorizeURL:`.
+
+There are 3 handlers to pass in to this call: `onAuthroize`, `onFailure`, and `onCancel`. onAuthorize and onFailure can be set at anytime on the betable object between when this call is made and when the response is handled inside of `application:handleURLOpen:`
+
+#### onAuthorize(NSString *accessToken)
+
+This is called when the person successfully completes the authorize flow. It gets passed the accessToken. You should store this accessToken with your user so that subsequent launches do not require reauthorization.
+
+#### onFailure(NSURLResponse *response, NSString *responseBody, NSError *error)
+
+This is called when the server rejects the authorization attempt by a user. `error` will have more information on why it was rejected.
+
+#### onCancel()
+
+This is called when the person cancels out of the authorization at some point during the authroization flow.
 
 ### Getting the Access Token
 
-- (void)handleAuthorizeURL:(NSURL*)url onAuthorizationComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure;
+    - (void)handleAuthorizeURL:(NSURL*)url
 
-Once your app recieves the redirect uri in `application:handleOpenURL:` of your `UIApplicationDelegate` you can pass the uri to the `handleAuthorizeURL:onAuthorizationComplete:onFailure` method of your `Betable` object.
+Once your app receives the redirect uri in `application:handleOpenURL:` of your `UIApplicationDelegate` you can pass the uri to the `handleAuthorizeURL:` method of your `Betable` object.
 
-This is the final step in the OAuth protocol.  In the `onComplete` handler you will recieve your access token for the user associated with this `Betable` object.  You will want to store this with the user so you can make future requests on their behalf.
+This is the final step in the OAuth protocol.  In the `onComplete` handler that you passed into the `authorizeInViewController:onAuthorizationComplete:onFailure:onCancel:` you will recieve your access token for the user associated with this `Betable` object.  You will want to store this with the user so you can make future requests on their behalf.
 
 ### Betting
 
