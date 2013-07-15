@@ -12,7 +12,9 @@ This is the object that serves as a wrapper for all calls to the Betable API.
 
 ### Initializing
 
-    - (Betable*)initWithClientID:(NSString*)clientID clientSecret:(NSString*)clientSecret redirectURI:(NSString*)redirectURI;
+    - (Betable*)initWithClientID:(NSString*)clientID
+                    clientSecret:(NSString*)clientSecret
+                     redirectURI:(NSString*)redirectURI;
 
 To create a `Betable` object simply initilize it with your client ID, client secret and redirect URI.  All of these can be set at <https://developers.betable.com> when you create your game.  We suggest that your redirect URI be <code>betable+<em>game_id</em>://authorize</code>.  See **Authorization** below for more details.
 
@@ -24,7 +26,10 @@ If you have previously acquired an access token for the user you can simply set 
 
 ### Authorization
 
-    - (void)authorizeInViewController:(UIViewController*)viewController onAuthorize:(BetableAccessTokenHandler)onAuthorize onFailure(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel;
+    - (void)authorizeInViewController:(UIViewController*)viewController
+                          onAuthorize:(BetableAccessTokenHandler)onAuthorize
+                            onFailure:(BetableFailureHandler)onFailure
+                             onCancel:(BetableCancelHandler)onCancel;
 
 This method should be called when no access token exists for the current user.  It will initiate the OAuth protocol.  It will open a UIWebView in portrait and direct it to the Betable signup/login page.  After the person authorizes your app at <https://betable.com>, Betable will redirect them to your redirect URI which can be registered at <https://developers.betable.com> after configuring your game. This will be handled by the `Betable` object's `handleAuthroizeURL:` method inside of your applicaiton delegate's `application:handleURLOpen:`.
 
