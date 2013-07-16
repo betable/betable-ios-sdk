@@ -8,6 +8,13 @@
 
 #import "BetableWebViewController.h"
 
+BOOL isPad() {
+#ifdef UI_USER_INTERFACE_IDIOM
+    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+#else
+    return NO;
+#endif
+}
 
 @interface UIImage (BetableBundle)
 + (UIImage*)frameworkImageNamed:(NSString*)file;
@@ -70,6 +77,9 @@
     CGRect frame = [[UIScreen mainScreen] bounds];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:self.url]];
     self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+    
+    self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    
     [self.webView loadRequest:request];
     self.webView.hidden = YES;
     self.webView.delegate = self;
@@ -85,11 +95,18 @@
     self.betableLoader = [[UIView alloc] initWithFrame:CGRectMake(0, -20, self.view.frame.size.width, self.view.frame.size.height+20)];
     self.betableLoader.backgroundColor = [UIColor colorWithRed:238.0/255.0 green:243.0/255.0 blue:347.9/255.0 alpha:1.0];
     
+    self.betableLoader.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    
     [self.view addSubview:self.betableLoader];
     
     UIImageView *betableLogo = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 300, 63)];
     betableLogo.image = [UIImage frameworkImageNamed:@"betable_player.png"];
     betableLogo.center = CGPointMake(self.betableLoader.frame.size.width/2, self.betableLoader.frame.size.height/2+20);
+    
+    betableLogo.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |
+        UIViewAutoresizingFlexibleTopMargin |
+        UIViewAutoresizingFlexibleBottomMargin;
+    
     [self.betableLoader addSubview:betableLogo];
     
     CGFloat logoBottom = betableLogo.frame.origin.y + betableLogo.frame.size.height;
@@ -99,12 +116,19 @@
     [self.spinner startAnimating];
     [self.betableLoader addSubview:self.spinner];
     
+    self.spinner.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |
+        UIViewAutoresizingFlexibleTopMargin |
+        UIViewAutoresizingFlexibleBottomMargin;
+    
     UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     closeButton.frame = CGRectMake(self.view.frame.size.width-40, 7, 30, 30);
     [closeButton setTitle:@"×" forState:UIControlStateNormal];
     [closeButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
     closeButton.titleLabel.font = [UIFont boldSystemFontOfSize:32];
     [closeButton addTarget:self action:@selector(closeWindow) forControlEvents:UIControlEventTouchUpInside];
+    
+    closeButton.autoresizingMask =UIViewAutoresizingFlexibleLeftMargin  |   UIViewAutoresizingFlexibleBottomMargin;
+    
     [self.view addSubview:closeButton];
     
     //If we have already loaded then don't show the betableLoader and show the webview
@@ -150,16 +174,28 @@
 
 -(BOOL)shouldAutorotate
 {
-    return NO;
+    if (isPad()) {
+        return YES;
+    } else {
+        return NO;
+    }
 }
 
 -(NSUInteger)supportedInterfaceOrientations
 {
-    return UIInterfaceOrientationMaskPortrait;
+    if (isPad()) {
+        return UIInterfaceOrientationMaskAllButUpsideDown;
+    } else {
+        return UIInterfaceOrientationMaskPortrait;
+    }
 }
 
 // pre-iOS 6 support
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
-    return (toInterfaceOrientation == UIInterfaceOrientationPortrait);
+    if (isPad()) {
+        return YES;
+    } else {
+        return (toInterfaceOrientation == UIInterfaceOrientationPortrait);
+    }
 }
 @end
