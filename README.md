@@ -16,7 +16,7 @@ This is the object that serves as a wrapper for all calls to the Betable API.
                     clientSecret:(NSString*)clientSecret
                      redirectURI:(NSString*)redirectURI;
 
-To create a `Betable` object simply initilize it with your client ID, client secret and redirect URI.  All of these can be set at <https://developers.betable.com> when you create your game.  We suggest that your redirect URI be <code>betable+<em>game_id</em>://authorize</code>.  See **Authorization** below for more details.
+To create a `Betable` object simply initilize it with your client ID, client secret and redirect URI.  All of these can be set at <https://developers.betable.com> when you create your game.  Your redirect URI needs to have a custom unique scheme and the domain needs to be authorize. An example is betable+<company_name>+<game_name>://authorize .  It is important that it is unique so the oauth flow can be completed.  See **Authorization** below for more details.
 
 ### Adding the Token
 
@@ -70,6 +70,19 @@ This method is used to place a bet for the user associated with this Betable obj
 * `data`: this is a dictionary that will converted to JSON and sent as the request body.  It contains all the important information about the bet being made.  For documentation on the format of this dictionary see <https://developers.betable.com/docs#api-documentation>.
 * `onComplete`: this is a block that will be called in case of success.  Its only argument is a dictionary that contains Betable's JSON response.
 * `onFailure`: This is a block that will be called in case of error.  Its arguments are the `NSURLResponse` object, the string reresentation of the body, and the `NSError` that was raised.
+
+####Unbacked Betting
+If you want to make a bet that is not backed by the accounting software but just uses our betting math, you can make an unbacked bet. 
+    - (void)unbackedBetForGame:(NSString*)gameID
+                      withData:(NSDictionary*)data
+                    onComplete:(BetableCompletionHandler)onComplete
+                     onFailure:(BetableFailureHandler)onFailure;
+
+If you would like to do this with an unauthorized user you can an access token that only has unbacked betting permission from the following method:
+
+    - (void)unbackedToken:(NSString*)clientUserID
+               onComplete:(BetableAccessTokenHandler)onComplete
+                onFailure:(BetableFailureHandler)onFailure;
 
 ### Getting User's Account
 
