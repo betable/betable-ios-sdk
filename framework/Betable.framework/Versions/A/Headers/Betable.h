@@ -145,6 +145,10 @@
                 onComplete:(BetableCompletionHandler)onComplete
                  onFailure:(BetableFailureHandler)onFailure;
 
+// This method is used to clear a user out as the authroized user on a Betable Object. It
+// also manages the state of the betable object and it's web views.
+- (void)logout;
+
 // All of the betable server endpoint urls.
 + (NSString*)getTokenURL;
 + (NSString*)getBetURL:(NSString*)gameID;

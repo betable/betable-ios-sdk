@@ -131,7 +131,6 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 }
 
 - (void)setupAuthorizeWebView {
-    NSLog(@"Stored User ID:%@", [self stringFromSharedDataWithKey:BetablePasteBoardUserIDKey]);
     CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
     CFStringRef UUIDSRef = CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
     NSString* UUID = [NSString stringWithFormat:@"%@", UUIDSRef];
@@ -155,13 +154,6 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     }
     CFRelease(UUIDRef);
     CFRelease(UUIDSRef);
-}
-
-- (void)authorizeInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onAuthorize onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel {
-    self.currentWebView.onCancel = onCancel;
-    self.onAuthorize = onAuthorize;
-    self.onFailure = onFailure;
-    [viewController presentViewController:self.currentWebView animated:YES completion:nil];
 }
 
 - (void)handleAuthorizeURL:(NSURL*)url{
@@ -266,6 +258,16 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
                            }
      ];
 }
+
+
+#pragma mark - External Methods
+
+- (void)authorizeInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onAuthorize onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel {
+    self.currentWebView.onCancel = onCancel;
+    self.onAuthorize = onAuthorize;
+    self.onFailure = onFailure;
+    [viewController presentViewController:self.currentWebView animated:YES completion:nil];
+}
 - (void)checkAccessToken {
     if (self.accessToken == nil) {
         [NSException raise:@"User is not authorized"
@@ -313,6 +315,17 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     [self fireGenericAsynchronousRequest:request onSuccess:onComplete onFailure:onFailure];
 }
 
+- (void)logout {
+    //Get the cookie jar
+    NSHTTPCookie *cookie;
+    NSHTTPCookieStorage *cookieJar = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    for (cookie in [cookieJar cookies]) {
+        [cookie.domain rangeOfString:@"betable.com"];
+        [cookieJar deleteCookie:cookie];
+    }
+    //After the cookies are destroyed, reload the webpage
+    [self setupAuthorizeWebView];
+}
                          
 #pragma mark - URL getters
                          

@@ -83,7 +83,6 @@ BOOL isPad() {
     [self.webView loadRequest:request];
     self.webView.hidden = YES;
     self.webView.delegate = self;
-    NSLog(@"Happening");
 }
 
 - (void)viewDidLoad {
