@@ -435,6 +435,9 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
                         onSuccess(data);
                     });
                 }
+            } else {
+                NSDictionary *data = (NSDictionary*)[responseBody objectFromJSONString];
+                onSuccess(data);
             }
         }
     };

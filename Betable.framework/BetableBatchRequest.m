@@ -89,6 +89,12 @@ NSString const *BetableBatchVersion = @"1.0";
                         }
                         onSuccess(data);
                     });
+                } else {
+                    NSDictionary *data = (NSDictionary*)[responseBody objectFromJSONString];
+                    for (NSMutableDictionary *response in data[@"responses"]) {
+                        response[@"body"] = [response[@"body"] objectFromJSONString];
+                    }
+                    onSuccess(data);
                 }
             }
         }

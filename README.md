@@ -84,6 +84,39 @@ If you would like to do this with an unauthorized user you can an access token t
                onComplete:(BetableAccessTokenHandler)onComplete
                 onFailure:(BetableFailureHandler)onFailure;
 
+### Batching Bets
+
+You can batch requests to the api server by using the [`Betable request batching endpoint`](https://developers.betable.com/docs/#batch-requests).
+
+The SDK supports this with an object called `BetableBatchRequest`. You simply initialize it with a Betable object and can make requests on it. You can create your own requests using the following.
+
+    - (NSMutableDictionary* )createRequestWithPath:(NSString*)path
+                                            method:(NSString*)method
+                                              name:(NSString*)name
+                                      dependencies:(NSArray*)dependnecies
+                                              data:(NSDictionary*)data;
+
+And then add it to the requests for that batch with the following.
+
+	- (void)addRequest:(NSDictionary*)request;
+
+or you can using the betting and unbacked betting methods which automatically create and add the proper requests.
+
+    - (NSMutableDictionary* )betForGame:(NSString*)gameID
+                               withData:(NSDictionary*)data
+                              withName: (NSString*)name;
+
+    - (NSMutableDictionary* )unbackedBetForGame:(NSString*)gameID
+                                       withData:(NSDictionary*)data
+                                       withName: (NSString*)name;
+
+Once you have added all the requests you want to batch, simply fire the batch request.
+
+    - (void)runBatchOnComplete:(BetableCompletionHandler)onComplete 
+                     onFailure:(BetableFailureHandler)onFailure;
+
+The `BetableCompletionHandler` will receive a dictionary that will represent the documented JSON response found in the [Betable batch request api](https://developers.betable.com/docs/#response-protocol).
+
 ### Getting User's Account
 
     - (void)userAccountOnComplete:(BetableCompletionHandler)onComplete
