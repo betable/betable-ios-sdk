@@ -88,7 +88,6 @@ BOOL isPad() {
 }
 
 - (void)preloadWebview {
-    _errorLoading = nil;
     CGRect frame = [[UIScreen mainScreen] bounds];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:self.url]];
     self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
@@ -104,6 +103,9 @@ BOOL isPad() {
     self.view.frame = [[UIScreen mainScreen] bounds];
 
     [super viewDidLoad];
+    
+    [self.view addSubview:self.webView];
+    
     self.betableLoader = [[UIView alloc] initWithFrame:CGRectMake(0, -20, self.view.frame.size.width, self.view.frame.size.height+20)];
     self.betableLoader.backgroundColor = [UIColor colorWithRed:238.0/255.0 green:243.0/255.0 blue:347.9/255.0 alpha:1.0];
     
@@ -160,6 +162,8 @@ BOOL isPad() {
     if (!self.webView) {
         //If the webview was destroyed for memory usage or because of error
         [self preloadWebview];
+    }
+    if ([self.webView superview] == nil) {
         [self.view addSubview:self.webView];
     }
 }
@@ -216,8 +220,8 @@ BOOL isPad() {
     } else {
         [[[UIAlertView alloc] initWithTitle:@"Error connecting to Betable" message:@"There was a problem connecting to betable.com at this time. Make sure you are connected to the internet and then try again shortly." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
     }
-    self.webView = nil;
     [self.webView removeFromSuperview];
+    self.webView = nil;
     _finishedLoading = NO;
     _errorLoading = nil;
 }
