@@ -55,6 +55,8 @@ BOOL isPad() {
     NSError *_errorLoading;
     BOOL _viewLoaded;
     BOOL _errorShown;
+    BOOL _noClose;
+    UIButton *_closeButton;
 }
 
 @property (nonatomic, strong) NSString *url;
@@ -97,6 +99,15 @@ BOOL isPad() {
     [self.webView loadRequest:request];
     self.webView.hidden = YES;
     self.webView.delegate = self;
+    
+    _closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    _closeButton.frame = CGRectMake(self.view.frame.size.width-40, 7, 30, 30);
+    [_closeButton setTitle:@"×" forState:UIControlStateNormal];
+    [_closeButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+    _closeButton.titleLabel.font = [UIFont boldSystemFontOfSize:32];
+    [_closeButton addTarget:self action:@selector(closeWindow) forControlEvents:UIControlEventTouchUpInside];
+    
+    _closeButton.autoresizingMask =UIViewAutoresizingFlexibleLeftMargin  |   UIViewAutoresizingFlexibleBottomMargin;
 }
 
 - (void)viewDidLoad {
@@ -134,16 +145,7 @@ BOOL isPad() {
         UIViewAutoresizingFlexibleTopMargin |
         UIViewAutoresizingFlexibleBottomMargin;
     
-    UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    closeButton.frame = CGRectMake(self.view.frame.size.width-40, 7, 30, 30);
-    [closeButton setTitle:@"×" forState:UIControlStateNormal];
-    [closeButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-    closeButton.titleLabel.font = [UIFont boldSystemFontOfSize:32];
-    [closeButton addTarget:self action:@selector(closeWindow) forControlEvents:UIControlEventTouchUpInside];
-    
-    closeButton.autoresizingMask =UIViewAutoresizingFlexibleLeftMargin  |   UIViewAutoresizingFlexibleBottomMargin;
-    
-    [self.view addSubview:closeButton];
+    [self.view addSubview:_closeButton];
     
     //If we have already loaded then don't show the betableLoader and show the webview
     if (_finishedLoading) {
@@ -187,6 +189,16 @@ BOOL isPad() {
     self.webView.hidden = NO;
     [self.spinner stopAnimating];
     _finishedLoading = YES;
+    NSString *jsMethod = [self.webView stringByEvaluatingJavaScriptFromString:@"window.overlay_close_button"];
+    NSLog(@"JS: %@", jsMethod);
+    NSLog(@"JS Class: %@", [jsMethod class]);
+    if (![jsMethod length]) {
+        NSLog(@"Hiding");
+        _closeButton.hidden = YES;
+    } else {
+        NSLog(@"Not Hiding");
+        _closeButton.hidden = NO;
+    }
     [UIView animateWithDuration:.2 animations:^{
         CGRect frame = self.betableLoader.frame;
         frame.origin.y = -10;

@@ -28,6 +28,15 @@
 
 #import <Betable/BetableWebViewController.h>
 #import <Betable/BetableHandlers.h>
+#import <Betable/BetableBatchRequest.h>
+
+@interface NSDictionary (BetableJSON)
+- (NSData*)JSONData;
+@end
+
+@interface NSString (BetableJSON)
+- (NSObject*)objectFromJSONString;
+@end
 
 @class BetableWebViewController;
 
@@ -145,6 +154,9 @@
                 onComplete:(BetableCompletionHandler)onComplete
                  onFailure:(BetableFailureHandler)onFailure;
 
+// raises "User is not authroized" exception if there doesn't exist an access token
+- (void)checkAccessToken;
+
 // This method is used to clear a user out as the authroized user on a Betable Object. It
 // also manages the state of the betable object and it's web views.     
 - (void)logout;
@@ -155,6 +167,8 @@
 + (NSString*)getWalletURL;
 + (NSString*)getAccountURL;
 + (NSString*)getUnbackedBetURL:(NSString*)gameID;
++ (NSString*) getBetPath:(NSString*)gameID;
++ (NSString*) getUnbackedBetPath:(NSString*)gameID;
 
 @property (strong, nonatomic) NSString *accessToken;
 @property (strong, nonatomic) NSString *clientSecret;

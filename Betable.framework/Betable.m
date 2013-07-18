@@ -32,18 +32,14 @@
 
 NSString *BetablePasteBoardUserIDKey = @"com.Betable.BetableSDK.sharedData:UserID";
 NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
-NSString const *BetableAPIURL = @"https://api.betable.com/";
-NSString const *BetableAuthorizeURL = @"https://www.betable.com/authorize";
+NSString const *BetableAPIURL = @"https://api.betable.com";
+NSString const *BetableAuthorizeURL = @"http://betable.com/authorize";
 NSString const *BetableVersion = @"1.0";
 NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 
 
-@interface NSDictionary (BetableJSON)
 
 
-- (NSData*)JSONData;
-
-@end
 @implementation NSDictionary (BetableJSON)
 - (NSData*)JSONData {
     NSError *error;
@@ -61,22 +57,20 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 }
 
 @end
-@interface NSString (BetableJSON)
 
-
-- (NSObject*)objectFromJSONString;
-
-@end
 @implementation NSString (BetableJSON)
 
 - (NSObject*)objectFromJSONString {
     NSData *JSONdata = [self dataUsingEncoding:NSUTF8StringEncoding];
     NSError *jsonError = nil;
     if (JSONdata != nil) {
-        NSObject *object = [NSJSONSerialization JSONObjectWithData:JSONdata options:0 error:&jsonError];
+        NSObject *object = [NSJSONSerialization JSONObjectWithData:JSONdata options:NSJSONReadingMutableContainers error:&jsonError];
         if (jsonError == nil) {
             return object;
         }
+        NSLog(@"Self: %@", self);
+        NSLog(@"JSONERROR: %@", jsonError);
+        
         [NSException raise:@"JSON is not formated correctly"
                     format:@"The JSON returned from the server was improperly formated"];
     }
@@ -85,7 +79,9 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 
 @end
 
-@interface Betable ()
+@interface Betable () {
+    BetableCancelHandler _onBetableNativeAppAuthCancel;
+}
 - (NSString *)urlEncode:(NSString*)string;
 - (NSURL*)getAPIWithURL:(NSString*)urlString;
 - (void)checkAccessToken;
@@ -140,39 +136,10 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
                          [self urlEncode:clientID],
                          [self urlEncode:redirectURI],
                          UUID];
-    NSString *nativeAuthURL = [NSString stringWithFormat:urlFormat,
-                               BetableNativeAuthorizeURL,
-                               [self urlEncode:clientID],
-                               [self urlEncode:redirectURI],
-                               UUID];
     
-    
-    if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:nativeAuthURL]] == YES) {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:nativeAuthURL]];
-    } else {
-        self.currentWebView = [[BetableWebViewController alloc] initWithURL:authURL onCancel:nil];
-    }
+    self.currentWebView = [[BetableWebViewController alloc] initWithURL:authURL onCancel:nil];
     CFRelease(UUIDRef);
     CFRelease(UUIDSRef);
-}
-
-- (void)handleAuthorizeURL:(NSURL*)url{
-    NSURL *redirect = [NSURL URLWithString:self.redirectURI];
-    //First check that we should be handling this
-    BOOL schemeSame = [[[redirect scheme] lowercaseString] isEqualToString:[[url scheme] lowercaseString]];
-    BOOL hostSame = [[[redirect host] lowercaseString] isEqualToString:[[url host] lowercaseString]];
-    BOOL fragmentSame = ((![redirect fragment] && ![url fragment]) || [[[redirect fragment] lowercaseString] isEqualToString:[[url fragment] lowercaseString]]);
-    if (schemeSame && hostSame && fragmentSame) {
-        //If the command is the same as the redirect, then do the authorize.
-        NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-        for (NSString *param in [[url query] componentsSeparatedByString:@"&"]) {
-            NSArray *elts = [param componentsSeparatedByString:@"="];
-            if([elts count] < 2) continue;
-            [params setObject:[elts objectAtIndex:1] forKey:[elts objectAtIndex:0]];
-        }
-        [self token:[params objectForKey:@"code"]];
-        [self.currentWebView.presentingViewController dismissViewControllerAnimated:YES completion:nil];
-    }
 }
 
 - (void)token:(NSString*)code {
@@ -262,11 +229,53 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 
 #pragma mark - External Methods
 
+- (void)handleAuthorizeURL:(NSURL*)url{
+    NSURL *redirect = [NSURL URLWithString:self.redirectURI];
+    //First check that we should be handling this
+    BOOL schemeSame = [[[redirect scheme] lowercaseString] isEqualToString:[[url scheme] lowercaseString]];
+    BOOL hostSame = [[[redirect host] lowercaseString] isEqualToString:[[url host] lowercaseString]];
+    BOOL fragmentSame = ((![redirect fragment] && ![url fragment]) || [[[redirect fragment] lowercaseString] isEqualToString:[[url fragment] lowercaseString]]);
+    if (schemeSame && hostSame && fragmentSame) {
+        //If the command is the same as the redirect, then do the authorize.
+        NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+        for (NSString *param in [[url query] componentsSeparatedByString:@"&"]) {
+            NSArray *elts = [param componentsSeparatedByString:@"="];
+            if([elts count] < 2) continue;
+            [params setObject:[elts objectAtIndex:1] forKey:[elts objectAtIndex:0]];
+        }
+        if (params[@"code"]) {
+            [self token:[params objectForKey:@"code"]];
+            [self.currentWebView.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+        } else if (params[@"error"]) {
+            if ([params[@"error_description"] isEqualToString:@"user_close"]) {
+                NSURL *nativeAppAuthURL = [self redirectableBetableAppURL];
+                if(nativeAppAuthURL) {
+                    if (_onBetableNativeAppAuthCancel) {
+                        _onBetableNativeAppAuthCancel();
+                    }
+                } else {
+                    [self.currentWebView closeWindow];
+                }
+                _onBetableNativeAppAuthCancel = nil;
+            } else {
+                NSError *error = [[NSError alloc] initWithDomain:@"BetableAuthorization" code:-1 userInfo:params];
+                self.onFailure(nil, nil, error);    
+            }
+        }
+    }
+}
+
 - (void)authorizeInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onAuthorize onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel {
     self.currentWebView.onCancel = onCancel;
+    _onBetableNativeAppAuthCancel = onCancel;
     self.onAuthorize = onAuthorize;
     self.onFailure = onFailure;
-    [viewController presentViewController:self.currentWebView animated:YES completion:nil];
+    NSURL *nativeAppAuthURL = [self redirectableBetableAppURL];
+    if(nativeAppAuthURL) {
+        [[UIApplication sharedApplication] openURL:nativeAppAuthURL];
+    } else {
+        [viewController presentViewController:self.currentWebView animated:YES completion:nil];
+    }
 }
 - (void)checkAccessToken {
     if (self.accessToken == nil) {
@@ -335,19 +344,25 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     return [NSString stringWithFormat:@"%@", BetableAuthorizeURL];
 }
 + (NSString*) getTokenURL {
-    return [NSString stringWithFormat:@"%@%@/token", BetableAPIURL, BetableVersion];
+    return [NSString stringWithFormat:@"%@/%@/token", BetableAPIURL, BetableVersion];
 }
 + (NSString*) getBetURL:(NSString*)gameID {
-    return [NSString stringWithFormat:@"%@%@/games/%@/bet", BetableAPIURL, BetableVersion, gameID];
-}
-+ (NSString*) getWalletURL{
-    return [NSString stringWithFormat:@"%@%@/account/wallet", BetableAPIURL, BetableVersion];
-}
-+ (NSString*) getAccountURL{
-    return [NSString stringWithFormat:@"%@%@/account", BetableAPIURL, BetableVersion];
+    return [NSString stringWithFormat:@"%@/%@%@", BetableAPIURL, BetableVersion, [self getBetPath:gameID]];
 }
 + (NSString*) getUnbackedBetURL:(NSString*)gameID {
-    return [NSString stringWithFormat:@"%@%@/games/%@/unbacked-bet", BetableAPIURL, BetableVersion, gameID];
+    return [NSString stringWithFormat:@"%@/%@%@", BetableAPIURL, BetableVersion, [self getUnbackedBetPath:gameID]];
+}
++ (NSString*) getBetPath:(NSString*)gameID {
+    return [NSString stringWithFormat:@"/games/%@/bet", gameID];
+}
++ (NSString*) getUnbackedBetPath:(NSString*)gameID {
+    return [NSString stringWithFormat:@"/games/%@/unbacked-bet", gameID];
+}
++ (NSString*) getWalletURL{
+    return [NSString stringWithFormat:@"%@/%@/account/wallet", BetableAPIURL, BetableVersion];
+}
++ (NSString*) getAccountURL{
+    return [NSString stringWithFormat:@"%@/%@/account", BetableAPIURL, BetableVersion];
 }
 - (NSString*)urlEncode:(NSString*)string {
     NSString *encoded = (NSString*)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
@@ -425,5 +440,27 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     };
     
     [NSURLConnection sendAsynchronousRequest:request queue:self.queue completionHandler:onComplete];
+}
+
+/* The Betable app is our desired place to deal with authing and depositing
+ * 
+ * This method will return an redirect url to the Betable app, only if the betable app exists
+ * otherwise it returns nil.
+ */
+- (NSURL*)redirectableBetableAppURL {
+
+    CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
+    CFStringRef UUIDSRef = CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
+    NSString* UUID = [NSString stringWithFormat:@"%@", UUIDSRef];
+    NSString* urlFormat = @"%@?client_id=%@&redirect_uri=%@&state=%@&response_type=code";
+    NSString *nativeAuthURL = [NSString stringWithFormat:urlFormat,
+                               BetableNativeAuthorizeURL,
+                               [self urlEncode:clientID],
+                               [self urlEncode:redirectURI],
+                               UUID];
+    if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:nativeAuthURL]] == YES) {
+        return [NSURL URLWithString:nativeAuthURL];
+    }
+    return nil;
 }
 @end

@@ -14,5 +14,5 @@
 @property (nonatomic, copy) BetableCancelHandler onCancel;
 
 - (BetableWebViewController*)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onClose;
-
+- (void)closeWindow;
 @end

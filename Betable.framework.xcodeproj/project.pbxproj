@@ -24,6 +24,8 @@
 
 /* Begin PBXBuildFile section */
 		A5368211178F90A20009F3EB /* BetableResources-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A536820C178F90A20009F3EB /* BetableResources-Info.plist */; };
+		A544A0BC179870E200B58046 /* BetableBatchRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A544A0BA179870E200B58046 /* BetableBatchRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A544A0BD179870E200B58046 /* BetableBatchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A544A0BB179870E200B58046 /* BetableBatchRequest.m */; };
 		A5B6015A178F6EA000F162BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B60159178F6EA000F162BF /* Foundation.framework */; };
 		A5B60170178F6F1B00F162BF /* Betable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B6016B178F6F1B00F162BF /* Betable.m */; };
 		A5B60172178F6F1B00F162BF /* BetableWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B6016F178F6F1B00F162BF /* BetableWebViewController.m */; };
@@ -67,6 +69,8 @@
 /* Begin PBXFileReference section */
 		A536820C178F90A20009F3EB /* BetableResources-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "BetableResources-Info.plist"; sourceTree = "<group>"; };
 		A536820D178F90A20009F3EB /* BetableResources-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BetableResources-Prefix.pch"; sourceTree = "<group>"; };
+		A544A0BA179870E200B58046 /* BetableBatchRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableBatchRequest.h; sourceTree = "<group>"; };
+		A544A0BB179870E200B58046 /* BetableBatchRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableBatchRequest.m; sourceTree = "<group>"; };
 		A5B60156178F6EA000F162BF /* libBetable.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libBetable.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5B60159178F6EA000F162BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A5B6015D178F6EA000F162BF /* Betable.framework-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Betable.framework-Prefix.pch"; sourceTree = "<group>"; };
@@ -140,6 +144,8 @@
 				A5B6016F178F6F1B00F162BF /* BetableWebViewController.m */,
 				A5B6015C178F6EA000F162BF /* Supporting Files */,
 				A5B601C0178F8B9900F162BF /* BetableHandlers.h */,
+				A544A0BA179870E200B58046 /* BetableBatchRequest.h */,
+				A544A0BB179870E200B58046 /* BetableBatchRequest.m */,
 			);
 			path = Betable.framework;
 			sourceTree = "<group>";
@@ -179,6 +185,7 @@
 				A5B60175178F6F7E00F162BF /* Betable.h in Headers */,
 				A5B60177178F702600F162BF /* BetableWebViewController.h in Headers */,
 				A5B601C1178F8B9900F162BF /* BetableHandlers.h in Headers */,
+				A544A0BC179870E200B58046 /* BetableBatchRequest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -299,6 +306,7 @@
 			files = (
 				A5B60170178F6F1B00F162BF /* Betable.m in Sources */,
 				A5B60172178F6F1B00F162BF /* BetableWebViewController.m in Sources */,
+				A544A0BD179870E200B58046 /* BetableBatchRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
