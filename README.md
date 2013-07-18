@@ -88,7 +88,11 @@ If you would like to do this with an unauthorized user you can an access token t
 
 You can batch requests to the api server by using the [`Betable request batching endpoint`](https://developers.betable.com/docs/#batch-requests).
 
-The SDK supports this with an object called `BetableBatchRequest`. You simply initialize it with a Betable object and can make requests on it. You can create your own requests using the following.
+The SDK supports this with an object called `BetableBatchRequest`. You simply initialize it with a Betable object and you can add requests to it. Once all the requests you wish to batch have been added you can fire the requests and wait for the batch response. There are two ways of creating these requests, you can create them manually and add them, or you can use the prebuilt convenience methods.
+
+####Manually Creating Requests
+
+You can create your own requests using the following.
 
     - (NSMutableDictionary* )createRequestWithPath:(NSString*)path
                                             method:(NSString*)method
@@ -100,7 +104,9 @@ And then add it to the requests for that batch with the following.
 
 	- (void)addRequest:(NSDictionary*)request;
 
-or you can using the betting and unbacked betting methods which automatically create and add the proper requests.
+####Using the convenience request methods
+
+You can use the betting and unbacked betting methods which automatically create and add the proper requests.
 
     - (NSMutableDictionary* )betForGame:(NSString*)gameID
                                withData:(NSDictionary*)data
@@ -110,12 +116,14 @@ or you can using the betting and unbacked betting methods which automatically cr
                                        withData:(NSDictionary*)data
                                        withName: (NSString*)name;
 
-Once you have added all the requests you want to batch, simply fire the batch request.
+####Issuing the batched requests
+
+Once you have added all the requests you want to the batch, simply fire the batch request.
 
     - (void)runBatchOnComplete:(BetableCompletionHandler)onComplete 
                      onFailure:(BetableFailureHandler)onFailure;
 
-The `BetableCompletionHandler` will receive a dictionary that will represent the documented JSON response found in the [Betable batch request api](https://developers.betable.com/docs/#response-protocol).
+The `BetableCompletionHandler` will receive a `NSDictionary` that will represent the documented JSON response found in the [Betable batch request api](https://developers.betable.com/docs/#response-protocol).
 
 ### Getting User's Account
 
