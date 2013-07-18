@@ -325,6 +325,8 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     }
     //After the cookies are destroyed, reload the webpage
     [self setupAuthorizeWebView];
+    //And finally get rid of the access token
+    self.accessToken = nil;
 }
                          
 #pragma mark - URL getters

@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "BetableHandlers.h"
 
-@interface BetableWebViewController : UIViewController <UIWebViewDelegate>
+@interface BetableWebViewController : UIViewController <UIWebViewDelegate, UIAlertViewDelegate>
 
 @property (nonatomic, copy) BetableCancelHandler onCancel;
 

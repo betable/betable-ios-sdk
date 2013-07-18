@@ -52,6 +52,9 @@ BOOL isPad() {
 
 @interface BetableWebViewController () {
     BOOL _finishedLoading;
+    NSError *_errorLoading;
+    BOOL _viewLoaded;
+    BOOL _errorShown;
 }
 
 @property (nonatomic, strong) NSString *url;
@@ -63,7 +66,18 @@ BOOL isPad() {
 
 @implementation BetableWebViewController
 
-- (BetableWebViewController*)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onCancel {
+- (id)init {
+    self = [super init];
+    if (self) {
+        _finishedLoading = NO;
+        _errorLoading = nil;
+        _viewLoaded = NO;
+        _errorShown = NO;
+    }
+    return self;
+}
+
+- (id)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onCancel {
     self = [self init];
     if (self) {
         self.url = url;
@@ -74,6 +88,7 @@ BOOL isPad() {
 }
 
 - (void)preloadWebview {
+    _errorLoading = nil;
     CGRect frame = [[UIScreen mainScreen] bounds];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:self.url]];
     self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
@@ -87,8 +102,6 @@ BOOL isPad() {
 
 - (void)viewDidLoad {
     self.view.frame = [[UIScreen mainScreen] bounds];
-
-    [self.view addSubview:self.webView];
 
     [super viewDidLoad];
     self.betableLoader = [[UIView alloc] initWithFrame:CGRectMake(0, -20, self.view.frame.size.width, self.view.frame.size.height+20)];
@@ -138,8 +151,24 @@ BOOL isPad() {
         self.webView.hidden = YES;
         self.betableLoader.hidden = NO;
     }
+    
+    _viewLoaded = YES;
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+
+    if (!self.webView) {
+        //If the webview was destroyed for memory usage or because of error
+        [self preloadWebview];
+        [self.view addSubview:self.webView];
+    }
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    if (_errorLoading) {
+        [self showErrorAlert:_errorLoading];
+    }
+}
 - (void)closeWindow {
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
     if (self.onCancel) {
@@ -167,6 +196,37 @@ BOOL isPad() {
             self.betableLoader.hidden = YES;
         }];
     }];
+}
+
+- (void)webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error {
+    if (_viewLoaded) {
+        NSLog(@"Showing Error on fail");
+        [self showErrorAlert:error];
+    } else if (!_errorShown) {
+        _errorLoading = error;
+    } else {
+        _errorLoading = nil;
+    }
+}
+
+- (void)showErrorAlert:(NSError*)error {
+    _errorShown = YES;
+    if ([error.domain isEqualToString:@"NSURLErrorDomain"] && error.userInfo[NSURLErrorFailingURLPeerTrustErrorKey]) {
+        [[[UIAlertView alloc] initWithTitle:@"Error connecting to Betable" message:@"There was an issue connecting to Betable.  Please ensure that the time and date on this device are correct by going to Settings > General > Date & Time." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+    } else {
+        [[[UIAlertView alloc] initWithTitle:@"Error connecting to Betable" message:@"There was a problem connecting to betable.com at this time. Make sure you are connected to the internet and then try again shortly." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+    }
+    self.webView = nil;
+    [self.webView removeFromSuperview];
+    _finishedLoading = NO;
+    _errorLoading = nil;
+}
+
+#pragma mark - Alert View Delegate
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    _errorShown = NO;
+    [self closeWindow];
 }
 
 #pragma mark - Orientation Stuff
