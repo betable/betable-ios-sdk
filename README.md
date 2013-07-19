@@ -135,12 +135,12 @@ You can use the betting and unbacked betting methods which automatically create 
                                        withName: (NSString*)name;
 
     - (NSMutableDictionary* )creditBetForGame:(NSString*)gameID
-                                    bonusGame:(NSString*)creditGameID
+                                   creditGame:(NSString*)creditGameID
                                      withData:(NSDictionary*)data
                                      withName:(NSString*)name;
 
     - (NSMutableDictionary* )unbackedCreditBetForGame:(NSString*)gameID
-                                            bonusGame:(NSString*)creditGameID
+                                           creditGame:(NSString*)creditGameID
                                              withData:(NSDictionary*)data
                                              withName: (NSString*)name;
 
