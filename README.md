@@ -84,6 +84,24 @@ If you would like to do this with an unauthorized user you can an access token t
                onComplete:(BetableAccessTokenHandler)onComplete
                 onFailure:(BetableFailureHandler)onFailure;
 
+#### Credit Betting
+
+If you want to make a credit bet, backed and unbacked, use these two methods respectively:
+
+    - (void)creditBetForGame:(NSString*)gameID
+                  creditGame:(NSString*)creditGameID
+                    withData:(NSDictionary*)data
+                  onComplete:(BetableCompletionHandler)onComplete
+                   onFailure:(BetableFailureHandler)onFailure;
+
+    - (void)unbackedCreditBetForGame:(NSString*)gameID
+                          creditGame:(NSString*)creditGameID
+                            withData:(NSDictionary*)data
+                          onComplete:(BetableCompletionHandler)onComplete
+                           onFailure:(BetableFailureHandler)onFailure;
+
+In both of these methods `creditGameID` is the ID of the game for which you would like to make a bet.  `gameID` is the game your user authed with and the game in which they won the credits.
+
 ### Batching Bet Requests
 
 You can batch requests to the api server by using the [`Betable request batching endpoint`](https://developers.betable.com/docs/#batch-requests).
@@ -115,6 +133,16 @@ You can use the betting and unbacked betting methods which automatically create 
     - (NSMutableDictionary* )unbackedBetForGame:(NSString*)gameID
                                        withData:(NSDictionary*)data
                                        withName: (NSString*)name;
+
+    - (NSMutableDictionary* )creditBetForGame:(NSString*)gameID
+                                    bonusGame:(NSString*)creditGameID
+                                     withData:(NSDictionary*)data
+                                     withName:(NSString*)name;
+
+    - (NSMutableDictionary* )unbackedCreditBetForGame:(NSString*)gameID
+                                            bonusGame:(NSString*)creditGameID
+                                             withData:(NSDictionary*)data
+                                             withName: (NSString*)name;
 
 ####Issuing the batched requests
 
