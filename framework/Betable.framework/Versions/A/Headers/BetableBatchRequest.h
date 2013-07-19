@@ -23,7 +23,11 @@
 - (NSMutableDictionary* )unbackedBetForGame:(NSString*)gameID
                                    withData:(NSDictionary*)data
                                    withName: (NSString*)name;
-- (NSMutableDictionary* )createRequestWithPath:(NSString*)path method:(NSString*)method name:(NSString*)name dependencies:(NSArray*)dependnecies data:(NSDictionary*)data;
+- (NSMutableDictionary* )createRequestWithPath:(NSString*)path
+                                        method:(NSString*)method
+                                          name:(NSString*)name
+                                  dependencies:(NSArray*)dependnecies
+                                          data:(NSDictionary*)data;
 - (void)addRequest:(NSDictionary*)request;
 + (NSURL*)betableBatchURL:(NSString*)accessToken;
 - (void)runBatchOnComplete:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure;

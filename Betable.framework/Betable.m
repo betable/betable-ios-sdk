@@ -307,6 +307,24 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     [request setHTTPBody:[data JSONData]];
     [self fireGenericAsynchronousRequest:request onSuccess:onComplete onFailure:onFailure];
 }
+- (void)creditBetForGame:(NSString*)gameID
+               creditGame:(NSString*)creditGameID
+                withData:(NSDictionary*)data
+              onComplete:(BetableCompletionHandler)onComplete
+               onFailure:(BetableFailureHandler)onFailure {
+    [self checkAccessToken];
+    NSString *gameAndBonusID = [NSString stringWithFormat:@"%@/%@", gameID, creditGameID];
+    [self betForGame:gameAndBonusID withData:data onComplete:onComplete onFailure:onFailure];
+}
+- (void)unbackedCreditBetForGame:(NSString*)gameID
+                       creditGame:(NSString*)creditGameID
+                        withData:(NSDictionary*)data
+                      onComplete:(BetableCompletionHandler)onComplete
+                       onFailure:(BetableFailureHandler)onFailure {
+    [self checkAccessToken];
+    NSString *gameAndBonusID = [NSString stringWithFormat:@"%@/%@", gameID, creditGameID];
+    [self unbackedBetForGame:gameAndBonusID withData:data onComplete:onComplete onFailure:onFailure];
+}
 - (void)userAccountOnComplete:(BetableCompletionHandler)onComplete
                     onFailure:(BetableFailureHandler)onFailure{
     [self checkAccessToken];
@@ -337,7 +355,16 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     //And finally get rid of the access token
     self.accessToken = nil;
 }
-                         
+
+#pragma mark - Path getters
+
++ (NSString*) getBetPath:(NSString*)gameID {
+    return [NSString stringWithFormat:@"/games/%@/bet", gameID];
+}
++ (NSString*) getUnbackedBetPath:(NSString*)gameID {
+    return [NSString stringWithFormat:@"/games/%@/unbacked-bet", gameID];
+}
+
 #pragma mark - URL getters
                          
 + (NSString*) getAuthURL {
@@ -351,12 +378,6 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 }
 + (NSString*) getUnbackedBetURL:(NSString*)gameID {
     return [NSString stringWithFormat:@"%@/%@%@", BetableAPIURL, BetableVersion, [self getUnbackedBetPath:gameID]];
-}
-+ (NSString*) getBetPath:(NSString*)gameID {
-    return [NSString stringWithFormat:@"/games/%@/bet", gameID];
-}
-+ (NSString*) getUnbackedBetPath:(NSString*)gameID {
-    return [NSString stringWithFormat:@"/games/%@/unbacked-bet", gameID];
 }
 + (NSString*) getWalletURL{
     return [NSString stringWithFormat:@"%@/%@/account/wallet", BetableAPIURL, BetableVersion];
