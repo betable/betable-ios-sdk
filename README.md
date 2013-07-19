@@ -84,7 +84,7 @@ If you would like to do this with an unauthorized user you can an access token t
                onComplete:(BetableAccessTokenHandler)onComplete
                 onFailure:(BetableFailureHandler)onFailure;
 
-### Batching Bets
+### Batching Bet Requests
 
 You can batch requests to the api server by using the [`Betable request batching endpoint`](https://developers.betable.com/docs/#batch-requests).
 
