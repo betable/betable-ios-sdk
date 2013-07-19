@@ -29,11 +29,11 @@
                                   dependencies:(NSArray*)dependnecies
                                           data:(NSDictionary*)data;
 - (NSMutableDictionary* )creditBetForGame:(NSString*)gameID
-                                bonusGame:(NSString*)creditGameID
+                                creditGame:(NSString*)creditGameID
                                  withData:(NSDictionary*)data
                                  withName: (NSString*)name;
 - (NSMutableDictionary* )unbackedCreditBetForGame:(NSString*)gameID
-                                        bonusGame:(NSString*)creditGameID
+                                        creditGame:(NSString*)creditGameID
                                          withData:(NSDictionary*)data
                                          withName: (NSString*)name;
 - (void)addRequest:(NSDictionary*)request;

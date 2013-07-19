@@ -39,14 +39,14 @@ NSString const *BetableBatchVersion = @"1.0";
     return request;
 }
 - (NSMutableDictionary* )creditBetForGame:(NSString*)gameID
-                                bonusGame:(NSString*)creditGameID
+                                creditGame:(NSString*)creditGameID
                                  withData:(NSDictionary*)data
                                  withName: (NSString*)name {
     NSString *gameAndBonusID = [NSString stringWithFormat:@"%@/%@", gameID, creditGameID];
     return [self betForGame:gameAndBonusID withData:data withName:name];
 }
 - (NSMutableDictionary* )unbackedCreditBetForGame:(NSString*)gameID
-                                        bonusGame:(NSString*)creditGameID
+                                        creditGame:(NSString*)creditGameID
                                          withData:(NSDictionary*)data
                                          withName: (NSString*)name {
     NSString *gameAndBonusID = [NSString stringWithFormat:@"%@/%@", gameID, creditGameID];
