@@ -1,5 +1,17 @@
 # Changelog
 
+If the SDK you downloaded does not have a versioning number, assume it is pre 0.8.0.
+
+## 0.9.0
+
+* Added hooks for Betable Testing Profiles. Which allows you to test your games against new features and flows, without changing the code at all (Coming Soon)
+
+## 0.8.0
+
+* Now supports batched requests
+* Uses in app web view for authorization instead of bouncing to Safari
+* Now supports unbacked bets and credit bets.
+* added logout method, which properly clears cookies and access tokens when a user logs out.
 
 # Betable iOS SDK
 
