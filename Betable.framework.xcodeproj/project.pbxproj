@@ -29,8 +29,6 @@
 		A5A4A0A417B33C53006871F9 /* BetableProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A4A0A217B33C53006871F9 /* BetableProfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5A4A0A517B33C53006871F9 /* BetableProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A4A0A317B33C53006871F9 /* BetableProfile.m */; };
 		A5A4A0A717B41266006871F9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A4A0A617B41266006871F9 /* UIKit.framework */; };
-		A5A4A0BC17B45E0F006871F9 /* UIView+TCF.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A4A0B217B45E0F006871F9 /* UIView+TCF.h */; };
-		A5A4A0BD17B45E0F006871F9 /* UIView+TCF.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A4A0B317B45E0F006871F9 /* UIView+TCF.m */; };
 		A5B6015A178F6EA000F162BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B60159178F6EA000F162BF /* Foundation.framework */; };
 		A5B60170178F6F1B00F162BF /* Betable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B6016B178F6F1B00F162BF /* Betable.m */; };
 		A5B60172178F6F1B00F162BF /* BetableWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B6016F178F6F1B00F162BF /* BetableWebViewController.m */; };
@@ -79,8 +77,6 @@
 		A5A4A0A217B33C53006871F9 /* BetableProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BetableProfile.h; path = ../BetableProfile.h; sourceTree = "<group>"; };
 		A5A4A0A317B33C53006871F9 /* BetableProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BetableProfile.m; path = ../BetableProfile.m; sourceTree = "<group>"; };
 		A5A4A0A617B41266006871F9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		A5A4A0B217B45E0F006871F9 /* UIView+TCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIView+TCF.h"; path = "TonyCoreFoundation/UIView+TCF.h"; sourceTree = "<group>"; };
-		A5A4A0B317B45E0F006871F9 /* UIView+TCF.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+TCF.m"; path = "TonyCoreFoundation/UIView+TCF.m"; sourceTree = "<group>"; };
 		A5B60156178F6EA000F162BF /* libBetable.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libBetable.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5B60159178F6EA000F162BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A5B6015D178F6EA000F162BF /* Betable.framework-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Betable.framework-Prefix.pch"; sourceTree = "<group>"; };
@@ -119,8 +115,6 @@
 		A5B6014D178F6EA000F162BF = {
 			isa = PBXGroup;
 			children = (
-				A5A4A0B217B45E0F006871F9 /* UIView+TCF.h */,
-				A5A4A0B317B45E0F006871F9 /* UIView+TCF.m */,
 				A5B6015B178F6EA000F162BF /* Betable.framework */,
 				A5B60188178F762400F162BF /* BetableResources */,
 				A5B60158178F6EA000F162BF /* Frameworks */,
@@ -203,7 +197,6 @@
 				A5B601C1178F8B9900F162BF /* BetableHandlers.h in Headers */,
 				A544A0BC179870E200B58046 /* BetableBatchRequest.h in Headers */,
 				A5A4A0A417B33C53006871F9 /* BetableProfile.h in Headers */,
-				A5A4A0BC17B45E0F006871F9 /* UIView+TCF.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -326,7 +319,6 @@
 				A5B60172178F6F1B00F162BF /* BetableWebViewController.m in Sources */,
 				A544A0BD179870E200B58046 /* BetableBatchRequest.m in Sources */,
 				A5A4A0A517B33C53006871F9 /* BetableProfile.m in Sources */,
-				A5A4A0BD17B45E0F006871F9 /* UIView+TCF.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

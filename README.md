@@ -1,3 +1,6 @@
+# Changelog
+
+
 # Betable iOS SDK
 
 ## Adding the Framework
