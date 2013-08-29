@@ -26,6 +26,20 @@
 		A5368211178F90A20009F3EB /* BetableResources-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A536820C178F90A20009F3EB /* BetableResources-Info.plist */; };
 		A544A0BC179870E200B58046 /* BetableBatchRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A544A0BA179870E200B58046 /* BetableBatchRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A544A0BD179870E200B58046 /* BetableBatchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A544A0BB179870E200B58046 /* BetableBatchRequest.m */; };
+		A5A4A0A417B33C53006871F9 /* BetableProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A4A0A217B33C53006871F9 /* BetableProfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5A4A0A517B33C53006871F9 /* BetableProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A4A0A317B33C53006871F9 /* BetableProfile.m */; };
+		A5A4A0A717B41266006871F9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A4A0A617B41266006871F9 /* UIKit.framework */; };
+		A5A4A0B417B45E0F006871F9 /* NSDate+TCF.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A4A0A917B45E0F006871F9 /* NSDate+TCF.h */; };
+		A5A4A0B517B45E0F006871F9 /* NSDate+TCF.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A4A0AA17B45E0F006871F9 /* NSDate+TCF.m */; };
+		A5A4A0B617B45E0F006871F9 /* NSObject+TCF.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A4A0AB17B45E0F006871F9 /* NSObject+TCF.h */; };
+		A5A4A0B717B45E0F006871F9 /* NSObject+TCF.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A4A0AC17B45E0F006871F9 /* NSObject+TCF.m */; };
+		A5A4A0B817B45E0F006871F9 /* NSString+TCF.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A4A0AD17B45E0F006871F9 /* NSString+TCF.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5A4A0B917B45E0F006871F9 /* NSString+TCF.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A4A0AE17B45E0F006871F9 /* NSString+TCF.m */; };
+		A5A4A0BA17B45E0F006871F9 /* UIColor+TCF.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A4A0B017B45E0F006871F9 /* UIColor+TCF.h */; };
+		A5A4A0BB17B45E0F006871F9 /* UIColor+TCF.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A4A0B117B45E0F006871F9 /* UIColor+TCF.m */; };
+		A5A4A0BC17B45E0F006871F9 /* UIView+TCF.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A4A0B217B45E0F006871F9 /* UIView+TCF.h */; };
+		A5A4A0BD17B45E0F006871F9 /* UIView+TCF.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A4A0B317B45E0F006871F9 /* UIView+TCF.m */; };
+		A5A4A0C017B98839006871F9 /* NIPreprocessorMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A4A0BF17B98839006871F9 /* NIPreprocessorMacros.h */; };
 		A5B6015A178F6EA000F162BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B60159178F6EA000F162BF /* Foundation.framework */; };
 		A5B60170178F6F1B00F162BF /* Betable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B6016B178F6F1B00F162BF /* Betable.m */; };
 		A5B60172178F6F1B00F162BF /* BetableWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B6016F178F6F1B00F162BF /* BetableWebViewController.m */; };
@@ -71,6 +85,21 @@
 		A536820D178F90A20009F3EB /* BetableResources-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BetableResources-Prefix.pch"; sourceTree = "<group>"; };
 		A544A0BA179870E200B58046 /* BetableBatchRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableBatchRequest.h; sourceTree = "<group>"; };
 		A544A0BB179870E200B58046 /* BetableBatchRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableBatchRequest.m; sourceTree = "<group>"; };
+		A5A4A0A217B33C53006871F9 /* BetableProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BetableProfile.h; path = ../BetableProfile.h; sourceTree = "<group>"; };
+		A5A4A0A317B33C53006871F9 /* BetableProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BetableProfile.m; path = ../BetableProfile.m; sourceTree = "<group>"; };
+		A5A4A0A617B41266006871F9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		A5A4A0A917B45E0F006871F9 /* NSDate+TCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDate+TCF.h"; path = "TonyCoreFoundation/NSDate+TCF.h"; sourceTree = "<group>"; };
+		A5A4A0AA17B45E0F006871F9 /* NSDate+TCF.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDate+TCF.m"; path = "TonyCoreFoundation/NSDate+TCF.m"; sourceTree = "<group>"; };
+		A5A4A0AB17B45E0F006871F9 /* NSObject+TCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+TCF.h"; path = "TonyCoreFoundation/NSObject+TCF.h"; sourceTree = "<group>"; };
+		A5A4A0AC17B45E0F006871F9 /* NSObject+TCF.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+TCF.m"; path = "TonyCoreFoundation/NSObject+TCF.m"; sourceTree = "<group>"; };
+		A5A4A0AD17B45E0F006871F9 /* NSString+TCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+TCF.h"; path = "TonyCoreFoundation/NSString+TCF.h"; sourceTree = "<group>"; };
+		A5A4A0AE17B45E0F006871F9 /* NSString+TCF.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+TCF.m"; path = "TonyCoreFoundation/NSString+TCF.m"; sourceTree = "<group>"; };
+		A5A4A0AF17B45E0F006871F9 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.md; path = TonyCoreFoundation/README.md; sourceTree = "<group>"; };
+		A5A4A0B017B45E0F006871F9 /* UIColor+TCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+TCF.h"; path = "TonyCoreFoundation/UIColor+TCF.h"; sourceTree = "<group>"; };
+		A5A4A0B117B45E0F006871F9 /* UIColor+TCF.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+TCF.m"; path = "TonyCoreFoundation/UIColor+TCF.m"; sourceTree = "<group>"; };
+		A5A4A0B217B45E0F006871F9 /* UIView+TCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIView+TCF.h"; path = "TonyCoreFoundation/UIView+TCF.h"; sourceTree = "<group>"; };
+		A5A4A0B317B45E0F006871F9 /* UIView+TCF.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+TCF.m"; path = "TonyCoreFoundation/UIView+TCF.m"; sourceTree = "<group>"; };
+		A5A4A0BF17B98839006871F9 /* NIPreprocessorMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NIPreprocessorMacros.h; path = Betable.framework/NIPreprocessorMacros.h; sourceTree = "<group>"; };
 		A5B60156178F6EA000F162BF /* libBetable.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libBetable.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5B60159178F6EA000F162BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A5B6015D178F6EA000F162BF /* Betable.framework-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Betable.framework-Prefix.pch"; sourceTree = "<group>"; };
@@ -90,6 +119,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5A4A0A717B41266006871F9 /* UIKit.framework in Frameworks */,
 				A5B6015A178F6EA000F162BF /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -105,9 +135,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A5A4A0BE17B45E27006871F9 /* Tony Core Foundationo */ = {
+			isa = PBXGroup;
+			children = (
+				A5A4A0BF17B98839006871F9 /* NIPreprocessorMacros.h */,
+				A5A4A0A917B45E0F006871F9 /* NSDate+TCF.h */,
+				A5A4A0AA17B45E0F006871F9 /* NSDate+TCF.m */,
+				A5A4A0AB17B45E0F006871F9 /* NSObject+TCF.h */,
+				A5A4A0AC17B45E0F006871F9 /* NSObject+TCF.m */,
+				A5A4A0AD17B45E0F006871F9 /* NSString+TCF.h */,
+				A5A4A0AE17B45E0F006871F9 /* NSString+TCF.m */,
+				A5A4A0AF17B45E0F006871F9 /* README.md */,
+				A5A4A0B017B45E0F006871F9 /* UIColor+TCF.h */,
+				A5A4A0B117B45E0F006871F9 /* UIColor+TCF.m */,
+			);
+			name = "Tony Core Foundationo";
+			sourceTree = "<group>";
+		};
 		A5B6014D178F6EA000F162BF = {
 			isa = PBXGroup;
 			children = (
+				A5A4A0BE17B45E27006871F9 /* Tony Core Foundationo */,
+				A5A4A0B217B45E0F006871F9 /* UIView+TCF.h */,
+				A5A4A0B317B45E0F006871F9 /* UIView+TCF.m */,
 				A5B6015B178F6EA000F162BF /* Betable.framework */,
 				A5B60188178F762400F162BF /* BetableResources */,
 				A5B60158178F6EA000F162BF /* Frameworks */,
@@ -127,6 +177,7 @@
 		A5B60158178F6EA000F162BF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A5A4A0A617B41266006871F9 /* UIKit.framework */,
 				A5B60159178F6EA000F162BF /* Foundation.framework */,
 				A5B60186178F762400F162BF /* CoreFoundation.framework */,
 			);
@@ -136,6 +187,8 @@
 		A5B6015B178F6EA000F162BF /* Betable.framework */ = {
 			isa = PBXGroup;
 			children = (
+				A5A4A0A217B33C53006871F9 /* BetableProfile.h */,
+				A5A4A0A317B33C53006871F9 /* BetableProfile.m */,
 				A5B60168178F6F1B00F162BF /* betable_player.png */,
 				A5B60169178F6F1B00F162BF /* betable_player@2x.png */,
 				A5B6016A178F6F1B00F162BF /* Betable.h */,
@@ -186,6 +239,13 @@
 				A5B60177178F702600F162BF /* BetableWebViewController.h in Headers */,
 				A5B601C1178F8B9900F162BF /* BetableHandlers.h in Headers */,
 				A544A0BC179870E200B58046 /* BetableBatchRequest.h in Headers */,
+				A5A4A0A417B33C53006871F9 /* BetableProfile.h in Headers */,
+				A5A4A0B417B45E0F006871F9 /* NSDate+TCF.h in Headers */,
+				A5A4A0B617B45E0F006871F9 /* NSObject+TCF.h in Headers */,
+				A5A4A0B817B45E0F006871F9 /* NSString+TCF.h in Headers */,
+				A5A4A0BA17B45E0F006871F9 /* UIColor+TCF.h in Headers */,
+				A5A4A0BC17B45E0F006871F9 /* UIView+TCF.h in Headers */,
+				A5A4A0C017B98839006871F9 /* NIPreprocessorMacros.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -307,6 +367,12 @@
 				A5B60170178F6F1B00F162BF /* Betable.m in Sources */,
 				A5B60172178F6F1B00F162BF /* BetableWebViewController.m in Sources */,
 				A544A0BD179870E200B58046 /* BetableBatchRequest.m in Sources */,
+				A5A4A0A517B33C53006871F9 /* BetableProfile.m in Sources */,
+				A5A4A0B517B45E0F006871F9 /* NSDate+TCF.m in Sources */,
+				A5A4A0B717B45E0F006871F9 /* NSObject+TCF.m in Sources */,
+				A5A4A0B917B45E0F006871F9 /* NSString+TCF.m in Sources */,
+				A5A4A0BB17B45E0F006871F9 /* UIColor+TCF.m in Sources */,
+				A5A4A0BD17B45E0F006871F9 /* UIView+TCF.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,6 +502,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEAD_CODE_STRIPPING = NO;
+				OTHER_LDFLAGS = (
+					"-force_load",
+					"-ObjC",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -444,6 +514,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEAD_CODE_STRIPPING = NO;
+				OTHER_LDFLAGS = (
+					"-force_load",
+					"-ObjC",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

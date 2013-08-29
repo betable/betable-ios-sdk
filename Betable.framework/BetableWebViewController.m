@@ -59,7 +59,7 @@ BOOL isPad() {
     UIButton *_closeButton;
 }
 
-@property (nonatomic, strong) NSString *url;
+
 @property (nonatomic, strong) UIWebView *webView;
 @property (nonatomic, strong) UIView *betableLoader;
 @property (nonatomic, strong) UIActivityIndicatorView *spinner;
@@ -84,14 +84,25 @@ BOOL isPad() {
     if (self) {
         self.url = url;
         self.onCancel = onCancel;
-        [self preloadWebview];
     }
     return self;
 }
 
+- (void)setUrl:(NSString *)url {
+    _url = url;
+    [self preloadWebview];
+}
+
 - (void)preloadWebview {
     CGRect frame = [[UIScreen mainScreen] bounds];
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:self.url]];
+    NSURL *url = [NSURL URLWithString:self.url];
+    NSString *queryDelimeter = @"?";
+    if ([[url query] length]) {
+        queryDelimeter = @"&";
+    }
+    NSString *adjustedURLString = [NSString stringWithFormat:@"%@%@link_back_to_game=true", self.url, queryDelimeter];
+    url = [NSURL URLWithString:adjustedURLString];
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url ];
     self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
     
     self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -214,6 +225,21 @@ BOOL isPad() {
     }];
 }
 
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+    NSURL *url = request.URL;
+    NSDictionary *params = [self paramsFromURL:url];
+    NSLog(@"Loading URL:%@", url);
+    if (![[url scheme] isEqualToString:@"http"] && ![[url scheme] isEqualToString:@"https"]) {
+        BOOL userCloseError = params[@"error"] && [params[@"error_description"] isEqualToString:@"user_close"];
+        BOOL userCloseAction = [params[@"action"] isEqualToString:@"close"];
+        if (userCloseAction || userCloseError) {
+            [self closeWindow];
+            return NO;
+        }
+    }
+    return YES;
+}
+
 - (void)webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error {
     if (_viewLoaded) {
         NSLog(@"Showing Error on fail");
@@ -243,6 +269,18 @@ BOOL isPad() {
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     _errorShown = NO;
     [self closeWindow];
+}
+
+#pragma mark - Utilities
+
+- (NSDictionary*)paramsFromURL:(NSURL*)url {
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    for (NSString *param in [[url query] componentsSeparatedByString:@"&"]) {
+        NSArray *elts = [param componentsSeparatedByString:@"="];
+        if([elts count] < 2) continue;
+        [params setObject:[elts objectAtIndex:1] forKey:[elts objectAtIndex:0]];
+    }
+    return params;
 }
 
 #pragma mark - Orientation Stuff

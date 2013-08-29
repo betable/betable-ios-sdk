@@ -12,7 +12,9 @@
 @interface BetableWebViewController : UIViewController <UIWebViewDelegate, UIAlertViewDelegate>
 
 @property (nonatomic, copy) BetableCancelHandler onCancel;
+@property (nonatomic, strong) NSString *url;
 
 - (BetableWebViewController*)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onClose;
+
 - (void)closeWindow;
 @end

@@ -212,13 +212,11 @@
 - (void)logout;
 
 // All of the betable server endpoint urls.
-+ (NSString*)getTokenURL;
-+ (NSString*)getBetURL:(NSString*)gameID;
-+ (NSString*)getWalletURL;
-+ (NSString*)getAccountURL;
-+ (NSString*)getUnbackedBetURL:(NSString*)gameID;
+- (NSString*)getTokenURL;
 + (NSString*) getBetPath:(NSString*)gameID;
 + (NSString*) getUnbackedBetPath:(NSString*)gameID;
++ (NSString*) getWalletPath;
++ (NSString*) getAccountPath;
 
 @property (strong, nonatomic) NSString *accessToken;
 @property (strong, nonatomic) NSString *clientSecret;
