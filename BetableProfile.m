@@ -18,7 +18,7 @@ NSString *BetablePasteBoardSignatureName = @"com.Betable.BetableSDK.sharedData.p
 NSString *BetablePasteBoardExpiryName = @"com.Betable.BetableSDK.sharedData.profile:Expiry";
 NSString const *BetableAPIURL = @"https://api.betable.com/1.0";
 NSString const *BetableAuthorizeURL = @"https://betable.com/authorize";
-NSString const *BetableVerifyURL = @"developers.dev.betable.com:8080";
+NSString const *BetableVerifyURL = @"developers.betable.com";
 
 @interface BetableProfile() {
     NSString *_apiHost;
@@ -29,8 +29,6 @@ NSString const *BetableVerifyURL = @"developers.dev.betable.com:8080";
     BOOL _verified;
     BOOL _loadedVerification;
 }
-
-@property (readonly) BOOL hasProfile;
 
 @end
     
