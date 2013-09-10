@@ -119,10 +119,6 @@ id NILIFY(NSObject *object) {
         self.currentWebView = [[BetableWebViewController alloc] init];
         // If there is a testing profile, we need to verify it before we make
         // requests or set the URL for the authorize web view.
-        [_profile verify:^{
-            [self unqueueRequestsAfterVerification];
-            [self setupAuthorizeWebView];
-        }];
         self.queue = [[NSOperationQueue alloc] init];
     }
     return self;
@@ -133,6 +129,10 @@ id NILIFY(NSObject *object) {
         self.clientID = aClientID;
         self.clientSecret = aClientSecret;
         self.redirectURI = aRedirectURI;
+        [_profile verify:^{
+            [self unqueueRequestsAfterVerification];
+            [self setupAuthorizeWebView];
+        }];
     }
     return self;
 }
@@ -144,8 +144,8 @@ id NILIFY(NSObject *object) {
     NSString* urlFormat = @"%@?client_id=%@&redirect_uri=%@&state=%@&response_type=code";
     NSString *authURL = [NSString stringWithFormat:urlFormat,
                          _profile.authURL,
-                         [self urlEncode:clientID],
-                         [self urlEncode:redirectURI],
+                         [self urlEncode:self.clientID],
+                         [self urlEncode:self.redirectURI],
                          UUID];
     
     NSLog(@"Auth URL: %@", authURL);
@@ -473,7 +473,7 @@ id NILIFY(NSObject *object) {
 }
 
 - (void)fireGenericAsynchronousRequestWithPath:(NSString*)path method:(NSString*)method data:(NSDictionary*)data onSuccess:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure {
-    if (_profile.loadedVerification) {
+    if (_profile.loadedVerification || !_profile.hasProfile) {
         NSString *urlString = [NSString stringWithFormat:@"%@%@", _profile.apiURL, path];
 
         NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:[self getAPIWithURL:urlString]];
@@ -501,7 +501,6 @@ id NILIFY(NSObject *object) {
     void (^onComplete)(NSURLResponse*, NSData*, NSError*) = ^(NSURLResponse *response, NSData *data, NSError *error) {
         NSString *responseBody = [[NSString alloc] initWithData:data
                                                        encoding:NSUTF8StringEncoding];
-        
         if (error) {
             if (onFailure) {
                 if (![NSThread isMainThread]) {
