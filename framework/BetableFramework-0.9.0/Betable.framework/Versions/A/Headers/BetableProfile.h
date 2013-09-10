@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreFoundation/CoreFoundation.h>
 
 @interface BetableProfile : NSObject <UIAlertViewDelegate>
 
@@ -15,5 +16,7 @@
 - (NSURL*)apiURL;
 - (NSURL*)authURL;
 - (void)verify:(void(^)(void))onComplete;
+
+@property (readonly) BOOL hasProfile;
 
 @end
