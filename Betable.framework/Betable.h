@@ -29,6 +29,7 @@
 #import <Betable/BetableWebViewController.h>
 #import <Betable/BetableHandlers.h>
 #import <Betable/BetableBatchRequest.h>
+#import <Betable/BetableTable.h>
 
 @interface NSDictionary (BetableJSON)
 - (NSData*)JSONData;

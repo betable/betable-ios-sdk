@@ -26,15 +26,26 @@
 		A5368211178F90A20009F3EB /* BetableResources-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A536820C178F90A20009F3EB /* BetableResources-Info.plist */; };
 		A544A0BC179870E200B58046 /* BetableBatchRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A544A0BA179870E200B58046 /* BetableBatchRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A544A0BD179870E200B58046 /* BetableBatchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A544A0BB179870E200B58046 /* BetableBatchRequest.m */; };
+		A5542BE117EB87B6002CC41C /* BetableRouletteTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5542BDF17EB87B6002CC41C /* BetableRouletteTable.h */; };
+		A5542BE217EB87B6002CC41C /* BetableRouletteTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5542BE017EB87B6002CC41C /* BetableRouletteTable.m */; };
 		A5A4A0A417B33C53006871F9 /* BetableProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A4A0A217B33C53006871F9 /* BetableProfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5A4A0A517B33C53006871F9 /* BetableProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A4A0A317B33C53006871F9 /* BetableProfile.m */; };
 		A5A4A0A717B41266006871F9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A4A0A617B41266006871F9 /* UIKit.framework */; };
+		A5A763F217D662E5004966AF /* BetableTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A763F017D662E5004966AF /* BetableTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5A763F317D662E5004966AF /* BetableTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A763F117D662E5004966AF /* BetableTable.m */; };
+		A5A763FB17D66B64004966AF /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = A5A763F417D66B64004966AF /* base64.c */; };
+		A5A763FC17D66B64004966AF /* base64.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A763F517D66B64004966AF /* base64.h */; };
+		A5A763FF17D66B64004966AF /* SocketRocket-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = A5A763F817D66B64004966AF /* SocketRocket-Prefix.pch */; };
+		A5A7640017D66B64004966AF /* SRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A763F917D66B64004966AF /* SRWebSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5A7640117D66B64004966AF /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A763FA17D66B64004966AF /* SRWebSocket.m */; };
+		A5A7645317D808BE004966AF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B60186178F762400F162BF /* CoreFoundation.framework */; };
+		A5A7645517D8090E004966AF /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A7645417D8090E004966AF /* CFNetwork.framework */; };
+		A5A7645917D80964004966AF /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A7645817D80964004966AF /* Security.framework */; };
 		A5B6015A178F6EA000F162BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B60159178F6EA000F162BF /* Foundation.framework */; };
 		A5B60170178F6F1B00F162BF /* Betable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B6016B178F6F1B00F162BF /* Betable.m */; };
 		A5B60172178F6F1B00F162BF /* BetableWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B6016F178F6F1B00F162BF /* BetableWebViewController.m */; };
 		A5B60175178F6F7E00F162BF /* Betable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B6016A178F6F1B00F162BF /* Betable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5B60177178F702600F162BF /* BetableWebViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B6016E178F6F1B00F162BF /* BetableWebViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A5B60187178F762400F162BF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B60186178F762400F162BF /* CoreFoundation.framework */; };
 		A5B60192178F767A00F162BF /* betable_player.png in Resources */ = {isa = PBXBuildFile; fileRef = A5B60168178F6F1B00F162BF /* betable_player.png */; };
 		A5B60193178F767A00F162BF /* betable_player@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A5B60169178F6F1B00F162BF /* betable_player@2x.png */; };
 		A5B601C1178F8B9900F162BF /* BetableHandlers.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B601C0178F8B9900F162BF /* BetableHandlers.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -74,9 +85,20 @@
 		A536820D178F90A20009F3EB /* BetableResources-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BetableResources-Prefix.pch"; sourceTree = "<group>"; };
 		A544A0BA179870E200B58046 /* BetableBatchRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableBatchRequest.h; sourceTree = "<group>"; };
 		A544A0BB179870E200B58046 /* BetableBatchRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableBatchRequest.m; sourceTree = "<group>"; };
+		A5542BDF17EB87B6002CC41C /* BetableRouletteTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableRouletteTable.h; sourceTree = "<group>"; };
+		A5542BE017EB87B6002CC41C /* BetableRouletteTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableRouletteTable.m; sourceTree = "<group>"; };
 		A5A4A0A217B33C53006871F9 /* BetableProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BetableProfile.h; path = ../BetableProfile.h; sourceTree = "<group>"; };
 		A5A4A0A317B33C53006871F9 /* BetableProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BetableProfile.m; path = ../BetableProfile.m; sourceTree = "<group>"; };
 		A5A4A0A617B41266006871F9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		A5A763F017D662E5004966AF /* BetableTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableTable.h; sourceTree = "<group>"; };
+		A5A763F117D662E5004966AF /* BetableTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableTable.m; sourceTree = "<group>"; };
+		A5A763F417D66B64004966AF /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
+		A5A763F517D66B64004966AF /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
+		A5A763F817D66B64004966AF /* SocketRocket-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SocketRocket-Prefix.pch"; sourceTree = "<group>"; };
+		A5A763F917D66B64004966AF /* SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocket.h; sourceTree = "<group>"; };
+		A5A763FA17D66B64004966AF /* SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocket.m; sourceTree = "<group>"; };
+		A5A7645417D8090E004966AF /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		A5A7645817D80964004966AF /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		A5B60156178F6EA000F162BF /* libBetable.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libBetable.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5B60159178F6EA000F162BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A5B6015D178F6EA000F162BF /* Betable.framework-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Betable.framework-Prefix.pch"; sourceTree = "<group>"; };
@@ -96,8 +118,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5A7645917D80964004966AF /* Security.framework in Frameworks */,
+				A5A7645517D8090E004966AF /* CFNetwork.framework in Frameworks */,
 				A5A4A0A717B41266006871F9 /* UIKit.framework in Frameworks */,
 				A5B6015A178F6EA000F162BF /* Foundation.framework in Frameworks */,
+				A5A7645317D808BE004966AF /* CoreFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,13 +130,35 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5B60187178F762400F162BF /* CoreFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A5A763EF17D662CB004966AF /* Multiplayer */ = {
+			isa = PBXGroup;
+			children = (
+				A5A763F017D662E5004966AF /* BetableTable.h */,
+				A5A763F117D662E5004966AF /* BetableTable.m */,
+				A5542BDF17EB87B6002CC41C /* BetableRouletteTable.h */,
+				A5542BE017EB87B6002CC41C /* BetableRouletteTable.m */,
+			);
+			name = Multiplayer;
+			sourceTree = "<group>";
+		};
+		A5A7640217D66B67004966AF /* SocketRocket */ = {
+			isa = PBXGroup;
+			children = (
+				A5A763F417D66B64004966AF /* base64.c */,
+				A5A763F517D66B64004966AF /* base64.h */,
+				A5A763F817D66B64004966AF /* SocketRocket-Prefix.pch */,
+				A5A763F917D66B64004966AF /* SRWebSocket.h */,
+				A5A763FA17D66B64004966AF /* SRWebSocket.m */,
+			);
+			name = SocketRocket;
+			sourceTree = "<group>";
+		};
 		A5B6014D178F6EA000F162BF = {
 			isa = PBXGroup;
 			children = (
@@ -134,6 +181,8 @@
 		A5B60158178F6EA000F162BF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A5A7645817D80964004966AF /* Security.framework */,
+				A5A7645417D8090E004966AF /* CFNetwork.framework */,
 				A5A4A0A617B41266006871F9 /* UIKit.framework */,
 				A5B60159178F6EA000F162BF /* Foundation.framework */,
 				A5B60186178F762400F162BF /* CoreFoundation.framework */,
@@ -144,6 +193,8 @@
 		A5B6015B178F6EA000F162BF /* Betable.framework */ = {
 			isa = PBXGroup;
 			children = (
+				A5A7640217D66B67004966AF /* SocketRocket */,
+				A5A763EF17D662CB004966AF /* Multiplayer */,
 				A5A4A0A217B33C53006871F9 /* BetableProfile.h */,
 				A5A4A0A317B33C53006871F9 /* BetableProfile.m */,
 				A5B60168178F6F1B00F162BF /* betable_player.png */,
@@ -197,6 +248,11 @@
 				A5B601C1178F8B9900F162BF /* BetableHandlers.h in Headers */,
 				A544A0BC179870E200B58046 /* BetableBatchRequest.h in Headers */,
 				A5A4A0A417B33C53006871F9 /* BetableProfile.h in Headers */,
+				A5A763F217D662E5004966AF /* BetableTable.h in Headers */,
+				A5A763FC17D66B64004966AF /* base64.h in Headers */,
+				A5A763FF17D66B64004966AF /* SocketRocket-Prefix.pch in Headers */,
+				A5A7640017D66B64004966AF /* SRWebSocket.h in Headers */,
+				A5542BE117EB87B6002CC41C /* BetableRouletteTable.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -319,6 +375,10 @@
 				A5B60172178F6F1B00F162BF /* BetableWebViewController.m in Sources */,
 				A544A0BD179870E200B58046 /* BetableBatchRequest.m in Sources */,
 				A5A4A0A517B33C53006871F9 /* BetableProfile.m in Sources */,
+				A5A763F317D662E5004966AF /* BetableTable.m in Sources */,
+				A5A763FB17D66B64004966AF /* base64.c in Sources */,
+				A5A7640117D66B64004966AF /* SRWebSocket.m in Sources */,
+				A5542BE217EB87B6002CC41C /* BetableRouletteTable.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -417,6 +477,7 @@
 				SKIP_INSTALL = YES;
 				STRIP_STYLE = "non-global";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv7 armv7s i386";
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -440,6 +501,7 @@
 				SKIP_INSTALL = YES;
 				STRIP_STYLE = "non-global";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv7 armv7s i386";
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
