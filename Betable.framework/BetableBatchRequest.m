@@ -52,6 +52,19 @@ NSString const *BetableBatchVersion = @"1.0";
     NSString *gameAndBonusID = [NSString stringWithFormat:@"%@/%@", gameID, creditGameID];
     return [self unbackedBetForGame:gameAndBonusID withData:data withName:name];
 }
+- (NSMutableDictionary* )getUserWalletWithName:(NSString*)name {
+    NSString *path = [Betable getWalletPath];
+    NSMutableDictionary *request = [self createRequestWithPath:path method:@"GET" name:name dependencies:nil data:nil];
+    [self addRequest:request];
+    return request;
+}
+
+- (NSMutableDictionary* )getUserAccountWithName:(NSString*)name {
+    NSString *path = [Betable getAccountPath];
+    NSMutableDictionary *request = [self createRequestWithPath:path method:@"GET" name:name dependencies:nil data:nil];
+    [self addRequest:request];
+    return request;
+}
 
 - (NSMutableDictionary* )createRequestWithPath:(NSString*)path method:(NSString*)method name:(NSString*)name dependencies:(NSArray*)dependnecies data:(NSDictionary*)data {
     NSMutableDictionary *request = [NSMutableDictionary dictionaryWithCapacity:5];
