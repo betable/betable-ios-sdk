@@ -36,6 +36,9 @@
                                         creditGame:(NSString*)creditGameID
                                          withData:(NSDictionary*)data
                                          withName: (NSString*)name;
+- (NSMutableDictionary* )getUserWalletWithName:(NSString*)name;
+- (NSMutableDictionary* )getUserAccountWithName:(NSString*)name;
+
 - (void)addRequest:(NSDictionary*)request;
 + (NSURL*)betableBatchURL:(NSString*)accessToken;
 - (void)runBatchOnComplete:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure;
