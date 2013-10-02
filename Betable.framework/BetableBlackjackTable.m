@@ -148,7 +148,6 @@
 }
 
 - (void)handleJoiningTable {
-    NSString *roundStatus = self.roundInfo[@"status"];
     //TODO handle joining table
 }
 
@@ -165,7 +164,25 @@
     NSInteger sequence = [data[@"seq"] integerValue];
     BOOL shouldAcknowledge = NO;
     //TODO handle all event types
+    
+    
     if ([type isEqualToString:@"roulette.bet.create"]){
+        
+    // Dealer Actions
+    } else if ([type isEqualToString:@"roulette.bet.create"]){
+    } else if ([type isEqualToString:@"roulette.bet.create"]){
+    } else if ([type isEqualToString:@"roulette.bet.create"]){
+    } else if ([type isEqualToString:@"roulette.bet.create"]){
+    } else if ([type isEqualToString:@"roulette.bet.create"]){
+    } else if ([type isEqualToString:@"roulette.bet.create"]){
+    } else if ([type isEqualToString:@"roulette.bet.create"]){
+    } else if ([type isEqualToString:@"roulette.bet.create"]){
+    } else if ([type isEqualToString:@"roulette.bet.create"]){
+    } else if ([type isEqualToString:@"roulette.bet.create"]){
+    } else if ([type isEqualToString:@"roulette.bet.create"]){
+    
+    // Other Actions
+    } else if ([type isEqualToString:@"roulette.bet.create"]){
         
     } else {
         [super webSocket:webSocket didReceiveMessage:message];

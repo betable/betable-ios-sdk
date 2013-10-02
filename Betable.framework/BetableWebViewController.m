@@ -203,11 +203,9 @@ BOOL isPad() {
     NSString *jsMethod = [self.webView stringByEvaluatingJavaScriptFromString:@"window.overlay_close_button"];
     NSLog(@"JS: %@", jsMethod);
     NSLog(@"JS Class: %@", [jsMethod class]);
-    if (![jsMethod length]) {
-        NSLog(@"Hiding");
+    if (NO) { //![jsMethod length]) {
         _closeButton.hidden = YES;
     } else {
-        NSLog(@"Not Hiding");
         _closeButton.hidden = NO;
     }
     [UIView animateWithDuration:.2 animations:^{

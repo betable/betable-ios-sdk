@@ -28,6 +28,8 @@
 		A544A0BD179870E200B58046 /* BetableBatchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A544A0BB179870E200B58046 /* BetableBatchRequest.m */; };
 		A5542BE117EB87B6002CC41C /* BetableRouletteTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5542BDF17EB87B6002CC41C /* BetableRouletteTable.h */; };
 		A5542BE217EB87B6002CC41C /* BetableRouletteTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5542BE017EB87B6002CC41C /* BetableRouletteTable.m */; };
+		A5A49D0617FB7C04006CD898 /* BetableBlackjackTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A49D0417FB7C04006CD898 /* BetableBlackjackTable.m */; };
+		A5A49D0717FB7C04006CD898 /* BetableBlackjackTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A49D0517FB7C04006CD898 /* BetableBlackjackTable.h */; };
 		A5A4A0A417B33C53006871F9 /* BetableProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A4A0A217B33C53006871F9 /* BetableProfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5A4A0A517B33C53006871F9 /* BetableProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A4A0A317B33C53006871F9 /* BetableProfile.m */; };
 		A5A4A0A717B41266006871F9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A4A0A617B41266006871F9 /* UIKit.framework */; };
@@ -87,6 +89,8 @@
 		A544A0BB179870E200B58046 /* BetableBatchRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableBatchRequest.m; sourceTree = "<group>"; };
 		A5542BDF17EB87B6002CC41C /* BetableRouletteTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableRouletteTable.h; sourceTree = "<group>"; };
 		A5542BE017EB87B6002CC41C /* BetableRouletteTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableRouletteTable.m; sourceTree = "<group>"; };
+		A5A49D0417FB7C04006CD898 /* BetableBlackjackTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableBlackjackTable.m; sourceTree = "<group>"; };
+		A5A49D0517FB7C04006CD898 /* BetableBlackjackTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableBlackjackTable.h; sourceTree = "<group>"; };
 		A5A4A0A217B33C53006871F9 /* BetableProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BetableProfile.h; path = ../BetableProfile.h; sourceTree = "<group>"; };
 		A5A4A0A317B33C53006871F9 /* BetableProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BetableProfile.m; path = ../BetableProfile.m; sourceTree = "<group>"; };
 		A5A4A0A617B41266006871F9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -139,6 +143,8 @@
 		A5A763EF17D662CB004966AF /* Multiplayer */ = {
 			isa = PBXGroup;
 			children = (
+				A5A49D0417FB7C04006CD898 /* BetableBlackjackTable.m */,
+				A5A49D0517FB7C04006CD898 /* BetableBlackjackTable.h */,
 				A5A763F017D662E5004966AF /* BetableTable.h */,
 				A5A763F117D662E5004966AF /* BetableTable.m */,
 				A5542BDF17EB87B6002CC41C /* BetableRouletteTable.h */,
@@ -246,6 +252,7 @@
 				A5B60175178F6F7E00F162BF /* Betable.h in Headers */,
 				A5B60177178F702600F162BF /* BetableWebViewController.h in Headers */,
 				A5B601C1178F8B9900F162BF /* BetableHandlers.h in Headers */,
+				A5A49D0717FB7C04006CD898 /* BetableBlackjackTable.h in Headers */,
 				A544A0BC179870E200B58046 /* BetableBatchRequest.h in Headers */,
 				A5A4A0A417B33C53006871F9 /* BetableProfile.h in Headers */,
 				A5A763F217D662E5004966AF /* BetableTable.h in Headers */,
@@ -371,6 +378,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5A49D0617FB7C04006CD898 /* BetableBlackjackTable.m in Sources */,
 				A5B60170178F6F1B00F162BF /* Betable.m in Sources */,
 				A5B60172178F6F1B00F162BF /* BetableWebViewController.m in Sources */,
 				A544A0BD179870E200B58046 /* BetableBatchRequest.m in Sources */,
