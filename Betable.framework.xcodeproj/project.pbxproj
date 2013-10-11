@@ -26,10 +26,12 @@
 		A5368211178F90A20009F3EB /* BetableResources-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A536820C178F90A20009F3EB /* BetableResources-Info.plist */; };
 		A544A0BC179870E200B58046 /* BetableBatchRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A544A0BA179870E200B58046 /* BetableBatchRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A544A0BD179870E200B58046 /* BetableBatchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A544A0BB179870E200B58046 /* BetableBatchRequest.m */; };
-		A5542BE117EB87B6002CC41C /* BetableRouletteTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5542BDF17EB87B6002CC41C /* BetableRouletteTable.h */; };
+		A5542BE117EB87B6002CC41C /* BetableRouletteTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5542BDF17EB87B6002CC41C /* BetableRouletteTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5542BE217EB87B6002CC41C /* BetableRouletteTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5542BE017EB87B6002CC41C /* BetableRouletteTable.m */; };
 		A5A49D0617FB7C04006CD898 /* BetableBlackjackTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A49D0417FB7C04006CD898 /* BetableBlackjackTable.m */; };
 		A5A49D0717FB7C04006CD898 /* BetableBlackjackTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A49D0517FB7C04006CD898 /* BetableBlackjackTable.h */; };
+		A5A49D6417FE0D41006CD898 /* BetableBlackjackSpot.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A49D6217FE0D41006CD898 /* BetableBlackjackSpot.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5A49D6517FE0D41006CD898 /* BetableBlackjackSpot.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A49D6317FE0D41006CD898 /* BetableBlackjackSpot.m */; };
 		A5A4A0A417B33C53006871F9 /* BetableProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A4A0A217B33C53006871F9 /* BetableProfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5A4A0A517B33C53006871F9 /* BetableProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A4A0A317B33C53006871F9 /* BetableProfile.m */; };
 		A5A4A0A717B41266006871F9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A4A0A617B41266006871F9 /* UIKit.framework */; };
@@ -43,6 +45,8 @@
 		A5A7645317D808BE004966AF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B60186178F762400F162BF /* CoreFoundation.framework */; };
 		A5A7645517D8090E004966AF /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A7645417D8090E004966AF /* CFNetwork.framework */; };
 		A5A7645917D80964004966AF /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A7645817D80964004966AF /* Security.framework */; };
+		A5AFC2F417F2511400C47C26 /* BetableBlackjackTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFC2F217F2511400C47C26 /* BetableBlackjackTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5AFC2F517F2511400C47C26 /* BetableBlackjackTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5AFC2F317F2511400C47C26 /* BetableBlackjackTable.m */; };
 		A5B6015A178F6EA000F162BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B60159178F6EA000F162BF /* Foundation.framework */; };
 		A5B60170178F6F1B00F162BF /* Betable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B6016B178F6F1B00F162BF /* Betable.m */; };
 		A5B60172178F6F1B00F162BF /* BetableWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B6016F178F6F1B00F162BF /* BetableWebViewController.m */; };
@@ -91,6 +95,8 @@
 		A5542BE017EB87B6002CC41C /* BetableRouletteTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableRouletteTable.m; sourceTree = "<group>"; };
 		A5A49D0417FB7C04006CD898 /* BetableBlackjackTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableBlackjackTable.m; sourceTree = "<group>"; };
 		A5A49D0517FB7C04006CD898 /* BetableBlackjackTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableBlackjackTable.h; sourceTree = "<group>"; };
+		A5A49D6217FE0D41006CD898 /* BetableBlackjackSpot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableBlackjackSpot.h; sourceTree = "<group>"; };
+		A5A49D6317FE0D41006CD898 /* BetableBlackjackSpot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableBlackjackSpot.m; sourceTree = "<group>"; };
 		A5A4A0A217B33C53006871F9 /* BetableProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BetableProfile.h; path = ../BetableProfile.h; sourceTree = "<group>"; };
 		A5A4A0A317B33C53006871F9 /* BetableProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BetableProfile.m; path = ../BetableProfile.m; sourceTree = "<group>"; };
 		A5A4A0A617B41266006871F9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -103,6 +109,8 @@
 		A5A763FA17D66B64004966AF /* SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocket.m; sourceTree = "<group>"; };
 		A5A7645417D8090E004966AF /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		A5A7645817D80964004966AF /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		A5AFC2F217F2511400C47C26 /* BetableBlackjackTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableBlackjackTable.h; sourceTree = "<group>"; };
+		A5AFC2F317F2511400C47C26 /* BetableBlackjackTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableBlackjackTable.m; sourceTree = "<group>"; };
 		A5B60156178F6EA000F162BF /* libBetable.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libBetable.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5B60159178F6EA000F162BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A5B6015D178F6EA000F162BF /* Betable.framework-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Betable.framework-Prefix.pch"; sourceTree = "<group>"; };
@@ -145,10 +153,13 @@
 			children = (
 				A5A49D0417FB7C04006CD898 /* BetableBlackjackTable.m */,
 				A5A49D0517FB7C04006CD898 /* BetableBlackjackTable.h */,
+				A5AFC2F617F26C1C00C47C26 /* MultiplayerData */,
 				A5A763F017D662E5004966AF /* BetableTable.h */,
 				A5A763F117D662E5004966AF /* BetableTable.m */,
 				A5542BDF17EB87B6002CC41C /* BetableRouletteTable.h */,
 				A5542BE017EB87B6002CC41C /* BetableRouletteTable.m */,
+				A5AFC2F217F2511400C47C26 /* BetableBlackjackTable.h */,
+				A5AFC2F317F2511400C47C26 /* BetableBlackjackTable.m */,
 			);
 			name = Multiplayer;
 			sourceTree = "<group>";
@@ -163,6 +174,15 @@
 				A5A763FA17D66B64004966AF /* SRWebSocket.m */,
 			);
 			name = SocketRocket;
+			sourceTree = "<group>";
+		};
+		A5AFC2F617F26C1C00C47C26 /* MultiplayerData */ = {
+			isa = PBXGroup;
+			children = (
+				A5A49D6217FE0D41006CD898 /* BetableBlackjackSpot.h */,
+				A5A49D6317FE0D41006CD898 /* BetableBlackjackSpot.m */,
+			);
+			name = MultiplayerData;
 			sourceTree = "<group>";
 		};
 		A5B6014D178F6EA000F162BF = {
@@ -255,11 +275,13 @@
 				A5A49D0717FB7C04006CD898 /* BetableBlackjackTable.h in Headers */,
 				A544A0BC179870E200B58046 /* BetableBatchRequest.h in Headers */,
 				A5A4A0A417B33C53006871F9 /* BetableProfile.h in Headers */,
+				A5A49D6417FE0D41006CD898 /* BetableBlackjackSpot.h in Headers */,
 				A5A763F217D662E5004966AF /* BetableTable.h in Headers */,
 				A5A763FC17D66B64004966AF /* base64.h in Headers */,
 				A5A763FF17D66B64004966AF /* SocketRocket-Prefix.pch in Headers */,
 				A5A7640017D66B64004966AF /* SRWebSocket.h in Headers */,
 				A5542BE117EB87B6002CC41C /* BetableRouletteTable.h in Headers */,
+				A5AFC2F417F2511400C47C26 /* BetableBlackjackTable.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -382,11 +404,13 @@
 				A5B60170178F6F1B00F162BF /* Betable.m in Sources */,
 				A5B60172178F6F1B00F162BF /* BetableWebViewController.m in Sources */,
 				A544A0BD179870E200B58046 /* BetableBatchRequest.m in Sources */,
+				A5A49D6517FE0D41006CD898 /* BetableBlackjackSpot.m in Sources */,
 				A5A4A0A517B33C53006871F9 /* BetableProfile.m in Sources */,
 				A5A763F317D662E5004966AF /* BetableTable.m in Sources */,
 				A5A763FB17D66B64004966AF /* base64.c in Sources */,
 				A5A7640117D66B64004966AF /* SRWebSocket.m in Sources */,
 				A5542BE217EB87B6002CC41C /* BetableRouletteTable.m in Sources */,
+				A5AFC2F517F2511400C47C26 /* BetableBlackjackTable.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

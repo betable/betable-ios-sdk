@@ -15,7 +15,19 @@ NSString *BetableTableSocketURL = @"wss://api.betable.com/1.0/websocket";
     NSTimer *_keepAliveTimer;
     
     //Delegate checkers
-    
+    BOOL _delJoined;
+    BOOL _delSessionResumed;
+    BOOL _delParted;
+    BOOL _delRoundCreated;
+    BOOL _delRoundClosed;
+    BOOL _delRoundCanceled;
+    BOOL _delInactiveParted;
+    BOOL _delBettingOpened;
+    BOOL _delBettingClosed;
+    BOOL _delOtherJoined;
+    BOOL _delOtherParted;
+    BOOL _delDidFailWithError;
+    BOOL _delConnectionClosed;
 }
 
 @end
@@ -145,7 +157,7 @@ NSString *BetableTableSocketURL = @"wss://api.betable.com/1.0/websocket";
 #pragma mark - Getters and Setters
 
 - (NSString*)gameType {
-    return @"roulette";
+    return @"";
 }
 
 #pragma mark - SRWebSocket delegate methods
@@ -156,6 +168,10 @@ NSString *BetableTableSocketURL = @"wss://api.betable.com/1.0/websocket";
 
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
     [self.delegate betableTable:self didFailWithError:error];
+}
+
+- (void)handleJoiningTable {
+    //Subclass
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message {
@@ -169,7 +185,9 @@ NSString *BetableTableSocketURL = @"wss://api.betable.com/1.0/websocket";
     NSLog(@"Receieved Message:%@", type);
     
     if (data[@"error"]) {
-        [self.delegate betableTable:self didFailWithError:data[@"error"]];
+        if (_delDidFailWithError) {
+            [self.delegate betableTable:self didFailWithError:data[@"error"]];
+        }
         return;
     }
     
@@ -182,60 +200,53 @@ NSString *BetableTableSocketURL = @"wss://api.betable.com/1.0/websocket";
         [self.delegate betableTable:self sessionResumed:body];
         [self startSession:body];
         [self joinTable];
+        shouldAcknowledge = YES;
     } else if ([type isEqualToString:@"bad_message"]) {
         NSLog(@"Bad Message:%@", body);
     }
     //User Actions
-    else if ([type isEqualToString:@"roulette.table.join"]){
+    else if ([type isEqualToString:[self eventWithGameType:@"%@.table.join"]]){
         self.tableID = body[@"table"][@"id"];
         self.roundID = body[@"table"][@"current_round"][@"id"];
         self.tableInfo = body[@"table"];
         self.roundInfo = body[@"table"][@"current_round"];
         self.players = [self.tableInfo[@"players"] mutableCopy];
-        shouldAcknowledge = [self.delegate betableTable:self joined:body withNonce:nonce];
-        //TODO move this to Handle Joining Table Status method
-        NSString *roundStatus = self.roundInfo[@"status"];
-        if ([roundStatus isEqualToString:@"betting_opened"]) {
-            [self.delegate betableTable:self bettingOpened:self.roundInfo];
-        } else if ([roundStatus isEqualToString:@"betting_closed"]) {
-            [self.delegate betableTable:self bettingClosed:self.roundInfo];
-        } else if ([roundStatus isEqualToString:@"betting_created"]) {
-            [self.delegate betableTable:self roundCreated:self.roundInfo];
-        } else if ([roundStatus isEqualToString:@"closed"]) {
-            [self.delegate betableTable:self roundClosed:self.roundInfo];
-        }
-    } else if ([type isEqualToString:[self eventWithGameType:@"@%.bet.create"]]){
-        shouldAcknowledge = [self.delegate betableTable:self createdBet:body withNonce:nonce];
-    } else if ([type isEqualToString:[self eventWithGameType:@"@%.bet.destroy"]]){
-        shouldAcknowledge = [self.delegate betableTable:self destroyedBet:body withNonce:nonce];
-    } else if ([type isEqualToString:[self eventWithGameType:@"@%.round.betting_opened_player_done"]]){
-        shouldAcknowledge = [self.delegate betableTable:self finishedBetting:body withNonce:nonce];
-    } else if ([type isEqualToString:[self eventWithGameType:@"@%.table.part"]]) {
+        if (_delJoined) {
+            shouldAcknowledge = [self.delegate betableTable:self joined:body withNonce:nonce];
+        }   
+        [self handleJoiningTable];
+    } else if ([type isEqualToString:[self eventWithGameType:@"%@.table.part"]]) {
         [_keepAliveTimer invalidate];
         _keepAliveTimer = nil;
-        shouldAcknowledge = [self.delegate betableTable:self parted:body withNonce:nonce];
+        if (_delParted) {
+            shouldAcknowledge = [self.delegate betableTable:self parted:body withNonce:nonce];
+        }
     }
     
     //Round Actions
-    else if ([type isEqualToString:@"roulette.round.created"]){
+    else if ([type isEqualToString:[self eventWithGameType:@"%@.round.created"]]){
         self.roundID = body[@"round"][@"id"];
-        shouldAcknowledge = [self.delegate betableTable:self roundCreated:body];
-    } else if ([type isEqualToString:[self eventWithGameType:@"@%.round.betting_opened"]]){
-        shouldAcknowledge = [self.delegate betableTable:self bettingOpened:body];
-    } else if ([type isEqualToString:[self eventWithGameType:@"@%.round.betting_closed"]]){
-        shouldAcknowledge = [self.delegate betableTable:self bettingClosed:body];
-    } else if ([type isEqualToString:[self eventWithGameType:@"@%.round.closed"]]){
+        if (_delRoundCreated) {
+            shouldAcknowledge = [self.delegate betableTable:self roundCreated:body];
+        }
+    } else if ([type isEqualToString:[self eventWithGameType:@"%@.round.closed"]] && _delRoundClosed){
         shouldAcknowledge = [self.delegate betableTable:self roundClosed:body];
-    } else if ([type isEqualToString:[self eventWithGameType:@"@%.round.canceled"]]){
-        shouldAcknowledge = [self.delegate betableTable:self roundCancelled:body];
-    } else if ([type isEqualToString:[self eventWithGameType:@"@%.table.inactive_parted"]]) {
+    } else if ([type isEqualToString:[self eventWithGameType:@"%@.round.canceled"]] && _delRoundCanceled) {
+        shouldAcknowledge = [self.delegate betableTable:self roundCanceled:body];
+    } else if ([type isEqualToString:[self eventWithGameType:@"%@.table.inactive_parted"]]) {
         [_keepAliveTimer invalidate];
         _keepAliveTimer = nil;
-        shouldAcknowledge = [self.delegate betableTable:self inactiveParted:body];
+        if (_delInactiveParted) {
+            shouldAcknowledge = [self.delegate betableTable:self inactiveParted:body];
+        }
+    } else if ([type isEqualToString:[self eventWithGameType:@"%@.round.betting_opened"]] && _delBettingOpened) {
+        [self.delegate betableTable:self bettingOpened:body];
+    } else if ([type isEqualToString:[self eventWithGameType:@"%@.round.betting_closed"]] && _delBettingClosed) {
+        [self.delegate betableTable:self bettingClosed:body];
     }
     
     //Other player action
-    else if ([type isEqualToString:[self eventWithGameType:@"@%.table.other_joined"]]){
+    else if ([type isEqualToString:[self eventWithGameType:@"%@.table.other_joined"]]){
         NSDictionary *newPlayer = body[@"user"];
         BOOL isPlayerNew = YES;
         for (NSDictionary* player in self.players) {
@@ -247,14 +258,10 @@ NSString *BetableTableSocketURL = @"wss://api.betable.com/1.0/websocket";
         if (isPlayerNew) {
             [self.players addObject:newPlayer];
         }
-        shouldAcknowledge = [self.delegate betableTable:self otherJoined:body];
-    } else if ([type isEqualToString:[self eventWithGameType:@"@%.bet.other_created"]]){
-        shouldAcknowledge = [self.delegate betableTable:self otherCreatedBet:body];
-    } else if ([type isEqualToString:[self eventWithGameType:@"@%.bet.other_destroyed"]]){
-        shouldAcknowledge = [self.delegate betableTable:self otherDestroyedBet:body];
-    } else if ([type isEqualToString:[self eventWithGameType:@"@%.round.other_betting_opened_player_done"]]){
-        shouldAcknowledge = [self.delegate betableTable:self otherFinishedBetting:body];
-    } else if ([type isEqualToString:[self eventWithGameType:@"@%.table.other_parted"]]){
+        if (_delOtherJoined) {
+            shouldAcknowledge = [self.delegate betableTable:self otherJoined:body];
+        }
+    } else if ([type isEqualToString:[self eventWithGameType:@"%@.table.other_parted"]]){
         NSString *partingUserId = body[@"user_id"];
         for (NSDictionary* player in self.players) {
             if ([player[@"id"] isEqualToString:partingUserId]) {
@@ -262,12 +269,31 @@ NSString *BetableTableSocketURL = @"wss://api.betable.com/1.0/websocket";
                 break;
             }
         }
-        shouldAcknowledge = [self.delegate betableTable:self otherParted:body];
+        if (_delOtherParted) {
+            shouldAcknowledge = [self.delegate betableTable:self otherParted:body];
+        }
     }
     
     if (shouldAcknowledge) {
         [self acknowledge:sequence];
     }
+}
+
+- (void)setDelegate:(id<BetableTableDelegate>)delegate {
+    _delegate = delegate;
+    _delJoined = [delegate respondsToSelector:@selector(betableTable:joined:withNonce:)];
+    _delParted = [delegate respondsToSelector:@selector(betableTable:parted:withNonce:)];
+    _delSessionResumed = [delegate respondsToSelector:@selector(betableTable:sessionResumed:)];
+    _delRoundCreated = [delegate respondsToSelector:@selector(betableTable:roundCreated:)];
+    _delBettingOpened = [delegate respondsToSelector:@selector(betableTable:bettingOpened:)];
+    _delBettingClosed = [delegate respondsToSelector:@selector(betableTable:bettingClosed:)];
+    _delRoundClosed = [delegate respondsToSelector:@selector(betableTable:roundClosed:)];
+    _delRoundCanceled = [delegate respondsToSelector:@selector(betableTable:roundCanceled:)];
+    _delInactiveParted = [delegate respondsToSelector:@selector(betableTable:inactiveParted:)];
+    _delOtherJoined = [delegate respondsToSelector:@selector(betableTable:otherJoined:)];
+    _delOtherParted = [delegate respondsToSelector:@selector(betableTable:otherParted:)];
+    _delDidFailWithError = [delegate respondsToSelector:@selector(betableTable:didFailWithError:)];
+    _delConnectionClosed = [delegate respondsToSelector:@selector(betableTable:connectionClosedWithCode:reason:wasClean:)];
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean {

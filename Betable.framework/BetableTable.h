@@ -15,15 +15,10 @@
 
 // User actions
 //    Table Joined
-//    Bet Created
-//    Bet Destroyed
-//    Betting Done
+//    Session Resume
 //    Table Part
 - (BOOL)betableTable:(BetableTable*)betableTable joined:(NSDictionary*)tableInfo withNonce:(NSString*)nonce;
 - (BOOL)betableTable:(BetableTable*)betableTable sessionResumed:(NSDictionary*)tableInfo;
-- (BOOL)betableTable:(BetableTable *)betableTable createdBet:(NSDictionary *)betInfo withNonce:(NSString*)nonce;
-- (BOOL)betableTable:(BetableTable *)betableTable destroyedBet:(NSDictionary *)betInfo withNonce:(NSString*)nonce;
-- (BOOL)betableTable:(BetableTable *)betableTable finishedBetting:(NSDictionary *)info withNonce:(NSString*)nonce;
 - (BOOL)betableTable:(BetableTable *)betableTable parted:(NSDictionary *)info withNonce:(NSString*)nonce;
 
 // Game actions
@@ -36,19 +31,13 @@
 - (BOOL)betableTable:(BetableTable *)betableTable bettingOpened:(NSDictionary *)info;
 - (BOOL)betableTable:(BetableTable *)betableTable bettingClosed:(NSDictionary *)info;
 - (BOOL)betableTable:(BetableTable *)betableTable roundClosed:(NSDictionary *)info;
-- (BOOL)betableTable:(BetableTable *)betableTable roundCancelled:(NSDictionary *)info;
+- (BOOL)betableTable:(BetableTable *)betableTable roundCanceled:(NSDictionary *)info;
 - (BOOL)betableTable:(BetableTable *)betableTable inactiveParted:(NSDictionary *)info;
 
 // Other actions:
 //    Other Joined
 //    Other Parted
-//    Other Bet Created
-//    Other Bet Destroyed
-//    Other Betting Done
 - (BOOL)betableTable:(BetableTable *)betableTable otherJoined:(NSDictionary *)info;
-- (BOOL)betableTable:(BetableTable *)betableTable otherCreatedBet:(NSDictionary *)info;
-- (BOOL)betableTable:(BetableTable *)betableTable otherDestroyedBet:(NSDictionary *)info;
-- (BOOL)betableTable:(BetableTable *)betableTable otherFinishedBetting:(NSDictionary *)info;
 - (BOOL)betableTable:(BetableTable *)betableTable otherParted:(NSDictionary *)info;
 
 //Misc
@@ -75,7 +64,7 @@
 @property (readonly) NSString *gameType;
 @property BOOL betableManaged;
 @property NSInteger lastAck;
-@property id<BetableTableDelegate> delegate;
+@property (weak, nonatomic) id<BetableTableDelegate> delegate;
 
 
 - (id)initBetableManagedTableWithGameID:(NSString*)gameID andEconomy:(NSString*)economy;
@@ -86,6 +75,10 @@
 - (NSString*)joinTable;
 - (NSString*)sendMessage:(NSString*)type withBody:(NSDictionary*)body;
 - (void)acknowledge:(NSInteger)ack;
+
+//subclass
+- (void)handleJoiningTable;
+- (NSString*)gameType;
 
 
 @end

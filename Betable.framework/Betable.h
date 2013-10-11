@@ -30,6 +30,9 @@
 #import <Betable/BetableHandlers.h>
 #import <Betable/BetableBatchRequest.h>
 #import <Betable/BetableTable.h>
+#import <Betable/BetableRouletteTable.h>
+#import <Betable/BetableBlackjackTable.h>
+#import <Betable/BetableBlackjackSpot.h>
 
 @interface NSDictionary (BetableJSON)
 - (NSData*)JSONData;
