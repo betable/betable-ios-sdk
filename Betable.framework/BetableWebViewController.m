@@ -75,6 +75,7 @@ BOOL isPad() {
         _errorLoading = nil;
         _viewLoaded = NO;
         _errorShown = NO;
+        self.edgesForExtendedLayout = UIRectEdgeNone;
     }
     return self;
 }
@@ -94,7 +95,6 @@ BOOL isPad() {
 }
 
 - (void)preloadWebview {
-    CGRect frame = [[UIScreen mainScreen] bounds];
     NSURL *url = [NSURL URLWithString:self.url];
     NSString *queryDelimeter = @"?";
     if ([[url query] length]) {
@@ -103,9 +103,8 @@ BOOL isPad() {
     NSString *adjustedURLString = [NSString stringWithFormat:@"%@%@link_back_to_game=true", self.url, queryDelimeter];
     url = [NSURL URLWithString:adjustedURLString];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url ];
-    self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+    self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     
-    self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
     [self.webView loadRequest:request];
     self.webView.hidden = YES;
@@ -168,6 +167,25 @@ BOOL isPad() {
     }
     
     _viewLoaded = YES;
+    
+    if (self.webView) {
+        //Align webview to the top of the statusBar`
+        id topGuide = self.topLayoutGuide;
+        UIView *webView = self.webView;
+        [webView setTranslatesAutoresizingMaskIntoConstraints: NO];
+        NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings (webView, topGuide);
+        NSArray *consts = [NSLayoutConstraint constraintsWithVisualFormat: @"V:[topGuide]-(0)-[webView]-(0)-|"
+                                                                  options: 0
+                                                                  metrics: nil
+                                                                    views: viewsDictionary];
+        [self.view addConstraints:consts];
+        
+        consts = [NSLayoutConstraint constraintsWithVisualFormat: @"H:|-(0)-[webView]-(0)-|"
+                                                                  options: 0
+                                                                  metrics: nil
+                                                                    views: viewsDictionary];
+        [self.view addConstraints:consts];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -178,6 +196,22 @@ BOOL isPad() {
     }
     if ([self.webView superview] == nil) {
         [self.view addSubview:self.webView];
+        
+        //Align webview to the top of the statusBar
+        id topGuide = self.topLayoutGuide;
+        UIView *webView = self.webView;
+        [webView setTranslatesAutoresizingMaskIntoConstraints: NO];
+        NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings (webView, topGuide);
+        NSArray *consts = [NSLayoutConstraint constraintsWithVisualFormat: @"V:[topGuide]-(0)-[webView]-(0)-|"
+                                                                  options: 0
+                                                                  metrics: nil
+                                                                    views: viewsDictionary];
+        [self.view addConstraints:consts];
+        consts = [NSLayoutConstraint constraintsWithVisualFormat: @"H:|-(0)-[webView]-(0)-|"
+                                                         options: 0
+                                                         metrics: nil
+                                                           views: viewsDictionary];
+        [self.view addConstraints:consts];
     }
 }
 

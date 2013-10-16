@@ -17,7 +17,7 @@ NSString *BetablePasteBoardClientIDName = @"com.Betable.BetableSDK.sharedData.pr
 NSString *BetablePasteBoardSignatureName = @"com.Betable.BetableSDK.sharedData.profile:Signature";
 NSString *BetablePasteBoardExpiryName = @"com.Betable.BetableSDK.sharedData.profile:Expiry";
 NSString const *BetableAPIURL = @"https://api.betable.com/1.0";
-NSString const *BetableAuthorizeURL = @"https://betable.com/authorize";
+NSString const *BetableAuthorizeURL = @"https://betable.com/track?action=register";
 NSString const *BetableVerifyURL = @"developers.betable.com";
 
 @interface BetableProfile() {

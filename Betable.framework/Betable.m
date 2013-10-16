@@ -140,10 +140,16 @@ id NILIFY(NSObject *object) {
 - (void)setupAuthorizeWebView {
     CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
     CFStringRef UUIDSRef = CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
-    NSString* UUID = [NSString stringWithFormat:@"%@", UUIDSRef];
-    NSString* urlFormat = @"%@?client_id=%@&redirect_uri=%@&state=%@&response_type=code";
+    NSString *UUID = [NSString stringWithFormat:@"%@", UUIDSRef];
+    NSString *queryDelimiter = @"?";
+    NSURL *authURLFragment = _profile.authURL;
+    if ([authURLFragment query]) {
+        queryDelimiter = @"&";
+    }
+    NSString *urlFormat = @"%@%@client_id=%@&redirect_uri=%@&state=%@&response_type=code";
     NSString *authURL = [NSString stringWithFormat:urlFormat,
                          _profile.authURL,
+                         queryDelimiter,
                          [self urlEncode:self.clientID],
                          [self urlEncode:self.redirectURI],
                          UUID];
