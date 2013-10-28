@@ -75,7 +75,6 @@ BOOL isPad() {
         _errorLoading = nil;
         _viewLoaded = NO;
         _errorShown = NO;
-        self.edgesForExtendedLayout = UIRectEdgeNone;
     }
     return self;
 }
@@ -103,24 +102,72 @@ BOOL isPad() {
     NSString *adjustedURLString = [NSString stringWithFormat:@"%@%@link_back_to_game=true", self.url, queryDelimeter];
     url = [NSURL URLWithString:adjustedURLString];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url ];
-    self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    
+    self.webView = [[UIWebView alloc] init];
     
     [self.webView loadRequest:request];
     self.webView.hidden = YES;
     self.webView.delegate = self;
     
     _closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    _closeButton.frame = CGRectMake(self.view.frame.size.width-40, 7, 30, 30);
     [_closeButton setTitle:@"×" forState:UIControlStateNormal];
     [_closeButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
     _closeButton.titleLabel.font = [UIFont boldSystemFontOfSize:32];
     [_closeButton addTarget:self action:@selector(closeWindow) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)addCloseButtonConstraints {
+    [_closeButton setTranslatesAutoresizingMaskIntoConstraints: NO];
+    id topGuide;
+    NSString *verticalFormat;
+    @try {
+        topGuide = self.topLayoutGuide;
+        verticalFormat = @"V:[topGuide]-5-[_closeButton(30)]";
+    } @catch (NSException *exception) {
+        topGuide = [[UIView alloc] init];
+        verticalFormat = @"V:|-5-[_closeButton(30)]";
+    }
+    NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings (_closeButton, topGuide);
+    NSArray *consts = [NSLayoutConstraint constraintsWithVisualFormat: verticalFormat
+                                                              options: 0
+                                                              metrics: nil
+                                                                views: viewsDictionary];
+    [self.view addConstraints:consts];
     
-    _closeButton.autoresizingMask =UIViewAutoresizingFlexibleLeftMargin  |   UIViewAutoresizingFlexibleBottomMargin;
+    consts = [NSLayoutConstraint constraintsWithVisualFormat: @"H:[_closeButton(30)]-5-|"
+                                                     options: 0
+                                                     metrics: nil
+                                                       views: viewsDictionary];
+    [self.view addConstraints:consts];
+}
+- (void)addWebViewConstraints {
+    //Align webview to the top of the statusBar
+    id topGuide;
+    NSString *verticalFormat;
+    @try {
+        topGuide = self.topLayoutGuide;
+        verticalFormat = @"V:[topGuide][webView]|";
+    } @catch (NSException *exception) {
+        topGuide = [[UIView alloc] init];
+        verticalFormat = @"V:|[webView]|";
+    }
+    UIView *webView = self.webView;
+    [webView setTranslatesAutoresizingMaskIntoConstraints: NO];
+    NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings (webView, topGuide);
+    NSArray *consts = [NSLayoutConstraint constraintsWithVisualFormat: verticalFormat
+                                                              options: 0
+                                                              metrics: nil
+                                                                views: viewsDictionary];
+    [self.view addConstraints:consts];
+    
+    consts = [NSLayoutConstraint constraintsWithVisualFormat: @"H:|[webView]|"
+                                                     options: 0
+                                                     metrics: nil
+                                                       views: viewsDictionary];
+    [self.view addConstraints:consts];
 }
 
 - (void)viewDidLoad {
+
     self.view.frame = [[UIScreen mainScreen] bounds];
 
     [super viewDidLoad];
@@ -129,18 +176,16 @@ BOOL isPad() {
     
     self.betableLoader = [[UIView alloc] initWithFrame:CGRectMake(0, -20, self.view.frame.size.width, self.view.frame.size.height+20)];
     self.betableLoader.backgroundColor = [UIColor colorWithRed:238.0/255.0 green:243.0/255.0 blue:347.9/255.0 alpha:1.0];
-    
     self.betableLoader.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    
     [self.view addSubview:self.betableLoader];
     
     UIImageView *betableLogo = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 300, 63)];
     betableLogo.image = [UIImage frameworkImageNamed:@"betable_player.png"];
     betableLogo.center = CGPointMake(self.betableLoader.frame.size.width/2, self.betableLoader.frame.size.height/2+20);
     
-    betableLogo.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |
-        UIViewAutoresizingFlexibleTopMargin |
-        UIViewAutoresizingFlexibleBottomMargin;
+//    betableLogo.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |
+//        UIViewAutoresizingFlexibleTopMargin |
+//        UIViewAutoresizingFlexibleBottomMargin;
     
     [self.betableLoader addSubview:betableLogo];
     
@@ -150,12 +195,13 @@ BOOL isPad() {
     self.spinner.center = CGPointMake(self.betableLoader.frame.size.width/2, self.spinner.center.y);
     [self.spinner startAnimating];
     [self.betableLoader addSubview:self.spinner];
-    
     self.spinner.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |
         UIViewAutoresizingFlexibleTopMargin |
         UIViewAutoresizingFlexibleBottomMargin;
     
     [self.view addSubview:_closeButton];
+    
+    [self addCloseButtonConstraints];
     
     //If we have already loaded then don't show the betableLoader and show the webview
     if (_finishedLoading) {
@@ -169,23 +215,14 @@ BOOL isPad() {
     _viewLoaded = YES;
     
     if (self.webView) {
-        //Align webview to the top of the statusBar`
-        id topGuide = self.topLayoutGuide;
-        UIView *webView = self.webView;
-        [webView setTranslatesAutoresizingMaskIntoConstraints: NO];
-        NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings (webView, topGuide);
-        NSArray *consts = [NSLayoutConstraint constraintsWithVisualFormat: @"V:[topGuide]-(0)-[webView]-(0)-|"
-                                                                  options: 0
-                                                                  metrics: nil
-                                                                    views: viewsDictionary];
-        [self.view addConstraints:consts];
-        
-        consts = [NSLayoutConstraint constraintsWithVisualFormat: @"H:|-(0)-[webView]-(0)-|"
-                                                                  options: 0
-                                                                  metrics: nil
-                                                                    views: viewsDictionary];
-        [self.view addConstraints:consts];
+        [self addWebViewConstraints];
     }
+}
+
+- (void)resetView {
+    CGRect frame = self.betableLoader.frame;
+    frame.origin.y = 0;
+    self.betableLoader.frame = frame;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -193,25 +230,6 @@ BOOL isPad() {
     if (!self.webView) {
         //If the webview was destroyed for memory usage or because of error
         [self preloadWebview];
-    }
-    if ([self.webView superview] == nil) {
-        [self.view addSubview:self.webView];
-        
-        //Align webview to the top of the statusBar
-        id topGuide = self.topLayoutGuide;
-        UIView *webView = self.webView;
-        [webView setTranslatesAutoresizingMaskIntoConstraints: NO];
-        NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings (webView, topGuide);
-        NSArray *consts = [NSLayoutConstraint constraintsWithVisualFormat: @"V:[topGuide]-(0)-[webView]-(0)-|"
-                                                                  options: 0
-                                                                  metrics: nil
-                                                                    views: viewsDictionary];
-        [self.view addConstraints:consts];
-        consts = [NSLayoutConstraint constraintsWithVisualFormat: @"H:|-(0)-[webView]-(0)-|"
-                                                         options: 0
-                                                         metrics: nil
-                                                           views: viewsDictionary];
-        [self.view addConstraints:consts];
     }
 }
 
@@ -235,13 +253,9 @@ BOOL isPad() {
     [self.spinner stopAnimating];
     _finishedLoading = YES;
     NSString *jsMethod = [self.webView stringByEvaluatingJavaScriptFromString:@"window.overlay_close_button"];
-    NSLog(@"JS: %@", jsMethod);
-    NSLog(@"JS Class: %@", [jsMethod class]);
     if (![jsMethod length]) {
-        NSLog(@"Hiding");
         _closeButton.hidden = YES;
     } else {
-        NSLog(@"Not Hiding");
         _closeButton.hidden = NO;
     }
     [UIView animateWithDuration:.2 animations:^{

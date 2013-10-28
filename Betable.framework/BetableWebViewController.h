@@ -17,4 +17,5 @@
 - (BetableWebViewController*)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onClose;
 
 - (void)closeWindow;
+- (void)resetView;
 @end

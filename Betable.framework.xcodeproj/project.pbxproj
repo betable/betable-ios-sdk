@@ -23,7 +23,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		A5368211178F90A20009F3EB /* BetableResources-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A536820C178F90A20009F3EB /* BetableResources-Info.plist */; };
 		A544A0BC179870E200B58046 /* BetableBatchRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A544A0BA179870E200B58046 /* BetableBatchRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A544A0BD179870E200B58046 /* BetableBatchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A544A0BB179870E200B58046 /* BetableBatchRequest.m */; };
 		A5A4A0A417B33C53006871F9 /* BetableProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A4A0A217B33C53006871F9 /* BetableProfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -245,7 +244,7 @@
 		A5B6014E178F6EA000F162BF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "Tony hauber";
 			};
 			buildConfigurationList = A5B60151178F6EA000F162BF /* Build configuration list for PBXProject "Betable.framework" */;
@@ -274,7 +273,6 @@
 			files = (
 				A5B60192178F767A00F162BF /* betable_player.png in Resources */,
 				A5B60193178F767A00F162BF /* betable_player@2x.png in Resources */,
-				A5368211178F90A20009F3EB /* BetableResources-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -370,8 +368,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos6.1;
+				SDKROOT = iphoneos7.0;
+				VALID_ARCHS = "arm64 armv7 armv7s i386";
 			};
 			name = Debug;
 		};
@@ -387,14 +385,15 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				SDKROOT = iphoneos6.1;
+				SDKROOT = iphoneos7.0;
 				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "arm64 armv7 armv7s i386";
 			};
 			name = Release;
 		};
@@ -409,11 +408,10 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Betable.framework/Betable.framework-Prefix.pch";
-				ONLY_ACTIVE_ARCH = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = Betable;
 				PUBLIC_HEADERS_FOLDER_PATH = Headers;
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_STYLE = "non-global";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -432,11 +430,10 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Betable.framework/Betable.framework-Prefix.pch";
-				ONLY_ACTIVE_ARCH = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = Betable;
 				PUBLIC_HEADERS_FOLDER_PATH = Headers;
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_STYLE = "non-global";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -447,7 +444,6 @@
 		A5B6017C178F74E700F162BF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				DEAD_CODE_STRIPPING = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				OTHER_LDFLAGS = (
@@ -455,14 +451,12 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos7.0;
 			};
 			name = Debug;
 		};
 		A5B6017D178F74E700F162BF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				DEAD_CODE_STRIPPING = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				OTHER_LDFLAGS = (
@@ -470,14 +464,12 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos7.0;
 			};
 			name = Release;
 		};
 		A5B60190178F762400F162BF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -495,7 +487,6 @@
 		A5B60191178F762400F162BF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;

@@ -207,7 +207,7 @@
                        onFailure:(BetableFailureHandler)onFailure;
 
 // raises "User is not authroized" exception if there doesn't exist an access token
-- (void)checkAccessToken;
+- (void)checkAccessToken:(NSString*)method;
 
 // This method is used to clear a user out as the authroized user on a Betable Object. It
 // also manages the state of the betable object and it's web views.     

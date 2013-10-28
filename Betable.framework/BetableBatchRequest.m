@@ -87,7 +87,7 @@ NSString const *BetableBatchVersion = @"1.0";
 }
 
 - (void)runBatchOnComplete:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure{
-    [self.betable checkAccessToken];
+    [self.betable checkAccessToken:@"Run Batch"];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[BetableBatchRequest betableBatchURL:self.betable.accessToken]];
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];

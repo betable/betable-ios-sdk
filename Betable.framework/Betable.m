@@ -78,11 +78,10 @@ id NILIFY(NSObject *object) {
         if (jsonError == nil) {
             return object;
         }
-        NSLog(@"Self: %@", self);
         NSLog(@"JSONERROR: %@", jsonError);
         
         [NSException raise:@"JSON is not formated correctly"
-                    format:@"The JSON returned from the server was improperly formated"];
+                    format:@"The JSON returned from the server was improperly formated: %@", jsonError];
     }
     return nil;
 }
@@ -95,10 +94,13 @@ id NILIFY(NSObject *object) {
     //Verifcation Holds
     NSMutableArray *_deferredRequests;
     BetableProfile *_profile;
+    // This holds the value of the betable auth cookie when we precache the page. If the
+    // value of this cookie changes before then and the showing of the page, we need to
+    // load the page again.
+    NSString *_preCacheAuthToken;
 }
 - (NSString *)urlEncode:(NSString*)string;
 - (NSURL*)getAPIWithURL:(NSString*)urlString;
-- (void)checkAccessToken;
 + (NSString*)base64forData:(NSData*)theData;
 
 @end
@@ -138,6 +140,8 @@ id NILIFY(NSObject *object) {
 }
 
 - (void)setupAuthorizeWebView {
+    [self.currentWebView resetView];
+    _preCacheAuthToken = [self getBetableAuthCookie].value;
     CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
     CFStringRef UUIDSRef = CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
     NSString *UUID = [NSString stringWithFormat:@"%@", UUIDSRef];
@@ -154,15 +158,27 @@ id NILIFY(NSObject *object) {
                          [self urlEncode:self.redirectURI],
                          UUID];
     
-    NSLog(@"Auth URL: %@", authURL);
     self.currentWebView.url = authURL;
     CFRelease(UUIDRef);
     CFRelease(UUIDSRef);
 }
 
+- (NSHTTPCookie*)getBetableAuthCookie {
+    //Get the cookie jar
+    NSHTTPCookie *cookie;
+    NSHTTPCookieStorage *cookieJar = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    for (cookie in [cookieJar cookies]) {
+        BOOL isBetableCookie = [cookie.domain rangeOfString:@"betable.com"].location != NSNotFound;
+        BOOL isAuthCookie = [cookie.name isEqualToString:@"betable-players"];
+        if (isBetableCookie && isAuthCookie) {
+            return cookie;
+        }
+    }
+    return nil;
+}
+
 - (void)token:(NSString*)code {
     NSURL *apiURL = [NSURL URLWithString:[self getTokenURL]];
-    NSLog(@"TOKEN URL: %@", apiURL);
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:apiURL];
     NSString *authStr = [NSString stringWithFormat:@"%@:%@", clientID, clientSecret];
     NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
@@ -285,6 +301,10 @@ id NILIFY(NSObject *object) {
 }
 
 - (void)authorizeInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onAuthorize onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel {
+    if (![_preCacheAuthToken isEqualToString:[self getBetableAuthCookie].value]) {
+        self.currentWebView = [[BetableWebViewController alloc] init];
+        [self setupAuthorizeWebView];
+    }
     self.currentWebView.onCancel = onCancel;
     _onBetableNativeAppAuthCancel = onCancel;
     self.onAuthorize = onAuthorize;
@@ -293,12 +313,12 @@ id NILIFY(NSObject *object) {
     if(nativeAppAuthURL) {
         [[UIApplication sharedApplication] openURL:nativeAppAuthURL];
     } else {
-        [viewController presentViewController:self.currentWebView animated:YES completion:nil];
+        [viewController presentModalViewController:self.currentWebView animated:YES];
     }
 }
-- (void)checkAccessToken {
+- (void)checkAccessToken:(NSString*)method {
     if (self.accessToken == nil) {
-        [NSException raise:@"User is not authorized"
+        [NSException raise:[NSString stringWithFormat:@"User is not authorized %@", method]
                     format:@"User must have an access token to use this feature"];
     }
 }
@@ -309,14 +329,14 @@ id NILIFY(NSObject *object) {
           withData:(NSDictionary*)data
         onComplete:(BetableCompletionHandler)onComplete
          onFailure:(BetableFailureHandler)onFailure {
-    [self checkAccessToken];
+    [self checkAccessToken:@"Bet"];
     [self fireGenericAsynchronousRequestWithPath:[Betable getBetPath:gameID] method:@"POST" data:data onSuccess:onComplete onFailure:onFailure];
 }
 - (void)unbackedBetForGame:(NSString*)gameID
           withData:(NSDictionary*)data
         onComplete:(BetableCompletionHandler)onComplete
          onFailure:(BetableFailureHandler)onFailure {
-    [self checkAccessToken];
+    [self checkAccessToken:@"Unbacked Bet"];
     [self fireGenericAsynchronousRequestWithPath:[Betable getUnbackedBetPath:gameID] method:@"POST" data:data onSuccess:onComplete onFailure:onFailure];
 }
 - (void)creditBetForGame:(NSString*)gameID
@@ -324,7 +344,7 @@ id NILIFY(NSObject *object) {
                 withData:(NSDictionary*)data
               onComplete:(BetableCompletionHandler)onComplete
                onFailure:(BetableFailureHandler)onFailure {
-    [self checkAccessToken];
+    [self checkAccessToken:@"Credit Bet"];
     NSString *gameAndBonusID = [NSString stringWithFormat:@"%@/%@", gameID, creditGameID];
     [self betForGame:gameAndBonusID withData:data onComplete:onComplete onFailure:onFailure];
 }
@@ -333,29 +353,29 @@ id NILIFY(NSObject *object) {
                         withData:(NSDictionary*)data
                       onComplete:(BetableCompletionHandler)onComplete
                        onFailure:(BetableFailureHandler)onFailure {
-    [self checkAccessToken];
+    [self checkAccessToken:@"Unbacked Credit Bet"];
     NSString *gameAndBonusID = [NSString stringWithFormat:@"%@/%@", gameID, creditGameID];
     [self unbackedBetForGame:gameAndBonusID withData:data onComplete:onComplete onFailure:onFailure];
 }
 - (void)userAccountOnComplete:(BetableCompletionHandler)onComplete
                     onFailure:(BetableFailureHandler)onFailure{
-    [self checkAccessToken];
+    [self checkAccessToken:@"Account"];
     [self fireGenericAsynchronousRequestWithPath:[Betable getAccountPath] method:@"GET" onSuccess:onComplete onFailure:onFailure];
 }
 - (void)userWalletOnComplete:(BetableCompletionHandler)onComplete
                    onFailure:(BetableFailureHandler)onFailure {
-    [self checkAccessToken];
+    [self checkAccessToken:@"Wallet"];
     [self fireGenericAsynchronousRequestWithPath:[Betable getWalletPath] method:@"Get" onSuccess:onComplete onFailure:onFailure];
 }
 - (void)logout {
     //Get the cookie jar
-    NSHTTPCookie *cookie;
     NSHTTPCookieStorage *cookieJar = [NSHTTPCookieStorage sharedHTTPCookieStorage];
-    for (cookie in [cookieJar cookies]) {
-        [cookie.domain rangeOfString:@"betable.com"];
+    NSHTTPCookie *cookie = [self getBetableAuthCookie];
+    if (cookie) {
         [cookieJar deleteCookie:cookie];
     }
     //After the cookies are destroyed, reload the webpage
+    self.currentWebView = [[BetableWebViewController alloc] init];
     [self setupAuthorizeWebView];
     //And finally get rid of the access token
     self.accessToken = nil;
@@ -532,7 +552,7 @@ id NILIFY(NSObject *object) {
         }
     };
     
-    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:onComplete];
+    [NSURLConnection sendAsynchronousRequest:request queue:self.queue completionHandler:onComplete];
 }
 
 #pragma mark - Shared Data
