@@ -2,6 +2,13 @@
 
 If the SDK you downloaded does not have a versioning number, assume it is pre 0.8.0.
 
+## Current
+
+* Support for iOS7
+* More stable pre-caching of authorize page
+* Some support for promotions
+* Now using a track enpoint for better tracking of users.
+
 ## 0.9.0
 
 * Added hooks for Betable Testing Profiles. Which allows you to test your games against new features and flows, without changing the code at all (Coming Soon)
