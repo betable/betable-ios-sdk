@@ -116,13 +116,22 @@ BOOL isPad() {
 }
 
 - (void)addCloseButtonConstraints {
-    [_closeButton setTranslatesAutoresizingMaskIntoConstraints: NO];
+    @try {
+        [_closeButton setTranslatesAutoresizingMaskIntoConstraints: NO];
+    }
+    @catch (NSException *exception) {
+        // iOS 5.0 doesn't support auto layout.
+        _closeButton.frame = CGRectMake(self.view.frame.size.width-35, 5, 30, 30);
+        _closeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin  |   UIViewAutoresizingFlexibleBottomMargin;
+        return;
+    }
     id topGuide;
     NSString *verticalFormat;
     @try {
         topGuide = self.topLayoutGuide;
         verticalFormat = @"V:[topGuide]-5-[_closeButton(30)]";
     } @catch (NSException *exception) {
+        // iOS 6.0 doesn't support topLayoutGuide.
         topGuide = [[UIView alloc] init];
         verticalFormat = @"V:|-5-[_closeButton(30)]";
     }
@@ -141,17 +150,26 @@ BOOL isPad() {
 }
 - (void)addWebViewConstraints {
     //Align webview to the top of the statusBar
+    @try {
+        [self.webView setTranslatesAutoresizingMaskIntoConstraints: NO];
+    }
+    @catch (NSException *exception) {
+        // iOS 5.0 doesn't support auto layout.
+        self.webView.frame = CGRectMake(0,0,self.view.frame.size.width,self.view.frame.size.height);
+        self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        return;
+    }
     id topGuide;
     NSString *verticalFormat;
     @try {
         topGuide = self.topLayoutGuide;
         verticalFormat = @"V:[topGuide][webView]|";
     } @catch (NSException *exception) {
+        // iOS 6.0 doesn't support topLayoutGuide.
         topGuide = [[UIView alloc] init];
         verticalFormat = @"V:|[webView]|";
     }
     UIView *webView = self.webView;
-    [webView setTranslatesAutoresizingMaskIntoConstraints: NO];
     NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings (webView, topGuide);
     NSArray *consts = [NSLayoutConstraint constraintsWithVisualFormat: verticalFormat
                                                               options: 0
@@ -183,9 +201,9 @@ BOOL isPad() {
     betableLogo.image = [UIImage frameworkImageNamed:@"betable_player.png"];
     betableLogo.center = CGPointMake(self.betableLoader.frame.size.width/2, self.betableLoader.frame.size.height/2+20);
     
-//    betableLogo.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |
-//        UIViewAutoresizingFlexibleTopMargin |
-//        UIViewAutoresizingFlexibleBottomMargin;
+    betableLogo.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |
+        UIViewAutoresizingFlexibleTopMargin |
+        UIViewAutoresizingFlexibleBottomMargin;
     
     [self.betableLoader addSubview:betableLogo];
     
@@ -258,19 +276,21 @@ BOOL isPad() {
     } else {
         _closeButton.hidden = NO;
     }
-    [UIView animateWithDuration:.2 animations:^{
-        CGRect frame = self.betableLoader.frame;
-        frame.origin.y = -10;
-        self.betableLoader.frame = frame;
-    } completion:^(BOOL finished) {
+    if (!self.betableLoader.hidden) {
         [UIView animateWithDuration:.2 animations:^{
             CGRect frame = self.betableLoader.frame;
-            frame.origin.y = -frame.size.height;
+            frame.origin.y = -10;
             self.betableLoader.frame = frame;
         } completion:^(BOOL finished) {
-            self.betableLoader.hidden = YES;
+            [UIView animateWithDuration:.2 animations:^{
+                CGRect frame = self.betableLoader.frame;
+                frame.origin.y = -frame.size.height;
+                self.betableLoader.frame = frame;
+            } completion:^(BOOL finished) {
+                self.betableLoader.hidden = YES;
+            }];
         }];
-    }];
+    }
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
@@ -282,8 +302,10 @@ BOOL isPad() {
         BOOL userCloseAction = [params[@"action"] isEqualToString:@"close"];
         if (userCloseAction || userCloseError) {
             [self closeWindow];
-            return NO;
+        } else {
+            [[UIApplication sharedApplication] openURL:url];
         }
+        return NO;
     }
     return YES;
 }
