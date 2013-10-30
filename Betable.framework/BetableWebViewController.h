@@ -13,8 +13,10 @@
 
 @property (nonatomic, copy) BetableCancelHandler onCancel;
 @property (nonatomic, strong) NSString *url;
+@property BOOL showInternalCloseButton;
 
 - (BetableWebViewController*)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onClose;
+- (id)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onCancel showInternalCloseButton:(BOOL)showInternalCloseButton;
 
 - (void)closeWindow;
 - (void)resetView;

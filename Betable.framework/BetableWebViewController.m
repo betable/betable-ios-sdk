@@ -75,6 +75,7 @@ BOOL isPad() {
         _errorLoading = nil;
         _viewLoaded = NO;
         _errorShown = NO;
+        self.showInternalCloseButton = YES;
     }
     return self;
 }
@@ -82,6 +83,16 @@ BOOL isPad() {
 - (id)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onCancel {
     self = [self init];
     if (self) {
+        self.url = url;
+        self.onCancel = onCancel;
+    }
+    return self;
+}
+
+- (id)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onCancel showInternalCloseButton:(BOOL)showInternalCloseButton {
+    self = [self init];
+    if (self) {
+        self.showInternalCloseButton = showInternalCloseButton;
         self.url = url;
         self.onCancel = onCancel;
     }
@@ -99,9 +110,11 @@ BOOL isPad() {
     if ([[url query] length]) {
         queryDelimeter = @"&";
     }
-    NSString *adjustedURLString = [NSString stringWithFormat:@"%@%@link_back_to_game=true", self.url, queryDelimeter];
-    url = [NSURL URLWithString:adjustedURLString];
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url ];
+    if (self.showInternalCloseButton) {
+        NSString *adjustedURLString = [NSString stringWithFormat:@"%@%@link_back_to_game=true", self.url, queryDelimeter];
+        url = [NSURL URLWithString:adjustedURLString];
+    }
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
     self.webView = [[UIWebView alloc] init];
     
     [self.webView loadRequest:request];
@@ -296,7 +309,6 @@ BOOL isPad() {
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
     NSURL *url = request.URL;
     NSDictionary *params = [self paramsFromURL:url];
-    NSLog(@"Loading URL:%@", url);
     if (![[url scheme] isEqualToString:@"http"] && ![[url scheme] isEqualToString:@"https"]) {
         BOOL userCloseError = params[@"error"] && [params[@"error_description"] isEqualToString:@"user_close"];
         BOOL userCloseAction = [params[@"action"] isEqualToString:@"close"];
