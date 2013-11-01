@@ -27,6 +27,7 @@ BOOL isPad() {
     
     NSString *fileName = nameParts[0];
     NSString *fileExtension = nameParts[1];
+
     if ([[UIScreen mainScreen] respondsToSelector:@selector(displayLinkWithTarget:selector:)] &&
         ([UIScreen mainScreen].scale == 2.0)) {
         fileName = [fileName stringByAppendingString:@"@2x"];
@@ -392,5 +393,9 @@ BOOL isPad() {
     } else {
         return (toInterfaceOrientation == UIInterfaceOrientationPortrait);
     }
+}
+
+- (void)dealloc {
+    self.webView.delegate = nil;
 }
 @end
