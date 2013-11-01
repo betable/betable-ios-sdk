@@ -116,17 +116,24 @@ BOOL isPad() {
         url = [NSURL URLWithString:adjustedURLString];
     }
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
-    self.webView = [[UIWebView alloc] init];
+    NSLog(@"Loading");
+    self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     
     [self.webView loadRequest:request];
     self.webView.hidden = YES;
     self.webView.delegate = self;
+    
+    [self.view insertSubview:self.webView atIndex:0];
+    [self addWebViewConstraints];
     
     _closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_closeButton setTitle:@"×" forState:UIControlStateNormal];
     [_closeButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
     _closeButton.titleLabel.font = [UIFont boldSystemFontOfSize:32];
     [_closeButton addTarget:self action:@selector(closeWindow) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self.view addSubview:_closeButton];
+    [self addCloseButtonConstraints];
 }
 
 - (void)addCloseButtonConstraints {
@@ -204,8 +211,6 @@ BOOL isPad() {
 
     [super viewDidLoad];
     
-    [self.view addSubview:self.webView];
-    
     self.betableLoader = [[UIView alloc] initWithFrame:CGRectMake(0, -20, self.view.frame.size.width, self.view.frame.size.height+20)];
     self.betableLoader.backgroundColor = [UIColor colorWithRed:238.0/255.0 green:243.0/255.0 blue:347.9/255.0 alpha:1.0];
     self.betableLoader.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -231,23 +236,11 @@ BOOL isPad() {
         UIViewAutoresizingFlexibleTopMargin |
         UIViewAutoresizingFlexibleBottomMargin;
     
-    [self.view addSubview:_closeButton];
-    
-    [self addCloseButtonConstraints];
-    
     //If we have already loaded then don't show the betableLoader and show the webview
     if (_finishedLoading) {
-        self.webView.hidden = NO;
         self.betableLoader.hidden = YES;
     } else {
-        self.webView.hidden = YES;
         self.betableLoader.hidden = NO;
-    }
-    
-    _viewLoaded = YES;
-    
-    if (self.webView) {
-        [self addWebViewConstraints];
     }
 }
 
@@ -325,7 +318,7 @@ BOOL isPad() {
 
 - (void)webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error {
     if (_viewLoaded) {
-        NSLog(@"Showing Error on fail");
+        NSLog(@"Showing Error on failure");
         [self showErrorAlert:error];
     } else if (!_errorShown) {
         _errorLoading = error;
