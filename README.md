@@ -4,10 +4,11 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 
 ## Current
 
+* Now requires `AdSupport.framework`
 * Support for iOS7
 * More stable pre-caching of authorize page
 * Some support for promotions
-* Now using a track enpoint for better tracking of users.
+* Now using a track enpoint for better tracking of users, and tracks users through ad installs.
 
 ## 0.9.0
 
@@ -25,6 +26,8 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 ## Adding the Framework
 
 In the `framework` directory of this repository is a folder called `Betable.framework` and one called `Betable.bundle`.  Download these directories and then drag and drop them into your project (Usually into the frameworks group).  Then just `#import <Betable/Betable.h>` in whichever files you reference the Betable object form.  (This is the method that the [`betable-ios-sample`](https://github.com/betable/betable-ios-sample) app uses.)
+
+To use this framework you are required to include the following iOS frameworks: `Foundation.framework`, `UIKit.framework`, and `AdSupport.framework`.
 
 If you want to modify the code and build a new framework, simply build the Framework target in this project and the folders will be built to the proper build locations (usually `~/Library/Developer/Xcode/DerivedData/Betable.framework-<hash>/Build/Products/Debug-iphoneos/`).  Simply drag those files into your project from there or you can link to them so you can continue development on both the framework and your project at the same time.
 

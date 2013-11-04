@@ -25,6 +25,7 @@
 /* Begin PBXBuildFile section */
 		A544A0BC179870E200B58046 /* BetableBatchRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A544A0BA179870E200B58046 /* BetableBatchRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A544A0BD179870E200B58046 /* BetableBatchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A544A0BB179870E200B58046 /* BetableBatchRequest.m */; };
+		A55A7C3218282EF3003208A6 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A55A7C3118282EF3003208A6 /* AdSupport.framework */; };
 		A5A4A0A417B33C53006871F9 /* BetableProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A4A0A217B33C53006871F9 /* BetableProfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5A4A0A517B33C53006871F9 /* BetableProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A4A0A317B33C53006871F9 /* BetableProfile.m */; };
 		A5A4A0A717B41266006871F9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A4A0A617B41266006871F9 /* UIKit.framework */; };
@@ -73,6 +74,7 @@
 		A536820D178F90A20009F3EB /* BetableResources-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BetableResources-Prefix.pch"; sourceTree = "<group>"; };
 		A544A0BA179870E200B58046 /* BetableBatchRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableBatchRequest.h; sourceTree = "<group>"; };
 		A544A0BB179870E200B58046 /* BetableBatchRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableBatchRequest.m; sourceTree = "<group>"; };
+		A55A7C3118282EF3003208A6 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		A5A4A0A217B33C53006871F9 /* BetableProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BetableProfile.h; path = ../BetableProfile.h; sourceTree = "<group>"; };
 		A5A4A0A317B33C53006871F9 /* BetableProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BetableProfile.m; path = ../BetableProfile.m; sourceTree = "<group>"; };
 		A5A4A0A617B41266006871F9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -95,6 +97,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A55A7C3218282EF3003208A6 /* AdSupport.framework in Frameworks */,
 				A5A4A0A717B41266006871F9 /* UIKit.framework in Frameworks */,
 				A5B6015A178F6EA000F162BF /* Foundation.framework in Frameworks */,
 			);
@@ -133,6 +136,7 @@
 		A5B60158178F6EA000F162BF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A55A7C3118282EF3003208A6 /* AdSupport.framework */,
 				A5A4A0A617B41266006871F9 /* UIKit.framework */,
 				A5B60159178F6EA000F162BF /* Foundation.framework */,
 				A5B60186178F762400F162BF /* CoreFoundation.framework */,

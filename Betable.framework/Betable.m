@@ -27,6 +27,7 @@
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
+#import <AdSupport/AdSupport.h>
 #import "Betable.h"
 #import "BetableProfile.h"
 #import "BetableWebViewController.h"
@@ -157,7 +158,11 @@ id NILIFY(NSObject *object) {
                          [self urlEncode:self.clientID],
                          [self urlEncode:self.redirectURI],
                          UUID];
-    
+    NSString *IDFA = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+    if (IDFA) {
+        authURL = [NSString stringWithFormat:@"%@&device_identifier=%@", authURL, IDFA];
+    }
+    NSLog(@"Auth URL: %@", authURL);
     self.currentWebView.url = authURL;
     CFRelease(UUIDRef);
     CFRelease(UUIDSRef);
@@ -476,6 +481,7 @@ id NILIFY(NSObject *object) {
                                [self urlEncode:clientID],
                                [self urlEncode:redirectURI],
                                UUID];
+
     if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:nativeAuthURL]] == YES) {
         return [NSURL URLWithString:nativeAuthURL];
     }
