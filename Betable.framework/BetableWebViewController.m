@@ -116,7 +116,6 @@ BOOL isPad() {
         url = [NSURL URLWithString:adjustedURLString];
     }
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
-    NSLog(@"Loading");
     self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     
     [self.webView loadRequest:request];
