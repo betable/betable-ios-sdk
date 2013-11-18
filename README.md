@@ -82,6 +82,12 @@ Once your app receives the redirect uri in `application:handleOpenURL:` of your 
 
 This is the final step in the OAuth protocol.  In the `onComplete` handler that you passed into the `authorizeInViewController:onAuthorizationComplete:onFailure:onCancel:` you will recieve your access token for the user associated with this `Betable` object.  You will want to store this with the user so you can make future requests on their behalf.
 
+### Loggging out
+
+    - (void)logout
+
+If you need to disassociate the current player with the betable object simply call the logout method.  This handles destroying the cookies, resetting the authorize web browser, and removing the betable token.
+
 ### Betting
 
     - (void)betForGame:(NSString*)gameID
