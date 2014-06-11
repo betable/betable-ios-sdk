@@ -29,6 +29,16 @@
 		A5A4A0A417B33C53006871F9 /* BetableProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A4A0A217B33C53006871F9 /* BetableProfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5A4A0A517B33C53006871F9 /* BetableProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A4A0A317B33C53006871F9 /* BetableProfile.m */; };
 		A5A4A0A717B41266006871F9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A4A0A617B41266006871F9 /* UIKit.framework */; };
+		A5B477C51946584600875CBE /* BetableTracking.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B477C31946584600875CBE /* BetableTracking.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5B477C61946584600875CBE /* BetableTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B477C41946584600875CBE /* BetableTracking.m */; };
+		A5B477C91946630D00875CBE /* BetableTrackingUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B477C71946630D00875CBE /* BetableTrackingUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5B477CA1946630D00875CBE /* BetableTrackingUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B477C81946630D00875CBE /* BetableTrackingUtil.m */; };
+		A5B477D31946637000875CBE /* NSData+BetableTracking.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B477CD1946637000875CBE /* NSData+BetableTracking.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5B477D41946637000875CBE /* NSData+BetableTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B477CE1946637000875CBE /* NSData+BetableTracking.m */; };
+		A5B477D51946637000875CBE /* NSString+BetableTracking.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B477CF1946637000875CBE /* NSString+BetableTracking.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5B477D61946637000875CBE /* NSString+BetableTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B477D01946637000875CBE /* NSString+BetableTracking.m */; };
+		A5B477D71946637000875CBE /* UIDevice+BetableTracking.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B477D11946637000875CBE /* UIDevice+BetableTracking.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5B477D81946637000875CBE /* UIDevice+BetableTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B477D21946637000875CBE /* UIDevice+BetableTracking.m */; };
 		A5B6015A178F6EA000F162BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B60159178F6EA000F162BF /* Foundation.framework */; };
 		A5B60170178F6F1B00F162BF /* Betable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B6016B178F6F1B00F162BF /* Betable.m */; };
 		A5B60172178F6F1B00F162BF /* BetableWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B6016F178F6F1B00F162BF /* BetableWebViewController.m */; };
@@ -38,6 +48,10 @@
 		A5B60192178F767A00F162BF /* betable_player.png in Resources */ = {isa = PBXBuildFile; fileRef = A5B60168178F6F1B00F162BF /* betable_player.png */; };
 		A5B60193178F767A00F162BF /* betable_player@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A5B60169178F6F1B00F162BF /* betable_player@2x.png */; };
 		A5B601C1178F8B9900F162BF /* BetableHandlers.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B601C0178F8B9900F162BF /* BetableHandlers.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5B95F921947A231004BDA4A /* BetableTrackingHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B95F901947A231004BDA4A /* BetableTrackingHistory.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5B95F931947A231004BDA4A /* BetableTrackingHistory.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B95F911947A231004BDA4A /* BetableTrackingHistory.m */; };
+		A5B95F961948C89F004BDA4A /* NSDictionary+BetableTracking.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B95F941948C89F004BDA4A /* NSDictionary+BetableTracking.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5B95F971948C89F004BDA4A /* NSDictionary+BetableTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B95F951948C89F004BDA4A /* NSDictionary+BetableTracking.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +92,16 @@
 		A5A4A0A217B33C53006871F9 /* BetableProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BetableProfile.h; path = ../BetableProfile.h; sourceTree = "<group>"; };
 		A5A4A0A317B33C53006871F9 /* BetableProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BetableProfile.m; path = ../BetableProfile.m; sourceTree = "<group>"; };
 		A5A4A0A617B41266006871F9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		A5B477C31946584600875CBE /* BetableTracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableTracking.h; sourceTree = "<group>"; };
+		A5B477C41946584600875CBE /* BetableTracking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableTracking.m; sourceTree = "<group>"; };
+		A5B477C71946630D00875CBE /* BetableTrackingUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableTrackingUtil.h; sourceTree = "<group>"; };
+		A5B477C81946630D00875CBE /* BetableTrackingUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableTrackingUtil.m; sourceTree = "<group>"; };
+		A5B477CD1946637000875CBE /* NSData+BetableTracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+BetableTracking.h"; sourceTree = "<group>"; };
+		A5B477CE1946637000875CBE /* NSData+BetableTracking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+BetableTracking.m"; sourceTree = "<group>"; };
+		A5B477CF1946637000875CBE /* NSString+BetableTracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+BetableTracking.h"; sourceTree = "<group>"; };
+		A5B477D01946637000875CBE /* NSString+BetableTracking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+BetableTracking.m"; sourceTree = "<group>"; };
+		A5B477D11946637000875CBE /* UIDevice+BetableTracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+BetableTracking.h"; sourceTree = "<group>"; };
+		A5B477D21946637000875CBE /* UIDevice+BetableTracking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+BetableTracking.m"; sourceTree = "<group>"; };
 		A5B60156178F6EA000F162BF /* libBetable.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libBetable.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5B60159178F6EA000F162BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A5B6015D178F6EA000F162BF /* Betable.framework-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Betable.framework-Prefix.pch"; sourceTree = "<group>"; };
@@ -90,6 +114,10 @@
 		A5B60185178F762400F162BF /* Betable.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Betable.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5B60186178F762400F162BF /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		A5B601C0178F8B9900F162BF /* BetableHandlers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableHandlers.h; sourceTree = "<group>"; };
+		A5B95F901947A231004BDA4A /* BetableTrackingHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableTrackingHistory.h; sourceTree = "<group>"; };
+		A5B95F911947A231004BDA4A /* BetableTrackingHistory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableTrackingHistory.m; sourceTree = "<group>"; };
+		A5B95F941948C89F004BDA4A /* NSDictionary+BetableTracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+BetableTracking.h"; sourceTree = "<group>"; };
+		A5B95F951948C89F004BDA4A /* NSDictionary+BetableTracking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+BetableTracking.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +142,35 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A5B477CB1946635500875CBE /* Tracking */ = {
+			isa = PBXGroup;
+			children = (
+				A5B477CC1946635F00875CBE /* Additions */,
+				A5B477C31946584600875CBE /* BetableTracking.h */,
+				A5B477C41946584600875CBE /* BetableTracking.m */,
+				A5B477C71946630D00875CBE /* BetableTrackingUtil.h */,
+				A5B477C81946630D00875CBE /* BetableTrackingUtil.m */,
+				A5B95F901947A231004BDA4A /* BetableTrackingHistory.h */,
+				A5B95F911947A231004BDA4A /* BetableTrackingHistory.m */,
+			);
+			name = Tracking;
+			sourceTree = "<group>";
+		};
+		A5B477CC1946635F00875CBE /* Additions */ = {
+			isa = PBXGroup;
+			children = (
+				A5B477CD1946637000875CBE /* NSData+BetableTracking.h */,
+				A5B477CE1946637000875CBE /* NSData+BetableTracking.m */,
+				A5B477CF1946637000875CBE /* NSString+BetableTracking.h */,
+				A5B477D01946637000875CBE /* NSString+BetableTracking.m */,
+				A5B477D11946637000875CBE /* UIDevice+BetableTracking.h */,
+				A5B477D21946637000875CBE /* UIDevice+BetableTracking.m */,
+				A5B95F941948C89F004BDA4A /* NSDictionary+BetableTracking.h */,
+				A5B95F951948C89F004BDA4A /* NSDictionary+BetableTracking.m */,
+			);
+			name = Additions;
+			sourceTree = "<group>";
+		};
 		A5B6014D178F6EA000F162BF = {
 			isa = PBXGroup;
 			children = (
@@ -147,6 +204,7 @@
 		A5B6015B178F6EA000F162BF /* Betable.framework */ = {
 			isa = PBXGroup;
 			children = (
+				A5B477CB1946635500875CBE /* Tracking */,
 				A5A4A0A217B33C53006871F9 /* BetableProfile.h */,
 				A5A4A0A317B33C53006871F9 /* BetableProfile.m */,
 				A5B60168178F6F1B00F162BF /* betable_player.png */,
@@ -196,6 +254,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				A5B60175178F6F7E00F162BF /* Betable.h in Headers */,
+				A5B477D31946637000875CBE /* NSData+BetableTracking.h in Headers */,
+				A5B477D51946637000875CBE /* NSString+BetableTracking.h in Headers */,
+				A5B477D71946637000875CBE /* UIDevice+BetableTracking.h in Headers */,
+				A5B95F961948C89F004BDA4A /* NSDictionary+BetableTracking.h in Headers */,
+				A5B477C51946584600875CBE /* BetableTracking.h in Headers */,
+				A5B477C91946630D00875CBE /* BetableTrackingUtil.h in Headers */,
+				A5B95F921947A231004BDA4A /* BetableTrackingHistory.h in Headers */,
 				A5B60177178F702600F162BF /* BetableWebViewController.h in Headers */,
 				A5B601C1178F8B9900F162BF /* BetableHandlers.h in Headers */,
 				A544A0BC179870E200B58046 /* BetableBatchRequest.h in Headers */,
@@ -248,7 +313,7 @@
 		A5B6014E178F6EA000F162BF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Tony hauber";
 			};
 			buildConfigurationList = A5B60151178F6EA000F162BF /* Build configuration list for PBXProject "Betable.framework" */;
@@ -317,9 +382,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5B95F971948C89F004BDA4A /* NSDictionary+BetableTracking.m in Sources */,
 				A5B60170178F6F1B00F162BF /* Betable.m in Sources */,
+				A5B477D41946637000875CBE /* NSData+BetableTracking.m in Sources */,
 				A5B60172178F6F1B00F162BF /* BetableWebViewController.m in Sources */,
 				A544A0BD179870E200B58046 /* BetableBatchRequest.m in Sources */,
+				A5B477C61946584600875CBE /* BetableTracking.m in Sources */,
+				A5B477D61946637000875CBE /* NSString+BetableTracking.m in Sources */,
+				A5B477D81946637000875CBE /* UIDevice+BetableTracking.m in Sources */,
+				A5B95F931947A231004BDA4A /* BetableTrackingHistory.m in Sources */,
+				A5B477CA1946630D00875CBE /* BetableTrackingUtil.m in Sources */,
 				A5A4A0A517B33C53006871F9 /* BetableProfile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -372,7 +444,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				SDKROOT = iphoneos7.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
 				VALID_ARCHS = "arm64 armv7 armv7s i386";
 			};
 			name = Debug;
@@ -395,7 +468,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				SDKROOT = iphoneos7.0;
+				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "arm64 armv7 armv7s i386";
 			};
@@ -413,12 +486,15 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Betable.framework/Betable.framework-Prefix.pch";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = Betable;
 				PUBLIC_HEADERS_FOLDER_PATH = Headers;
 				SKIP_INSTALL = YES;
-				STRIP_STYLE = "non-global";
+				STRIP_INSTALLED_PRODUCT = NO;
+				STRIP_STYLE = debugging;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64 x86";
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -435,12 +511,15 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Betable.framework/Betable.framework-Prefix.pch";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = Betable;
 				PUBLIC_HEADERS_FOLDER_PATH = Headers;
 				SKIP_INSTALL = YES;
-				STRIP_STYLE = "non-global";
+				STRIP_INSTALLED_PRODUCT = NO;
+				STRIP_STYLE = debugging;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64 x86";
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
@@ -450,11 +529,13 @@
 			buildSettings = {
 				DEAD_CODE_STRIPPING = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-force_load",
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64 x86";
 			};
 			name = Debug;
 		};
@@ -463,18 +544,20 @@
 			buildSettings = {
 				DEAD_CODE_STRIPPING = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-force_load",
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64 x86";
 			};
 			name = Release;
 		};
 		A5B60190178F762400F162BF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BetableResources/BetableResources-Prefix.pch";
@@ -491,7 +574,7 @@
 		A5B60191178F762400F162BF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

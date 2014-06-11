@@ -31,6 +31,7 @@
 #import "Betable.h"
 #import "BetableProfile.h"
 #import "BetableWebViewController.h"
+#import "BetableTracking.h"
 
 NSString *BetablePasteBoardUserIDKey = @"com.Betable.BetableSDK.sharedData:UserID";
 NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
@@ -99,6 +100,7 @@ id NILIFY(NSObject *object) {
     // value of this cookie changes before then and the showing of the page, we need to
     // load the page again.
     NSString *_preCacheAuthToken;
+    BetableTracking *_tracking;
 }
 - (NSString *)urlEncode:(NSString*)string;
 - (NSURL*)getAPIWithURL:(NSString*)urlString;
@@ -126,12 +128,14 @@ id NILIFY(NSObject *object) {
     }
     return self;
 }
-- (Betable*)initWithClientID:(NSString*)aClientID clientSecret:(NSString*)aClientSecret redirectURI:(NSString*)aRedirectURI {
+- (Betable*)initWithClientID:(NSString*)aClientID clientSecret:(NSString*)aClientSecret redirectURI:(NSString*)aRedirectURI environment:(NSString*)environment {
     self = [self init];
     if (self) {
         self.clientID = aClientID;
         self.clientSecret = aClientSecret;
         self.redirectURI = aRedirectURI;
+        _tracking = [[BetableTracking alloc] initWithClientID:clientID andEnvironment:environment];
+        [_tracking trackSession];
         [_profile verify:^{
             [self unqueueRequestsAfterVerification];
             [self setupAuthorizeWebView];

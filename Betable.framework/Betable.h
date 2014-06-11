@@ -29,6 +29,9 @@
 #import <Betable/BetableWebViewController.h>
 #import <Betable/BetableHandlers.h>
 #import <Betable/BetableBatchRequest.h>
+#import <BetableTracking.h>
+#import <BetableTrackingHistory.h>
+#import <BetableTrackingUtil.h>
 
 @interface NSDictionary (BetableJSON)
 - (NSData*)JSONData;
@@ -38,13 +41,14 @@
 - (NSObject*)objectFromJSONString;
 @end
 
+static NSString * const AIEnvironmentSandbox    = @"sandbox";
+static NSString * const AIEnvironmentProduction = @"production";
+
 @class BetableWebViewController;
 
 @interface Betable : NSObject
 
-- (Betable*)initWithClientID:(NSString*)clientID clientSecret:(NSString*)clientSecret redirectURI:(NSString*)redirectURI;
-
-- (Betable*)initWithAccessToken:(NSString*)aAccessToken;
+- (Betable*)initWithClientID:(NSString*)clientID clientSecret:(NSString*)clientSecret redirectURI:(NSString*)redirectURI environment:(NSString*)environment;
 
 // This method is called when no access token exists for the current user. It
 // will initiate the OAuth flow. It will bounce the user to the Safari app that
