@@ -52,6 +52,7 @@
 		A5B95F931947A231004BDA4A /* BetableTrackingHistory.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B95F911947A231004BDA4A /* BetableTrackingHistory.m */; };
 		A5B95F961948C89F004BDA4A /* NSDictionary+BetableTracking.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B95F941948C89F004BDA4A /* NSDictionary+BetableTracking.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5B95F971948C89F004BDA4A /* NSDictionary+BetableTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B95F951948C89F004BDA4A /* NSDictionary+BetableTracking.m */; };
+		A5B95F9F194900AD004BDA4A /* LoadableCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B95F9E194900AD004BDA4A /* LoadableCategory.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -118,6 +119,7 @@
 		A5B95F911947A231004BDA4A /* BetableTrackingHistory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableTrackingHistory.m; sourceTree = "<group>"; };
 		A5B95F941948C89F004BDA4A /* NSDictionary+BetableTracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+BetableTracking.h"; sourceTree = "<group>"; };
 		A5B95F951948C89F004BDA4A /* NSDictionary+BetableTracking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+BetableTracking.m"; sourceTree = "<group>"; };
+		A5B95F9E194900AD004BDA4A /* LoadableCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoadableCategory.h; path = ../../../../../Documents/LoadableCategory.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -224,6 +226,7 @@
 		A5B6015C178F6EA000F162BF /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				A5B95F9E194900AD004BDA4A /* LoadableCategory.h */,
 				A5B6015D178F6EA000F162BF /* Betable.framework-Prefix.pch */,
 			);
 			name = "Supporting Files";
@@ -261,6 +264,7 @@
 				A5B477C51946584600875CBE /* BetableTracking.h in Headers */,
 				A5B477C91946630D00875CBE /* BetableTrackingUtil.h in Headers */,
 				A5B95F921947A231004BDA4A /* BetableTrackingHistory.h in Headers */,
+				A5B95F9F194900AD004BDA4A /* LoadableCategory.h in Headers */,
 				A5B60177178F702600F162BF /* BetableWebViewController.h in Headers */,
 				A5B601C1178F8B9900F162BF /* BetableHandlers.h in Headers */,
 				A544A0BC179870E200B58046 /* BetableBatchRequest.h in Headers */,

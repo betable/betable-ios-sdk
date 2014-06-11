@@ -8,6 +8,7 @@
 
 #import "UIDevice+BetableTracking.h"
 #import "NSString+BetableTracking.h"
+#import "LoadableCategory.h"
 
 #import <sys/socket.h>
 #import <sys/sysctl.h>
@@ -17,6 +18,8 @@
 #if !ADJUST_NO_IDFA
 #import <AdSupport/ASIdentifierManager.h>
 #endif
+
+MAKE_CATEGORIES_LOADABLE(UIDevice_BetableTracking);
 
 @implementation UIDevice(BetableTracking)
 

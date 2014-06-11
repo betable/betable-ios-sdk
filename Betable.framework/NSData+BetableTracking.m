@@ -7,6 +7,9 @@
 //
 
 #import "NSData+BetableTracking.h"
+#import "LoadableCategory.h"
+
+MAKE_CATEGORIES_LOADABLE(NSData_BetableTracking);
 
 @implementation NSData(BetableTracking)
 

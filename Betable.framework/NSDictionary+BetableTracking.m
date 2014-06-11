@@ -8,6 +8,9 @@
 
 #import "NSDictionary+BetableTracking.h"
 #import "BetableTrackingUtil.h"
+#import "LoadableCategory.h"
+
+MAKE_CATEGORIES_LOADABLE(NSDictionary_BetableTracking);
 
 @implementation NSMutableDictionary (BetableTracking)
 

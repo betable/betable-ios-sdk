@@ -7,8 +7,11 @@
 //
 
 #import "NSString+BetableTracking.h"
+#import "LoadableCategory.h"
 
 #import "CommonCrypto/CommonDigest.h"
+
+MAKE_CATEGORIES_LOADABLE(NSString_BetableTracking);
 
 @implementation NSString(BetableTracking)
 
