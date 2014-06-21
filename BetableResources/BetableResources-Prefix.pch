@@ -1,7 +1,0 @@
-//
-// Prefix header for all source files of the 'BetableResources' target in the 'BetableResources' project
-//
-
-
-    #import <UIKit/UIKit.h>
-    #import <Foundation/Foundation.h>
