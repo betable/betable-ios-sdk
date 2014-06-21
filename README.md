@@ -2,12 +2,24 @@
 
 If the SDK you downloaded does not have a versioning number, assume it is pre 0.8.0.
 
-## Current
+## 0.1.0
 
+**NOTES for upgrading:**
+
+* To update you must be sure to call [betable launchWithOptions:launchOptions] in your app delegate's +applicationDidFinishLaunchingWithOptions: method
+
+* You must add `AdSupport.framework` and `iAd.framework` to your projects
+
+* You must add `-ObjC` to your other linker flags inside your target's build settings
+
+**Changes**
+
+* Now supporting install attribution through adjust.
+* Added calls for displaying deposit, withdraw, wallet, and redeem track endpoints
+* Now supporting the storing of an access token in the keychain
 * Now requires `AdSupport.framework`
 * Support for iOS7
 * More stable pre-caching of authorize page
-* Some support for promotions
 * Now using a track enpoint for better tracking of users, and tracks users through ad installs.
 
 ## 0.9.0
@@ -40,14 +52,31 @@ This is the object that serves as a wrapper for all calls to the Betable API.
     - (Betable*)initWithClientID:(NSString*)clientID
                     clientSecret:(NSString*)clientSecret
                      redirectURI:(NSString*)redirectURI;
+                     environment:(NSString*)environment;
 
-To create a `Betable` object simply initilize it with your client ID, client secret and redirect URI.  All of these can be set at <https://developers.betable.com> when you create your game.  Your redirect URI needs to have a custom unique scheme and the domain needs to be authorize. An example is betable+<company_name>+<game_name>://authorize .  It is important that it is unique so the oauth flow can be completed.  See **Authorization** below for more details.
+To create a `Betable` object simply initilize it with your client ID, client secret and redirect URI.  All of these can be set at <https://developers.betable.com> when you create your game.  Your redirect URI needs to have a custom unique scheme and the domain needs to be authorize. An example is betable+<company_name>+<game_name>://authorize .  It is important that it is unique so the oauth flow can be completed.  See **Authorization** below for more details. For environment you can set it to `BetableEnvironmentProduction` or `BetableEnvironmentSandbox`. **It is important that this be set to `BetableEnvironmentSandbox` unless you are releasing your app**
 
-### Adding the Token
+### Launching
+
+You must now launch your app before you can authorize or use any API's. This must be done in your application delegate's `+applicationDidFinishLaunchingWithOptions:` method. to launch, simply call the `launchWithOptions:` method on the betable object and pass in the launchOptions from the `+applicationDidFinishLaunchingWithOptions:` method.
+
+    - (void)launchWithOptions:(NSDictionary*)launcOptions;
+
+### Storing and Retrieving the access token
+
+If you have asked for the user's permission you may store their access token on the device to recall it when they start a session in the future. To do this call
+
+    - (void)storeAccessToken
+
+It will store the current access token on the Betable object to the KeyChain. To later retrieve and auth with this call
+
+    - (BOOL)loadStoredAccessToken
+
+This will load and store the access token on the current Betable instance. It will return `YES` if the access token existed and could be retrieved and `NO` otherwise. If this method has return `YES` you can skip the authorization step and take them directly to the game.
+
+If you have stored the access token your self in some other form, simply add the access token to the Betable object after initilization and skip the authorization flow.
 
 <pre><code>self.accessToken = <em>accessToken</em></code></pre>
-
-If you have previously acquired an access token for the user you can simply set it after the initialization, skipping the authorization and access token acquisition steps, and start making requests to the Betable API.
 
 ### Authorization
 
@@ -74,6 +103,7 @@ This is called when the server rejects the authorization attempt by a user. `err
 
 This is called when the person cancels out of the authorization at some point during the authroization flow.
 
+
 ### Getting the Access Token
 
     - (void)handleAuthorizeURL:(NSURL*)url
@@ -87,6 +117,28 @@ This is the final step in the OAuth protocol.  In the `onComplete` handler that 
     - (void)logout
 
 If you need to disassociate the current player with the betable object simply call the logout method.  This handles destroying the cookies, resetting the authorize web browser, and removing the betable token.
+
+### Launching Other Web Views
+
+You can launch a couple of other web views for the other track endpoints. They all require you give the viewController that they will be displayed over modally. They all take an onClose method. To protect the user the onClose method does not return any information about what actions the user has taken while the webview is displayed. It will simply notifiy you that they browser has closed.
+
+#### Deposit
+
+    - (void)depositInViewController:(UIViewController*) onClose:(BetableCancelHandler);
+
+#### Withdraw
+
+    - (void)withdrawInViewController:(UIViewController*) onClose:(BetableCancelHandler);
+
+#### Wallet
+
+    - (void)walletInViewController:(UIViewController*) onClose:(BetableCancelHandler);
+
+#### Redeem
+
+    - (void)redeemPromotion:(NSString*) inViewController:(UIViewController*) onClose:(BetableCancelHandler);
+
+    For this you can pass in the promotion as the first argument. It should be a string version of the complete unencoded URL for the promotion.
 
 ### Betting
 
