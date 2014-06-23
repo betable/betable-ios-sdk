@@ -9,9 +9,9 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 * You must add `AdSupport.framework` and `iAd.framework` to your projects
 * You must add `-ObjC` to your other linker flags inside your target's build settings
 
-## 1.0.1
+## 1.0.1 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.0.1/BetableFramework-1.0.1.zip)
 
-**Changes** [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.0.1/BetableFramework-1.0.1.zip)
+**Changes** 
 
 * No longer persisting stored access tokens after app deletion.
 * Removed the requirement to add an environment
