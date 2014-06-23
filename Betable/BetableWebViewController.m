@@ -75,6 +75,7 @@ BOOL isPad() {
         _errorLoading = nil;
         _viewLoaded = NO;
         _errorShown = NO;
+        self.portraitOnly = NO;
         self.showInternalCloseButton = YES;
     }
     return self;
@@ -364,7 +365,7 @@ BOOL isPad() {
 
 -(BOOL)shouldAutorotate
 {
-    if (isPad()) {
+    if (isPad() || !self.portraitOnly) {
         return YES;
     } else {
         return NO;
@@ -373,7 +374,7 @@ BOOL isPad() {
 
 -(NSUInteger)supportedInterfaceOrientations
 {
-    if (isPad()) {
+    if (isPad() || !self.portraitOnly) {
         return UIInterfaceOrientationMaskAllButUpsideDown;
     } else {
         return UIInterfaceOrientationMaskPortrait;
@@ -382,7 +383,7 @@ BOOL isPad() {
 
 // pre-iOS 6 support
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
-    if (isPad()) {
+    if (isPad() || !self.portraitOnly) {
         return YES;
     } else {
         return (toInterfaceOrientation == UIInterfaceOrientationPortrait);

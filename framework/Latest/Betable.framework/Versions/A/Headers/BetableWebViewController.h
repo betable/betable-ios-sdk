@@ -15,6 +15,7 @@
 @property (nonatomic, strong) NSString *url;
 @property BOOL showInternalCloseButton;
 @property BOOL finishedLoading;
+@property BOOL portraitOnly;
 @property BOOL loadCachedStateOnFinish;
 
 - (BetableWebViewController*)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onClose;

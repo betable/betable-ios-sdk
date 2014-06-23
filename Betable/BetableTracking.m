@@ -20,7 +20,7 @@
 
 static NSString   * const kHistoryFileName = @"BetableTrackingHistory";
 
-static NSString   * const kBaseURL = @"https://next.api.betable.com";
+static NSString   * const kBaseURL = @"https://api.betable.com";
 //static NSString   * const kBaseURL = @"https://app.adjust.io";
 
 static const double kRequestTimeout = 60;

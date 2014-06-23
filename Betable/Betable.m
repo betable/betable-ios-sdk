@@ -42,6 +42,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 
 #define SERVICE_KEY @"com.betable.SDK"
 #define USERNAME_KEY @"com.betable.AccessToken"
+#define FIRSTSTORE_KEY @"com.betable.FirstStore"
 
 @interface Betable () {
     BetableCancelHandler _onBetableNativeAppAuthCancel;
@@ -85,13 +86,13 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     }
     return self;
 }
-- (Betable*)initWithClientID:(NSString*)aClientID clientSecret:(NSString*)aClientSecret redirectURI:(NSString*)aRedirectURI environment:(NSString*)environment {
+- (Betable*)initWithClientID:(NSString*)aClientID clientSecret:(NSString*)aClientSecret redirectURI:(NSString*)aRedirectURI {
     self = [self init];
     if (self) {
         self.clientID = aClientID;
         self.clientSecret = aClientSecret;
         self.redirectURI = aRedirectURI;
-        _tracking = [[BetableTracking alloc] initWithClientID:aClientID andEnvironment:environment];
+        _tracking = [[BetableTracking alloc] initWithClientID:aClientID andEnvironment:BetableEnvironmentProduction];
         [_tracking trackSession];
         [_profile verify:^{
             [self unqueueRequestsAfterVerification];
@@ -109,13 +110,24 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 
 - (BOOL)loadStoredAccessToken {
     [self checkLaunchStatus];
-    NSError *error;
-    NSString *pAccessToken = [STKeychain getPasswordForUsername:USERNAME_KEY andServiceName:SERVICE_KEY error:&error];
-    if (error) {
-        NSLog(@"Error retrieving accessToken <%@>: %@", accessToken, error);
+    // If a user deletes the app, their keychain item still exists.
+    // If it hasn't been stored then delete it and don't retrieve it
+    NSString *pAccessToken = nil;
+    NSNumber *hasBeenStoredSinceInstall = (NSNumber*)[[NSUserDefaults standardUserDefaults] objectForKey:FIRSTSTORE_KEY];
+    if ([hasBeenStoredSinceInstall boolValue]) {
+        NSError *error;
+        pAccessToken = [STKeychain getPasswordForUsername:USERNAME_KEY andServiceName:SERVICE_KEY error:&error];
+        if (error) {
+            NSLog(@"Error retrieving accessToken <%@>: %@", accessToken, error);
+        }
+        self.accessToken = pAccessToken;
+    } else {
+        NSError *error;
+        [STKeychain deleteItemForUsername:USERNAME_KEY andServiceName:SERVICE_KEY error:&error];
+        if (error) {
+            NSLog(@"Error removing accessToken: %@", error);
+        }
     }
-    self.accessToken = pAccessToken;
-    NSLog(@"%@",pAccessToken);
     return !!pAccessToken;
 }
 
@@ -299,6 +311,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     if(nativeAppAuthURL) {
         [[UIApplication sharedApplication] openURL:nativeAppAuthURL];
     } else {
+        self.currentWebView.portraitOnly = YES;
         [viewController presentViewController:self.currentWebView animated:YES completion:nil];
         if(self.currentWebView.finishedLoading) {
             [self.currentWebView loadCachedState];
@@ -313,6 +326,11 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     [viewController presentViewController:webController animated:YES completion:nil];
 }
 
+
+- (void)supportInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
+    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"support"] onCancel:onClose];
+    [viewController presentViewController:webController animated:YES completion:nil];
+}
 
 - (void)withdrawInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
     BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"withdraw"] onCancel:onClose];

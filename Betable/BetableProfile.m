@@ -216,6 +216,7 @@ NSString const *BetableVerifyURL = @"developers.betable.com";
     [params setObject:SDK_VERSION forKey:@"sdk_version"];
     NSString *url = [NSString stringWithFormat:@"%@%@", BetableURL, path];
     NSString *fullURL = [[self urlForDomain:url andQuery:params] absoluteString];
+    NSLog(@"Full URL:%@", fullURL);
     return fullURL;
 }
 - (NSString*)decorateTrackURLForClient:(NSString*)clientID withAction:(NSString*)action andParams:(NSDictionary*)aParams {
