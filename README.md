@@ -6,18 +6,17 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 **NOTES for upgrading:**
 
 * To update you must be sure to call [betable launchWithOptions:launchOptions] in your app delegate's +applicationDidFinishLaunchingWithOptions: method
-
 * You must add `AdSupport.framework` and `iAd.framework` to your projects
-
 * You must add `-ObjC` to your other linker flags inside your target's build settings
 
 ## 1.0.1
 
 **Changes**
 
-	* Now no longer recognizing app token on app removal
-	* removed the requirement to add an environment
-	* added -supportInViewController:onClose: although the website does not currently support it 	* added landscape views for all web views except authorize
+* Now no longer recognizing app token on app removal
+* removed the requirement to add an environment
+* added -supportInViewController:onClose: although the website does not currently support it
+* added landscape views for all web views except authorize
 
 ## 1.0.0
 
