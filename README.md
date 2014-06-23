@@ -11,7 +11,7 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 
 ## 1.0.1
 
-**Changes**
+**Changes** [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.0.1/BetableFramework-1.0.1.zip)
 
 * No longer persisting stored access tokens after app deletion.
 * Removed the requirement to add an environment
