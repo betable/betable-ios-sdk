@@ -41,7 +41,7 @@ static NSString * const BetableEnvironmentProduction = @"production";
 
 @interface Betable : NSObject
 
-- (Betable*)initWithClientID:(NSString*)clientID clientSecret:(NSString*)clientSecret redirectURI:(NSString*)redirectURI environment:(NSString*)environment;
+- (Betable*)initWithClientID:(NSString*)clientID clientSecret:(NSString*)clientSecret redirectURI:(NSString*)redirectURI;
 
 //This method is used to provide BetableSDK with the launch options for the app, it also allows betable to do install attribution for any ads that directed people to this app
 
@@ -111,11 +111,16 @@ static NSString * const BetableEnvironmentProduction = @"production";
 // This method is called when the user chooses to see their wallet or account. It will display the external/cobranded version of their wallet.
 //
 //      |onClose| - this block will be called when the webview is closed,
-//          it will not send any information about the nature of the
-//          promotion.
 //
-
 - (void)walletInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose;
+
+// This method is called when the user chooses to see their wallet or account. It will display the external/cobranded version of their wallet.
+//
+//      |onClose| - this block will be called when the webview is closed,
+//          it will not send any information about the nature of the
+//          support ticket lodged.
+//
+- (void)supportInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose;
 
 // This method allows developers to open a web view to any betable page, it takes care for any
 //
