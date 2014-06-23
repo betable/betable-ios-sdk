@@ -9,7 +9,7 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 * You must add `AdSupport.framework` and `iAd.framework` to your projects
 * You must add `-ObjC` to your other linker flags inside your target's build settings
 
-## 1.0.1 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.0.1/BetableFramework-1.0.1.zip)
+## 1.0.2 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.0.2/BetableFramework-1.0.2.zip)
 
 **Changes** 
 
@@ -17,6 +17,7 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 * Removed the requirement to add an environment
 * Added -supportInViewController:onClose: although the website does not currently support it
 * Added landscape views for all web views except authorize
+* Exposing the proper methods from betable.h
 
 ## 1.0.0
 
