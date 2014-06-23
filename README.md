@@ -13,10 +13,10 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 
 **Changes**
 
-* no longer persisting stored access tokens after app deletion.
-* removed the requirement to add an environment
-* added -supportInViewController:onClose: although the website does not currently support it
-* added landscape views for all web views except authorize
+* No longer persisting stored access tokens after app deletion.
+* Removed the requirement to add an environment
+* Added -supportInViewController:onClose: although the website does not currently support it
+* Added landscape views for all web views except authorize
 
 ## 1.0.0
 
