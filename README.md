@@ -13,7 +13,7 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 
 **Changes**
 
-* Now no longer recognizing app token on app removal
+* No longer persisting stored access tokens after app deletion.
 * removed the requirement to add an environment
 * added -supportInViewController:onClose: although the website does not currently support it
 * added landscape views for all web views except authorize
