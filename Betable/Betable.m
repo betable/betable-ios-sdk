@@ -133,6 +133,11 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 
 - (void)storeAccessToken {
     [self checkAccessToken:@"storeAccessToken"];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:[NSNumber numberWithBool:YES] forKey:FIRSTSTORE_KEY];
+    [defaults synchronize];
+    
     NSError *error;
     [STKeychain storeUsername:USERNAME_KEY andPassword:accessToken forServiceName:SERVICE_KEY updateExisting:YES error:&error];
     if (error) {
