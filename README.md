@@ -3,7 +3,7 @@
 If the SDK you downloaded does not have a versioning number, assume it is pre 0.8.0.
 
 
-**NOTES for upgrading:**
+**NOTES for upgrading to 1.0 and above:**
 
 * To update you must be sure to call [betable launchWithOptions:launchOptions] in your app delegate's +applicationDidFinishLaunchingWithOptions: method
 * You must add `AdSupport.framework` and `iAd.framework` to your projects
@@ -19,9 +19,7 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 * Added landscape views for all web views except authorize
 * Exposing the proper methods from betable.h
 
-## 1.0.0
-
-**Changes**
+**1.0 Changes**
 
 * Now supporting install attribution through adjust.
 * Added calls for displaying deposit, withdraw, wallet, and redeem track endpoints
