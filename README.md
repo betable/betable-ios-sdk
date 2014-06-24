@@ -9,7 +9,7 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 * You must add `AdSupport.framework` and `iAd.framework` to your projects
 * You must add `-ObjC` to your other linker flags inside your target's build settings
 
-## 1.0.3 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.0.2/BetableFramework-1.0.2.zip)
+## 1.0.3 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.0.3/BetableFramework-1.0.3.zip)
 
 **Changes** 
 
