@@ -162,8 +162,11 @@ MAKE_CATEGORIES_LOADABLE(UIDevice_BetableTracking);
 }
 
 - (NSString *)aiVendorId {
-    NSString * vendorId = [UIDevice.currentDevice.identifierForVendor UUIDString];
-    return vendorId;
+    if ([[UIDevice currentDevice] respondsToSelector:@selector(identifierForVendor)]) {
+        return [[[UIDevice currentDevice] identifierForVendor] UUIDString];
+    } else {
+        return @"";
+    }
 }
 
 @end

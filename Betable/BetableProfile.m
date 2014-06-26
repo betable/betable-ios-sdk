@@ -212,7 +212,9 @@ NSString const *BetableVerifyURL = @"developers.betable.com";
         params = [NSMutableDictionary dictionary];
     }
     [params setObject:clientID forKey:@"client_id"];
-    [params setObject:NULLIFY(IDFA) forKey:@"device_identifier"];
+    if (IDFA) {
+        [params setObject:IDFA forKey:@"device_identifier"];
+    }
     [params setObject:SDK_VERSION forKey:@"sdk_version"];
     NSString *url = [NSString stringWithFormat:@"%@%@", BetableURL, path];
     NSString *fullURL = [[self urlForDomain:url andQuery:params] absoluteString];
