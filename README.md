@@ -7,6 +7,7 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 
 * To update you must be sure to call [betable launchWithOptions:launchOptions] in your app delegate's +applicationDidFinishLaunchingWithOptions: method
 * You must add `AdSupport.framework` and `iAd.framework` to your projects
+* For 5.1 support you need to set the AdSupport iAd and Foundation frameworks to optional under "Link Binary With Libraries" in the "Build Phases" section of your target's settings.
 * You must add `-ObjC` to your other linker flags inside your target's build settings
 
 ## 1.0.4 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.0.4/BetableFramework-1.0.4.zip)
