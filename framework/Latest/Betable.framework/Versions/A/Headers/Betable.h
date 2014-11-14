@@ -41,6 +41,8 @@ static NSString * const BetableEnvironmentProduction = @"production";
 
 @interface Betable : NSObject
 
+@property (nonatomic, strong) BetableProfile *profile;
+
 - (Betable*)initWithClientID:(NSString*)clientID clientSecret:(NSString*)clientSecret redirectURI:(NSString*)redirectURI;
 
 //This method is used to provide BetableSDK with the launch options for the app, it also allows betable to do install attribution for any ads that directed people to this app
@@ -80,6 +82,10 @@ static NSString * const BetableEnvironmentProduction = @"production";
 // From your UIApplicationDelegate method application:handleOpenURL: you can
 // handle the response.
 - (void)authorizeInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel;
+
+// Same as authorizeInViewController excepts takes them to login instead of
+// register
+- (void)authorizeLoginInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel;
 
 // This method is called when the user chooses to deposit money. It will display the external/cobranded version of the deposit flow
 

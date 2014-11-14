@@ -8,11 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "BetableHandlers.h"
+#import "BetableProfile.h"
 
 @interface BetableWebViewController : UIViewController <UIWebViewDelegate, UIAlertViewDelegate>
 
 @property (nonatomic, copy) BetableCancelHandler onCancel;
 @property (nonatomic, strong) NSString *url;
+@property (nonatomic, strong) NSString *onLoadState;
 @property BOOL showInternalCloseButton;
 @property BOOL finishedLoading;
 @property BOOL portraitOnly;

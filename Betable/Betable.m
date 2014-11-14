@@ -147,6 +147,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 
 
 - (void)setupAuthorizeWebView {
+    //It will be inside of a navcontroller to protect its alignment.
     [self.currentWebView resetView];
     _preCacheAuthToken = [self getBetableAuthCookie].value;
     CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
@@ -303,6 +304,12 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 }
 
 - (void)authorizeInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onAuthorize onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel {
+    [self authorizeInViewController:viewController login:NO onAuthorizationComplete:onAuthorize onFailure:onFailure onCancel:onCancel];
+}
+- (void)authorizeLoginInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onAuthorize onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel {
+    [self authorizeInViewController:viewController login:YES onAuthorizationComplete:onAuthorize onFailure:onFailure onCancel:onCancel];
+}
+- (void)authorizeInViewController:(UIViewController*)viewController login:(BOOL)goToLogin onAuthorizationComplete:(BetableAccessTokenHandler)onAuthorize onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel {
     [self checkLaunchStatus];
     if (![_preCacheAuthToken isEqualToString:[self getBetableAuthCookie].value]) {
         self.currentWebView = [[BetableWebViewController alloc] init];
@@ -317,7 +324,14 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
         [[UIApplication sharedApplication] openURL:nativeAppAuthURL];
     } else {
         self.currentWebView.portraitOnly = YES;
+        /*UINavigationController *nvc = [[UINavigationController alloc] initWithRootViewController:self.currentWebView];
+        nvc.navigationBarHidden = YES;
+        self.currentWebView.modalPresentationStyle = UIModalPresentationFullScreen;
+        [viewController presentViewController:nvc animated:YES completion:nil];*/
         [viewController presentViewController:self.currentWebView animated:YES completion:nil];
+        if (goToLogin) {
+            self.currentWebView.onLoadState = @"ext.nux.play";
+        }
         if(self.currentWebView.finishedLoading) {
             [self.currentWebView loadCachedState];
         } else {

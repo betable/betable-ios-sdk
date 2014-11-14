@@ -116,8 +116,8 @@ BOOL isPad() {
         url = [NSURL URLWithString:adjustedURLString];
     }
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
-    self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    
+    self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, -20, self.view.frame.size.width, self.view.frame.size.height+20)];
+    self.webView.clipsToBounds = YES;
     [self.webView loadRequest:request];
     self.webView.hidden = YES;
     self.webView.delegate = self;
@@ -204,13 +204,17 @@ BOOL isPad() {
     [self.view addConstraints:consts];
 }
 
++ (void)attemptRotationToDeviceOrientation {
+    NSLog(@"IS THIS HAPPENING");
+}
+
 - (void)viewDidLoad {
 
     self.view.frame = [[UIScreen mainScreen] bounds];
 
     [super viewDidLoad];
     
-    self.betableLoader = [[UIView alloc] initWithFrame:CGRectMake(0, -20, self.view.frame.size.width, self.view.frame.size.height+20)];
+    self.betableLoader = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     self.betableLoader.backgroundColor = [UIColor colorWithRed:238.0/255.0 green:243.0/255.0 blue:347.9/255.0 alpha:1.0];
     self.betableLoader.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self.view addSubview:self.betableLoader];
@@ -270,7 +274,11 @@ BOOL isPad() {
     self.onCancel = nil;
 }
 - (void)loadCachedState {
-    [self.webView stringByEvaluatingJavaScriptFromString:@"window.loadCachedState()"];
+    NSString *javacript = @"window.loadCachedState()";
+    if (self.onLoadState) {
+        [NSString stringWithFormat:@"window.loadCachedState(%@)", self.onLoadState];
+    }
+    [self.webView stringByEvaluatingJavaScriptFromString:javacript];
 }
 
 #pragma mark - Web View Delegate
