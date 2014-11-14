@@ -36,6 +36,8 @@
 #import "BetableUtils.h"
 #import "STKeychain.h"
 
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+
 NSString *BetablePasteBoardUserIDKey = @"com.Betable.BetableSDK.sharedData:UserID";
 NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
 NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
@@ -80,6 +82,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
         _deferredRequests = [NSMutableArray array];
         _profile = [[BetableProfile alloc] init];
         self.currentWebView = [[BetableWebViewController alloc] init];
+        self.currentWebView.forcedOrientationWithNavController = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8");
         // If there is a testing profile, we need to verify it before we make
         // requests or set the URL for the authorize web view.
         self.queue = [[NSOperationQueue alloc] init];
@@ -149,6 +152,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 - (void)setupAuthorizeWebView {
     //It will be inside of a navcontroller to protect its alignment.
     [self.currentWebView resetView];
+    self.currentWebView.forcedOrientationWithNavController = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8");
     _preCacheAuthToken = [self getBetableAuthCookie].value;
     CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
     CFStringRef UUIDSRef = CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
@@ -324,11 +328,14 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
         [[UIApplication sharedApplication] openURL:nativeAppAuthURL];
     } else {
         self.currentWebView.portraitOnly = YES;
-        /*UINavigationController *nvc = [[UINavigationController alloc] initWithRootViewController:self.currentWebView];
-        nvc.navigationBarHidden = YES;
-        self.currentWebView.modalPresentationStyle = UIModalPresentationFullScreen;
-        [viewController presentViewController:nvc animated:YES completion:nil];*/
-        [viewController presentViewController:self.currentWebView animated:YES completion:nil];
+        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
+            UINavigationController *nvc = [[UINavigationController alloc] initWithRootViewController:self.currentWebView];
+            nvc.navigationBarHidden = YES;
+            self.currentWebView.modalPresentationStyle = UIModalPresentationFullScreen;
+            [viewController presentViewController:nvc animated:YES completion:nil];
+        } else {
+            [viewController presentViewController:self.currentWebView animated:YES completion:nil];
+        }
         if (goToLogin) {
             self.currentWebView.onLoadState = @"ext.nux.play";
         }

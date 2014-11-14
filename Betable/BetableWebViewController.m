@@ -189,6 +189,9 @@ BOOL isPad() {
         topGuide = [[UIView alloc] init];
         verticalFormat = @"V:|[webView]|";
     }
+    if (self.forcedOrientationWithNavController) {
+        verticalFormat = @"V:|[webView]|";
+    }
     UIView *webView = self.webView;
     NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings (webView, topGuide);
     NSArray *consts = [NSLayoutConstraint constraintsWithVisualFormat: verticalFormat
@@ -213,6 +216,12 @@ BOOL isPad() {
     self.view.frame = [[UIScreen mainScreen] bounds];
 
     [super viewDidLoad];
+    
+    if (self.forcedOrientationWithNavController) {
+        UIView *clockBacker = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 20)];
+        clockBacker.backgroundColor = [UIColor whiteColor];
+        [self.view addSubview:clockBacker];
+    }
     
     self.betableLoader = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     self.betableLoader.backgroundColor = [UIColor colorWithRed:238.0/255.0 green:243.0/255.0 blue:347.9/255.0 alpha:1.0];

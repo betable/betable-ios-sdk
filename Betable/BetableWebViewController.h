@@ -10,6 +10,7 @@
 #import "BetableHandlers.h"
 #import "BetableProfile.h"
 
+
 @interface BetableWebViewController : UIViewController <UIWebViewDelegate, UIAlertViewDelegate>
 
 @property (nonatomic, copy) BetableCancelHandler onCancel;
@@ -19,6 +20,7 @@
 @property BOOL finishedLoading;
 @property BOOL portraitOnly;
 @property BOOL loadCachedStateOnFinish;
+@property BOOL forcedOrientationWithNavController;
 
 - (BetableWebViewController*)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onClose;
 - (id)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onCancel showInternalCloseButton:(BOOL)showInternalCloseButton;
