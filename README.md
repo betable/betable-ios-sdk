@@ -10,16 +10,11 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 * For 5.1 support you need to set the AdSupport iAd and Foundation frameworks to optional under "Link Binary With Libraries" in the "Build Phases" section of your target's settings.
 * You must add `-ObjC` to your other linker flags inside your target's build settings
 
-## 1.0.4 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.0.4/BetableFramework-1.0.4.zip)
+## 1.0.5 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.0.5/BetableFramework-1.0.5.zip)
 
 **Changes** 
 
-* Added 5.1 support
-* No longer persisting stored access tokens after app deletion.
-* Removed the requirement to add an environment
-* Added -supportInViewController:onClose: although the website does not currently support it
-* Added landscape views for all web views except authorize
-* Exposing the proper methods from betable.h
+* Now supporting iOS 8 keyboard orientation
 
 **1.0 Changes**
 
@@ -30,6 +25,15 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 * Support for iOS7
 * More stable pre-caching of authorize page
 * Now using a track enpoint for better tracking of users, and tracks users through ad installs.
+
+## 1.0.4 
+
+* Added 5.1 support
+* No longer persisting stored access tokens after app deletion.
+* Removed the requirement to add an environment
+* Added -supportInViewController:onClose: although the website does not currently support it
+* Added landscape views for all web views except authorize
+* Exposing the proper methods from betable.h
 
 ## 0.9.0
 
