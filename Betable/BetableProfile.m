@@ -10,8 +10,7 @@
 #import "BetableProfile.h"
 #import "BetableHandlers.h"
 #import "Betable.h"
-#import "NSString+Betable.h"
-#import <AdSupport/AdSupport.h>
+#import "NSString+Betable.h"        
 #import "BetableUtils.h"
 
 NSString *BetablePasteBoardAPIHostName = @"com.Betable.BetableSDK.sharedData.profile:APIHost";
@@ -20,7 +19,7 @@ NSString *BetablePasteBoardClientIDName = @"com.Betable.BetableSDK.sharedData.pr
 NSString *BetablePasteBoardSignatureName = @"com.Betable.BetableSDK.sharedData.profile:Signature";
 NSString *BetablePasteBoardExpiryName = @"com.Betable.BetableSDK.sharedData.profile:Expiry";
 NSString const *BetableAPIURL = @"https://api.betable.com/1.0";
-NSString const *BetableURL = @"https://betable.com";
+NSString const *BetableURL = @"https://prospecthallcasino.com";
 //NSString const *BetableAuthorizeURL = @"https://betable.com/authorize";
 NSString const *BetableVerifyURL = @"developers.betable.com";
 
@@ -218,7 +217,6 @@ NSString const *BetableVerifyURL = @"developers.betable.com";
     [params setObject:SDK_VERSION forKey:@"sdk_version"];
     NSString *url = [NSString stringWithFormat:@"%@%@", BetableURL, path];
     NSString *fullURL = [[self urlForDomain:url andQuery:params] absoluteString];
-    NSLog(@"Full URL:%@", fullURL);
     return fullURL;
 }
 - (NSString*)decorateTrackURLForClient:(NSString*)clientID withAction:(NSString*)action andParams:(NSDictionary*)aParams {

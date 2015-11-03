@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>6F7CF962-58D7-4DF3-B88C-6FA48D95F175</string>
 	<key>IDESourceControlProjectName</key>
-	<string>Betable</string>
+	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>198EE1D844E8D99284579ECA0E66634FA6DE5E52</key>
 		<string>https://github.com/betable/betable-ios-sdk.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Betable.xcodeproj</string>
+	<string>Betable.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>198EE1D844E8D99284579ECA0E66634FA6DE5E52</key>

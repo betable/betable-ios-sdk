@@ -10,6 +10,8 @@
 
 id NULLIFY(NSObject *object);
 id NILIFY(NSObject *object);
+NSString *toString(id object);
+NSString *urlEncode(id object);
 
 @interface BetableUtils : NSObject
 

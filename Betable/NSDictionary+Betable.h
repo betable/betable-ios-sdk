@@ -11,5 +11,6 @@
 @interface NSDictionary (Betable)
 
 - (NSData*)JSONData;
+-(NSString*) urlEncodedString;
 
 @end

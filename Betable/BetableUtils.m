@@ -22,6 +22,15 @@ id NILIFY(NSObject *object) {
     return object;
 }
 
+NSString *toString(id object) {
+    return [NSString stringWithFormat: @"%@", object];
+}
+
+NSString *urlEncode(id object) {
+    NSString *string = toString(object);
+    return [string stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+}
+
 @implementation BetableUtils
 
 @end

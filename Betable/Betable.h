@@ -87,6 +87,15 @@ static NSString * const BetableEnvironmentProduction = @"production";
 // register
 - (void)authorizeLoginInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel;
 
+// This method is will open a game referenced by the passed in game slug to open a webview for that game in the viewcontroller that is passed in.
+
+//      |gameSlug| - this is the slug for the game you are trying to load
+- (void)openGame:(NSString*)gameSlug
+     withEconomy:(NSString*)economy
+inViewController:(UIViewController*)viewController
+          onHome:(BetableCancelHandler)onHome
+       onFailure:(BetableFailureHandler)onFaiure;
+
 // This method is called when the user chooses to deposit money. It will display the external/cobranded version of the deposit flow
 
 //      |onClose| - this block will be called when the webview is closed,
@@ -158,6 +167,25 @@ static NSString * const BetableEnvironmentProduction = @"production";
 - (void)unbackedToken:(NSString*)clientUserID
             onComplete:(BetableAccessTokenHandler)onComplete
             onFailure:(BetableFailureHandler)onFailure;
+
+// This method is used to return the game manifest for a particular game in the
+// betable canvas ecosystem. Using this you can load game that you have access
+// for inside of your game. You will need to email tony [at] betable [dot] com
+// if you want access to this method.
+//
+//      |gameSlug|: This is the slug for the game in the betable canvas ecosytem
+//      |onComplete|: This is a block that will be called if the server returns
+//          the request with a successful response code. It will be passed a
+//          dictionary that contains all of the JSON data returned from the
+//          betable server.
+//      |onFailure|: This is a block that will be called if the server returns
+//          with an error. It gets passed the NSURLResponse object, the string
+//          reresentation of the body, and the NSError that was raised.
+//          betable server.
+- (void)gameManifestForSlug:(NSString*)gameSlug
+                    economy:(NSString*)economy
+                 onComplete:(BetableCompletionHandler)onComplete
+                  onFailure:(BetableFailureHandler)onFailure;
 
 // This method is used to place a bet for the user associated with this Betable
 // object.
@@ -290,6 +318,7 @@ static NSString * const BetableEnvironmentProduction = @"production";
 
 // All of the betable server endpoint urls.
 - (NSString*)getTokenURL;
++ (NSString*) getGameURLPath:(NSString*)gameSlug;
 + (NSString*) getBetPath:(NSString*)gameID;
 + (NSString*) getUnbackedBetPath:(NSString*)gameID;
 + (NSString*) getWalletPath;

@@ -208,7 +208,7 @@ BOOL isPad() {
 }
 
 + (void)attemptRotationToDeviceOrientation {
-    NSLog(@"IS THIS HAPPENING");
+
 }
 
 - (void)viewDidLoad {
@@ -331,6 +331,9 @@ BOOL isPad() {
             [[UIApplication sharedApplication] openURL:url];
         }
         return NO;
+    } else if ([[url host] isEqualToString:@"prospecthallcasino.com"] && [params[@"reason"] isEqualToString:@"0"] && params[@"gameId"] && params[@"sessId"]) {
+        //This is enough to determine that the home button was hit with netent
+        [self closeWindow];
     }
     return YES;
 }

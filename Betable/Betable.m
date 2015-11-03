@@ -164,7 +164,6 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
         @"load":@"ext.nux.deposit"
     };
     NSString *authURL = [_profile decorateURL:@"/ext/precache" forClient:self.clientID withParams:authorizeParameters];
-    NSLog(@"Auth URL: %@", authURL);
     self.currentWebView.url = authURL;
     CFRelease(UUIDRef);
     CFRelease(UUIDSRef);
@@ -347,6 +346,15 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     }
 }
 
+- (void)openGame:(NSString*)gameSlug withEconomy:(NSString*)economy inViewController:(UIViewController*)viewController onHome:(BetableCancelHandler)onHome onFailure:(BetableFailureHandler)onFaiure{
+    //TODO Make request to get url
+    [self gameManifestForSlug:gameSlug economy:economy onComplete:^(NSDictionary *data) {
+        NSString* url = [NSString stringWithFormat:@"https://prospecthallcasino.com%@", data[@"url"]];
+        BetableWebViewController *webController = [[BetableWebViewController alloc]initWithURL:url onCancel:onHome showInternalCloseButton:NO];
+        [viewController presentViewController:webController animated:YES completion:nil];
+    } onFailure:onFaiure];
+}
+
 - (void)depositInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
     BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"deposit"] onCancel:onClose];
     [viewController presentViewController:webController animated:YES completion:nil];
@@ -396,7 +404,23 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 }
 
 #pragma mark - API Calls
-
+- (void)gameManifestForSlug:(NSString*)gameSlug
+                    economy:(NSString*)economy
+                 onComplete:(BetableCompletionHandler)onComplete
+                  onFailure:(BetableFailureHandler)onFailure {
+    //TODO use right path
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+    if (economy) {
+        data[@"economy"] = economy;
+        data[@"currency"] = @"GPB";
+    } else {
+        data[@"unbacked"] = @"true";
+    }
+    data[@"type"] = @"mobile";
+    data[@"sdk"] = @"true";
+    [self checkAccessToken:@"Load Game"];
+    [self fireGenericAsynchronousRequestWithPath:[Betable getGameURLPath:gameSlug] method:@"GET" data:data onSuccess:onComplete onFailure:onFailure];
+}
 - (void)betForGame:(NSString*)gameID
           withData:(NSDictionary*)data
         onComplete:(BetableCompletionHandler)onComplete
@@ -461,6 +485,9 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 
 #pragma mark - Path getters
 
++ (NSString*) getGameURLPath:(NSString*)gameSlug {
+    return [NSString stringWithFormat:@"/application_manifests/slug/%@/play", gameSlug];
+}
 + (NSString*) getBetPath:(NSString*)gameID {
     return [NSString stringWithFormat:@"/games/%@/bet", gameID];
 }
@@ -482,7 +509,16 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 
 
 - (NSURL*)getAPIWithURL:(NSString*)urlString {
-    urlString = [NSString stringWithFormat:@"%@?access_token=%@", urlString, self.accessToken];
+    return [self getAPIWithURL:urlString withQuery:nil];
+}
+
+- (NSURL*)getAPIWithURL:(NSString*)urlString withQuery:(NSDictionary*)query {
+    NSMutableDictionary *mutQuery = [NSMutableDictionary dictionary];
+    if (query) {
+        mutQuery = [query mutableCopy];
+    }
+    mutQuery[@"access_token"] = self.accessToken;
+    urlString = [NSString stringWithFormat:@"%@?%@", urlString, [mutQuery urlEncodedString]];
     return [NSURL URLWithString:urlString];
 }
                          
@@ -581,13 +617,18 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 - (void)fireGenericAsynchronousRequestWithPath:(NSString*)path method:(NSString*)method data:(NSDictionary*)data onSuccess:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure {
     if (_profile.loadedVerification || !_profile.hasProfile) {
         NSString *urlString = [NSString stringWithFormat:@"%@%@", _profile.apiURL, path];
-
-        NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:[self getAPIWithURL:urlString]];
+        NSURL *url = [self getAPIWithURL:urlString];
+        if (data && [[method lowercaseString] isEqualToString:@"get"]) {
+            url = [self getAPIWithURL:urlString withQuery:data];
+        }
+        NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:url];
         
         [request setHTTPMethod:method];
         if (data) {
-            [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-            [request setHTTPBody:[data JSONData]];
+            if ([[method lowercaseString] isEqualToString:@"post"]) {
+                [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+                [request setHTTPBody:[data JSONData]];
+            }
         }
         [self fireGenericAsynchronousRequest:request onSuccess:onSuccess onFailure:onFailure];
     } else {

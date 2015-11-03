@@ -10,6 +10,7 @@
 #import "BetableHandlers.h"
 
 @class Betable;
+@class BetableProfile;
 
 @interface BetableBatchRequest : NSObject
 
@@ -40,6 +41,6 @@
 - (NSMutableDictionary* )getUserAccountWithName:(NSString*)name;
 
 - (void)addRequest:(NSDictionary*)request;
-+ (NSURL*)betableBatchURL:(NSString*)accessToken;
+- (NSURL*)betableBatchURL:(NSString*)accessToken;
 - (void)runBatchOnComplete:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure;
 @end

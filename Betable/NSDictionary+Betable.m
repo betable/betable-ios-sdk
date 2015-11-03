@@ -8,6 +8,7 @@
 
 #import "NSDictionary+Betable.h"
 #import "LoadableCategory.h"
+#import "BetableUtils.h"
 
 MAKE_CATEGORIES_LOADABLE(NSDictionary_Betable);
 
@@ -27,5 +28,16 @@ MAKE_CATEGORIES_LOADABLE(NSDictionary_Betable);
                 format:@"The JSON returned from the server was improperly formated"];
     return nil;
 }
+
+-(NSString*) urlEncodedString {
+    NSMutableArray *parts = [NSMutableArray array];
+    for (id key in self) {
+        id value = [self objectForKey: key];
+        NSString *part = [NSString stringWithFormat: @"%@=%@", urlEncode(key), urlEncode(value)];
+        [parts addObject: part];
+    }
+    return [parts componentsJoinedByString: @"&"];
+}
+
 
 @end

@@ -10,11 +10,9 @@
 #import "Betable.h"
 #import "NSDictionary+Betable.h"
 #import "NSString+Betable.h"
+#import "BetableProfile.h"
 
 @implementation BetableBatchRequest
-
-NSString const *BetableBatchURL = @"https://api.betable.com";
-NSString const *BetableBatchVersion = @"1.0";
 
 - (id)initWithBetable:(Betable*)betable {
     self = [self init];
@@ -90,7 +88,7 @@ NSString const *BetableBatchVersion = @"1.0";
 
 - (void)runBatchOnComplete:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure{
     [self.betable checkAccessToken:@"Run Batch"];
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[BetableBatchRequest betableBatchURL:self.betable.accessToken]];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[self betableBatchURL:self.betable.accessToken]];
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     [request setHTTPBody:[@{@"requests": self.requests} JSONData]];
@@ -132,8 +130,8 @@ NSString const *BetableBatchVersion = @"1.0";
     [NSURLConnection sendAsynchronousRequest:request queue:self.betable.queue completionHandler:onComplete];
 }
 
-+ (NSURL*)betableBatchURL:(NSString*)accessToken {
-    NSString *stringURL = [NSString stringWithFormat:@"%@/%@/batch?access_token=%@", BetableBatchURL, BetableBatchVersion, accessToken];
+- (NSURL*)betableBatchURL:(NSString*)accessToken {
+    NSString *stringURL = [NSString stringWithFormat:@"%@/batch?access_token=%@", [self.betable.profile apiURL], accessToken];
     return [NSURL URLWithString:stringURL];
 }
 @end
