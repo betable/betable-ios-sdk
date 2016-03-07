@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AdSupport/ASIdentifierManager.h>
 #import "BetableProfile.h"
 #import "BetableHandlers.h"
 #import "Betable.h"
