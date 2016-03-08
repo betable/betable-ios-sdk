@@ -19,8 +19,24 @@ NSString *BetablePasteBoardAuthHostName = @"com.Betable.BetableSDK.sharedData.pr
 NSString *BetablePasteBoardClientIDName = @"com.Betable.BetableSDK.sharedData.profile:ClientID";
 NSString *BetablePasteBoardSignatureName = @"com.Betable.BetableSDK.sharedData.profile:Signature";
 NSString *BetablePasteBoardExpiryName = @"com.Betable.BetableSDK.sharedData.profile:Expiry";
+
+// Wanna run on localhost? uncomment this
+#define LOCALHOST 1
+
+#ifdef LOCALHOST
+// betable-id by any other name
+NSString const *BetableAPIURL = @"http://localhost:8050";
+
+// betable-players by any other name
+NSString const *BetableURL = @"http://localhost:8080";
+
+#else
 NSString const *BetableAPIURL = @"https://api.betable.com/1.0";
+
 NSString const *BetableURL = @"https://prospecthallcasino.com";
+
+#endif
+
 //NSString const *BetableAuthorizeURL = @"https://betable.com/authorize";
 NSString const *BetableVerifyURL = @"developers.betable.com";
 
