@@ -18,7 +18,7 @@
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
  * ARE DISCLAIMED. IN NO EVENT SHALL BETABLE LIMITED BE LIABLE FOR ANY DIRECT,
  * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODSuuuubu OR SERVICES;
  * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
@@ -30,7 +30,6 @@
 #import "Betable.h"
 #import "BetableProfile.h"
 #import "BetableWebViewController.h"
-#import "BetableTracking.h"
 #import "NSString+Betable.h"
 #import "NSDictionary+Betable.h"
 #import "BetableUtils.h"
@@ -47,8 +46,6 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 #define FIRSTSTORE_KEY @"com.betable.FirstStore"
 
 @interface Betable () {
-    BetableCancelHandler _onBetableNativeAppAuthCancel;
-    
     //Verifcation Holds
     NSMutableArray *_deferredRequests;
     BetableProfile *_profile;
@@ -56,7 +53,6 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     // value of this cookie changes before then and the showing of the page, we need to
     // load the page again.
     NSString *_preCacheAuthToken;
-    BetableTracking *_tracking;
     BOOL _launched;
     NSDictionary *_launchOptions;
 }
@@ -83,6 +79,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
         _profile = [[BetableProfile alloc] init];
         self.currentWebView = [[BetableWebViewController alloc] init];
         self.currentWebView.forcedOrientationWithNavController = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8");
+        
         // If there is a testing profile, we need to verify it before we make
         // requests or set the URL for the authorize web view.
         self.queue = [[NSOperationQueue alloc] init];
@@ -95,8 +92,6 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
         self.clientID = aClientID;
         self.clientSecret = aClientSecret;
         self.redirectURI = aRedirectURI;
-        _tracking = [[BetableTracking alloc] initWithClientID:aClientID andEnvironment:BetableEnvironmentProduction];
-        [_tracking trackSession];
         [_profile verify:^{
             [self unqueueRequestsAfterVerification];
             [self setupAuthorizeWebView];
@@ -190,8 +185,8 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
     NSString *authValue = [NSString stringWithFormat:@"Basic %@", [Betable base64forData:authData]];
     [request setAllHTTPHeaderFields:[NSDictionary dictionaryWithObject:authValue forKey:@"Authorization"]];
+    [request setHTTPMethod:@"POST"];
     
-    [request setHTTPMethod:@"POST"]; 
     NSString *body = [NSString stringWithFormat:@"grant_type=authorization_code&redirect_uri=%@&code=%@",
                       [self urlEncode:redirectURI],
                       code];
@@ -230,6 +225,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
         }
     };
     [request setHTTPBody:[body dataUsingEncoding:NSUTF8StringEncoding]];
+    
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:self.queue
                            completionHandler:onComplete
@@ -289,15 +285,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
             [self.currentWebView.presentingViewController dismissViewControllerAnimated:YES completion:nil];
         } else if (params[@"error"]) {
             if ([params[@"error_description"] isEqualToString:@"user_close"]) {
-                NSURL *nativeAppAuthURL = [self redirectableBetableAppURL];
-                if(nativeAppAuthURL) {
-                    if (_onBetableNativeAppAuthCancel) {
-                        _onBetableNativeAppAuthCancel();
-                    }
-                } else {
-                    [self.currentWebView closeWindow];
-                }
-                _onBetableNativeAppAuthCancel = nil;
+                [self.currentWebView closeWindow];
             } else {
                 NSError *error = [[NSError alloc] initWithDomain:@"BetableAuthorization" code:-1 userInfo:params];
                 self.onFailure(nil, nil, error);    
@@ -319,30 +307,27 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
         [self setupAuthorizeWebView];
     }
     self.currentWebView.onCancel = onCancel;
-    _onBetableNativeAppAuthCancel = onCancel;
     self.onAuthorize = onAuthorize;
     self.onFailure = onFailure;
-    NSURL *nativeAppAuthURL = [self redirectableBetableAppURL];
-    if(nativeAppAuthURL) {
-        [[UIApplication sharedApplication] openURL:nativeAppAuthURL];
+    
+    self.currentWebView.portraitOnly = YES;
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
+        UINavigationController *nvc = [[UINavigationController alloc] initWithRootViewController:self.currentWebView];
+        nvc.navigationBarHidden = YES;
+
+        self.currentWebView.modalPresentationStyle = UIModalPresentationFullScreen;
+        [viewController presentViewController:nvc animated:YES completion:nil];
     } else {
-        self.currentWebView.portraitOnly = YES;
-        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
-            UINavigationController *nvc = [[UINavigationController alloc] initWithRootViewController:self.currentWebView];
-            nvc.navigationBarHidden = YES;
-            self.currentWebView.modalPresentationStyle = UIModalPresentationFullScreen;
-            [viewController presentViewController:nvc animated:YES completion:nil];
-        } else {
-            [viewController presentViewController:self.currentWebView animated:YES completion:nil];
-        }
-        if (goToLogin) {
-            self.currentWebView.onLoadState = @"ext.nux.play";
-        }
-        if(self.currentWebView.finishedLoading) {
-            [self.currentWebView loadCachedState];
-        } else {
-            self.currentWebView.loadCachedStateOnFinish = YES;
-        }
+        [viewController presentViewController:self.currentWebView animated:YES completion:nil];
+    }
+    if (goToLogin) {
+        self.currentWebView.onLoadState = @"ext.nux.play";
+    }
+    if(self.currentWebView.finishedLoading) {
+        // This is a js call inside the page--should populate form
+        [self.currentWebView loadCachedState];
+    } else {
+        self.currentWebView.loadCachedStateOnFinish = YES;
     }
 }
 
@@ -592,6 +577,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
                                UUID];
     CFRelease(UUIDRef);
     CFRelease(UUIDSRef);
+    
     if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:nativeAuthURL]] == YES) {
         return [NSURL URLWithString:nativeAuthURL];
     }

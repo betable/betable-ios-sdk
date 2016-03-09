@@ -29,13 +29,6 @@
 #import <Betable/BetableWebViewController.h>
 #import <Betable/BetableHandlers.h>
 #import <Betable/BetableBatchRequest.h>
-#import <Betable/BetableTracking.h>
-#import <Betable/BetableTrackingHistory.h>
-#import <Betable/BetableTrackingUtil.h>
-
-static NSString * const BetableEnvironmentSandbox    = @"sandbox";
-static NSString * const BetableEnvironmentProduction = @"production";
-
 
 @class BetableWebViewController;
 
