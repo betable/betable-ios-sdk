@@ -25,14 +25,12 @@ NSString *BetablePasteBoardExpiryName = @"com.Betable.BetableSDK.sharedData.prof
 
 #ifdef LOCALHOST
 // betable-id by any other name
-NSString const *BetableAPIURL = @"http://localhost:8050";
-
+NSString const *BetableAPIURL = @"http://localhost:8020";
 // betable-players by any other name
 NSString const *BetableURL = @"http://localhost:8080";
 
 #else
 NSString const *BetableAPIURL = @"https://api.betable.com/1.0";
-
 NSString const *BetableURL = @"https://prospecthallcasino.com";
 
 #endif
