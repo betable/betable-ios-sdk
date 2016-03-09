@@ -26,6 +26,20 @@
 		A5839652194BA6E300AF0E8E /* NSString+Betable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5839650194BA6E300AF0E8E /* NSString+Betable.m */; };
 		A59ABF19194913D3005466CC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A59ABF18194913D3005466CC /* Foundation.framework */; };
 		A59ABF1F194913D3005466CC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A59ABF1D194913D3005466CC /* InfoPlist.strings */; };
+		A59ABF471949147C005466CC /* BetableTracking.h in Headers */ = {isa = PBXBuildFile; fileRef = A59ABF411949147C005466CC /* BetableTracking.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A59ABF481949147C005466CC /* BetableTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = A59ABF421949147C005466CC /* BetableTracking.m */; };
+		A59ABF491949147C005466CC /* BetableTrackingUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = A59ABF431949147C005466CC /* BetableTrackingUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A59ABF4A1949147C005466CC /* BetableTrackingUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = A59ABF441949147C005466CC /* BetableTrackingUtil.m */; };
+		A59ABF4B1949147C005466CC /* BetableTrackingHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = A59ABF451949147C005466CC /* BetableTrackingHistory.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A59ABF4C1949147C005466CC /* BetableTrackingHistory.m in Sources */ = {isa = PBXBuildFile; fileRef = A59ABF461949147C005466CC /* BetableTrackingHistory.m */; };
+		A59ABF5519491484005466CC /* NSData+BetableTracking.h in Headers */ = {isa = PBXBuildFile; fileRef = A59ABF4D19491484005466CC /* NSData+BetableTracking.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A59ABF5619491484005466CC /* NSData+BetableTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = A59ABF4E19491484005466CC /* NSData+BetableTracking.m */; };
+		A59ABF5719491484005466CC /* NSString+BetableTracking.h in Headers */ = {isa = PBXBuildFile; fileRef = A59ABF4F19491484005466CC /* NSString+BetableTracking.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A59ABF5819491484005466CC /* NSString+BetableTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = A59ABF5019491484005466CC /* NSString+BetableTracking.m */; };
+		A59ABF5919491484005466CC /* UIDevice+BetableTracking.h in Headers */ = {isa = PBXBuildFile; fileRef = A59ABF5119491484005466CC /* UIDevice+BetableTracking.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A59ABF5A19491484005466CC /* UIDevice+BetableTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = A59ABF5219491484005466CC /* UIDevice+BetableTracking.m */; };
+		A59ABF5B19491484005466CC /* NSDictionary+BetableTracking.h in Headers */ = {isa = PBXBuildFile; fileRef = A59ABF5319491484005466CC /* NSDictionary+BetableTracking.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A59ABF5C19491484005466CC /* NSDictionary+BetableTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = A59ABF5419491484005466CC /* NSDictionary+BetableTracking.m */; };
 		A59ABF5E1949148C005466CC /* LoadableCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = A59ABF5D1949148C005466CC /* LoadableCategory.h */; };
 		A5B102321954B23800D3F01F /* STKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B102301954B23800D3F01F /* STKeychain.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		A5B102331954B23800D3F01F /* STKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B102311954B23800D3F01F /* STKeychain.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -56,6 +70,20 @@
 		A59ABF1C194913D3005466CC /* Betable.Framework-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Betable.Framework-Info.plist"; sourceTree = "<group>"; };
 		A59ABF1E194913D3005466CC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A59ABF20194913D3005466CC /* Betable.Framework-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Betable.Framework-Prefix.pch"; sourceTree = "<group>"; };
+		A59ABF411949147C005466CC /* BetableTracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableTracking.h; sourceTree = "<group>"; };
+		A59ABF421949147C005466CC /* BetableTracking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableTracking.m; sourceTree = "<group>"; };
+		A59ABF431949147C005466CC /* BetableTrackingUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableTrackingUtil.h; sourceTree = "<group>"; };
+		A59ABF441949147C005466CC /* BetableTrackingUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableTrackingUtil.m; sourceTree = "<group>"; };
+		A59ABF451949147C005466CC /* BetableTrackingHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableTrackingHistory.h; sourceTree = "<group>"; };
+		A59ABF461949147C005466CC /* BetableTrackingHistory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableTrackingHistory.m; sourceTree = "<group>"; };
+		A59ABF4D19491484005466CC /* NSData+BetableTracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+BetableTracking.h"; sourceTree = "<group>"; };
+		A59ABF4E19491484005466CC /* NSData+BetableTracking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+BetableTracking.m"; sourceTree = "<group>"; };
+		A59ABF4F19491484005466CC /* NSString+BetableTracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+BetableTracking.h"; sourceTree = "<group>"; };
+		A59ABF5019491484005466CC /* NSString+BetableTracking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+BetableTracking.m"; sourceTree = "<group>"; };
+		A59ABF5119491484005466CC /* UIDevice+BetableTracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+BetableTracking.h"; sourceTree = "<group>"; };
+		A59ABF5219491484005466CC /* UIDevice+BetableTracking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+BetableTracking.m"; sourceTree = "<group>"; };
+		A59ABF5319491484005466CC /* NSDictionary+BetableTracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+BetableTracking.h"; sourceTree = "<group>"; };
+		A59ABF5419491484005466CC /* NSDictionary+BetableTracking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+BetableTracking.m"; sourceTree = "<group>"; };
 		A59ABF5D1949148C005466CC /* LoadableCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadableCategory.h; sourceTree = "<group>"; };
 		A5B102301954B23800D3F01F /* STKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STKeychain.m; sourceTree = "<group>"; };
 		A5B102311954B23800D3F01F /* STKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STKeychain.h; sourceTree = "<group>"; };
@@ -134,6 +162,7 @@
 				A583964A194B779700AF0E8E /* BetableWebViewController.m */,
 				A5B2DCBE1952193000276224 /* BetableUtils.h */,
 				A5B2DCBF1952193000276224 /* BetableUtils.m */,
+				A59ABF3F19491461005466CC /* Tracking */,
 				A59ABF1B194913D3005466CC /* Supporting Files */,
 			);
 			path = Betable;
@@ -150,6 +179,35 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		A59ABF3F19491461005466CC /* Tracking */ = {
+			isa = PBXGroup;
+			children = (
+				A59ABF411949147C005466CC /* BetableTracking.h */,
+				A59ABF421949147C005466CC /* BetableTracking.m */,
+				A59ABF431949147C005466CC /* BetableTrackingUtil.h */,
+				A59ABF441949147C005466CC /* BetableTrackingUtil.m */,
+				A59ABF451949147C005466CC /* BetableTrackingHistory.h */,
+				A59ABF461949147C005466CC /* BetableTrackingHistory.m */,
+				A59ABF4019491473005466CC /* Additions */,
+			);
+			name = Tracking;
+			sourceTree = "<group>";
+		};
+		A59ABF4019491473005466CC /* Additions */ = {
+			isa = PBXGroup;
+			children = (
+				A59ABF5319491484005466CC /* NSDictionary+BetableTracking.h */,
+				A59ABF5419491484005466CC /* NSDictionary+BetableTracking.m */,
+				A59ABF4D19491484005466CC /* NSData+BetableTracking.h */,
+				A59ABF4E19491484005466CC /* NSData+BetableTracking.m */,
+				A59ABF4F19491484005466CC /* NSString+BetableTracking.h */,
+				A59ABF5019491484005466CC /* NSString+BetableTracking.m */,
+				A59ABF5119491484005466CC /* UIDevice+BetableTracking.h */,
+				A59ABF5219491484005466CC /* UIDevice+BetableTracking.m */,
+			);
+			name = Additions;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -157,6 +215,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A59ABF5919491484005466CC /* UIDevice+BetableTracking.h in Headers */,
+				A59ABF471949147C005466CC /* BetableTracking.h in Headers */,
+				A59ABF4B1949147C005466CC /* BetableTrackingHistory.h in Headers */,
 				A5839643194B76E700AF0E8E /* NSDictionary+Betable.h in Headers */,
 				A5839637194B767F00AF0E8E /* BetableHandlers.h in Headers */,
 				A583964B194B779700AF0E8E /* BetableWebViewController.h in Headers */,
@@ -166,6 +227,10 @@
 				A5839636194B767F00AF0E8E /* BetableBatchRequest.h in Headers */,
 				A5B2DCC01952193000276224 /* BetableUtils.h in Headers */,
 				A5B102331954B23800D3F01F /* STKeychain.h in Headers */,
+				A59ABF5719491484005466CC /* NSString+BetableTracking.h in Headers */,
+				A59ABF5B19491484005466CC /* NSDictionary+BetableTracking.h in Headers */,
+				A59ABF5519491484005466CC /* NSData+BetableTracking.h in Headers */,
+				A59ABF491949147C005466CC /* BetableTrackingUtil.h in Headers */,
 				A59ABF5E1949148C005466CC /* LoadableCategory.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -244,7 +309,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# stolen couurtesy: http://stackoverflow.com/questions/28652650/how-to-build-cocoa-touch-framework-for-i386-and-x86-64-architecture\nUNIVERSAL_OUTPUTFOLDER=${BUILD_DIR}/${CONFIGURATION}-universal\n\nif [ \"true\" == ${ALREADYINVOKED:-false} ]\nthen\necho \"RECURSION: Detected, stopping\"\nelse\nexport ALREADYINVOKED=\"true\"\n\n# Step 0.  Want accurate timestamps?  Blow away the old one\nrm -Rf \"${PROJECT_DIR}/${PROJECT_NAME}.framework\"\n\n# Step 1. Build Device and Simulator versions\nxcodebuild -target \"${PROJECT_NAME}\" ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphoneos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" clean build\nxcodebuild -target \"${PROJECT_NAME}\" -configuration ${CONFIGURATION} -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" clean build\n\n# Step 2. Copy the framework structure (from iphoneos build) to the universal folder\ncp -R \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/${PROJECT_NAME}.framework\" \"${UNIVERSAL_OUTPUTFOLDER}/\"\n\n# Step 3. Copy Swift modules (from iphonesimulator build) to the copied framework directory\n#cp -R \"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${PROJECT_NAME}.framework/Modules/${PROJECT_NAME}.swiftmodule/.\" \"${UNIVERSAL_OUTPUTFOLDER}/${PROJECT_NAME}.framework/Modules/${PROJECT_NAME}.swiftmodule\"\n\n# Step 4. Create universal binary file using lipo and place the combined executable in the copied framework directory\nlipo -create -output \"${UNIVERSAL_OUTPUTFOLDER}/${PROJECT_NAME}.framework/${PROJECT_NAME}\" \"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${PROJECT_NAME}.framework/${PROJECT_NAME}\" \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/${PROJECT_NAME}.framework/${PROJECT_NAME}\"\n\n# Step 5. Convenience step to copy the framework to the project's directory\ncp -R \"${UNIVERSAL_OUTPUTFOLDER}/${PROJECT_NAME}.framework\" \"${PROJECT_DIR}\"\n\n# Step 6. Convenience step to open the project's directory in Finder\nopen \"${PROJECT_DIR}\"\n\nfi\n";
+			shellScript = "# stolen couurtesy: http://stackoverflow.com/questions/28652650/how-to-build-cocoa-touch-framework-for-i386-and-x86-64-architecture\nUNIVERSAL_OUTPUTFOLDER=${BUILD_DIR}/${CONFIGURATION}-universal\n\nif [ \"true\" == ${ALREADYINVOKED:-false} ]\nthen\necho \"RECURSION: Detected, stopping\"\nelse\nexport ALREADYINVOKED=\"true\"\n\n# Step 1. Build Device and Simulator versions\nxcodebuild -target \"${PROJECT_NAME}\" ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphoneos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" clean build\nxcodebuild -target \"${PROJECT_NAME}\" -configuration ${CONFIGURATION} -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" clean build\n\n# Step 2. Copy the framework structure (from iphoneos build) to the universal folder\ncp -R \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/${PROJECT_NAME}.framework\" \"${UNIVERSAL_OUTPUTFOLDER}/\"\n\n# Step 3. Copy Swift modules (from iphonesimulator build) to the copied framework directory\n#cp -R \"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${PROJECT_NAME}.framework/Modules/${PROJECT_NAME}.swiftmodule/.\" \"${UNIVERSAL_OUTPUTFOLDER}/${PROJECT_NAME}.framework/Modules/${PROJECT_NAME}.swiftmodule\"\n\n# Step 4. Create universal binary file using lipo and place the combined executable in the copied framework directory\nlipo -create -output \"${UNIVERSAL_OUTPUTFOLDER}/${PROJECT_NAME}.framework/${PROJECT_NAME}\" \"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${PROJECT_NAME}.framework/${PROJECT_NAME}\" \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/${PROJECT_NAME}.framework/${PROJECT_NAME}\"\n\n# Step 5. Convenience step to copy the framework to the project's directory\ncp -R \"${UNIVERSAL_OUTPUTFOLDER}/${PROJECT_NAME}.framework\" \"${PROJECT_DIR}\"\n\n# Step 6. Convenience step to open the project's directory in Finder\nopen \"${PROJECT_DIR}\"\n\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -253,14 +318,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A59ABF5C19491484005466CC /* NSDictionary+BetableTracking.m in Sources */,
+				A59ABF4C1949147C005466CC /* BetableTrackingHistory.m in Sources */,
+				A59ABF5619491484005466CC /* NSData+BetableTracking.m in Sources */,
 				A5839634194B767F00AF0E8E /* BetableBatchRequest.m in Sources */,
 				A5839633194B767F00AF0E8E /* BetableProfile.m in Sources */,
 				A5B2DCC11952193000276224 /* BetableUtils.m in Sources */,
+				A59ABF5819491484005466CC /* NSString+BetableTracking.m in Sources */,
 				A5839648194B777C00AF0E8E /* Betable.m in Sources */,
 				A5839644194B76E700AF0E8E /* NSDictionary+Betable.m in Sources */,
 				A5839652194BA6E300AF0E8E /* NSString+Betable.m in Sources */,
+				A59ABF481949147C005466CC /* BetableTracking.m in Sources */,
 				A5B102321954B23800D3F01F /* STKeychain.m in Sources */,
+				A59ABF4A1949147C005466CC /* BetableTrackingUtil.m in Sources */,
 				A583964C194B779700AF0E8E /* BetableWebViewController.m in Sources */,
+				A59ABF5A19491484005466CC /* UIDevice+BetableTracking.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
