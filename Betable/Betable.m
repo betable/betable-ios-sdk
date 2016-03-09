@@ -92,10 +92,8 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
         self.clientID = aClientID;
         self.clientSecret = aClientSecret;
         self.redirectURI = aRedirectURI;
-        [_profile verify:^{
-            [self unqueueRequestsAfterVerification];
-            [self setupAuthorizeWebView];
-        }];
+        [self fireDeferredRequests];
+        [self setupAuthorizeWebView];
     }
     return self;
 }
@@ -586,7 +584,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 
 #pragma mark - Request Handling
 
-- (void)unqueueRequestsAfterVerification {
+- (void)fireDeferredRequests {
     for (NSDictionary* deferredRequest in _deferredRequests) {
         [self fireGenericAsynchronousRequestWithPath:NILIFY(deferredRequest[@"path"])
                                               method:NILIFY(deferredRequest[@"method"])
@@ -594,6 +592,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
                                            onSuccess:NILIFY(deferredRequest[@"onShccess"])
                                            onFailure:NILIFY(deferredRequest[@"onFailure"])];
     }
+    [_deferredRequests removeAllObjects];
 }
 
 - (void)fireGenericAsynchronousRequestWithPath:(NSString*)path method:(NSString*)method onSuccess:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure {
@@ -601,7 +600,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 }
 
 - (void)fireGenericAsynchronousRequestWithPath:(NSString*)path method:(NSString*)method data:(NSDictionary*)data onSuccess:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure {
-    if (_profile.loadedVerification || !_profile.hasProfile) {
+    if (!_profile.hasProfile) {
         NSString *urlString = [NSString stringWithFormat:@"%@%@", _profile.apiURL, path];
         NSURL *url = [self getAPIWithURL:urlString];
         if (data && [[method lowercaseString] isEqualToString:@"get"]) {
