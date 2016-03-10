@@ -40,16 +40,12 @@
 
 NSString *BetablePasteBoardUserIDKey = @"com.Betable.BetableSDK.sharedData:UserID";
 NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
-NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 
 #define SERVICE_KEY @"com.betable.SDK"
 #define USERNAME_KEY @"com.betable.AccessToken"
 #define FIRSTSTORE_KEY @"com.betable.FirstStore"
 
 @interface Betable () {
-    BetableCancelHandler _onBetableNativeAppAuthCancel;
-    
-    //Verifcation Holds
     NSMutableArray *_deferredRequests;
     BetableProfile *_profile;
     // This holds the value of the betable auth cookie when we precache the page. If the
@@ -286,20 +282,8 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
             [self token:[params objectForKey:@"code"]];
             [self.currentWebView.presentingViewController dismissViewControllerAnimated:YES completion:nil];
         } else if (params[@"error"]) {
-            if ([params[@"error_description"] isEqualToString:@"user_close"]) {
-                NSURL *nativeAppAuthURL = [self redirectableBetableAppURL];
-                if(nativeAppAuthURL) {
-                    if (_onBetableNativeAppAuthCancel) {
-                        _onBetableNativeAppAuthCancel();
-                    }
-                } else {
-                    [self.currentWebView closeWindow];
-                }
-                _onBetableNativeAppAuthCancel = nil;
-            } else {
-                NSError *error = [[NSError alloc] initWithDomain:@"BetableAuthorization" code:-1 userInfo:params];
-                self.onFailure(nil, nil, error);    
-            }
+            NSError *error = [[NSError alloc] initWithDomain:@"BetableAuthorization" code:-1 userInfo:params];
+            self.onFailure(nil, nil, error);    
         }
     }
 }
@@ -307,9 +291,11 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
 - (void)authorizeInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onAuthorize onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel {
     [self authorizeInViewController:viewController login:NO onAuthorizationComplete:onAuthorize onFailure:onFailure onCancel:onCancel];
 }
+    
 - (void)authorizeLoginInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onAuthorize onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel {
     [self authorizeInViewController:viewController login:YES onAuthorizationComplete:onAuthorize onFailure:onFailure onCancel:onCancel];
 }
+    
 - (void)authorizeInViewController:(UIViewController*)viewController login:(BOOL)goToLogin onAuthorizationComplete:(BetableAccessTokenHandler)onAuthorize onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel {
     [self checkLaunchStatus];
     if (![_preCacheAuthToken isEqualToString:[self getBetableAuthCookie].value]) {
@@ -317,13 +303,8 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
         [self setupAuthorizeWebView];
     }
     self.currentWebView.onCancel = onCancel;
-    _onBetableNativeAppAuthCancel = onCancel;
     self.onAuthorize = onAuthorize;
     self.onFailure = onFailure;
-    NSURL *nativeAppAuthURL = [self redirectableBetableAppURL];
-    if(nativeAppAuthURL) {
-        [[UIApplication sharedApplication] openURL:nativeAppAuthURL];
-    } else {
         self.currentWebView.portraitOnly = YES;
         if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
             UINavigationController *nvc = [[UINavigationController alloc] initWithRootViewController:self.currentWebView];
@@ -337,11 +318,11 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
             self.currentWebView.onLoadState = @"ext.nux.play";
         }
         if(self.currentWebView.finishedLoading) {
+            // This is a method in the webview's JS
             [self.currentWebView loadCachedState];
         } else {
             self.currentWebView.loadCachedStateOnFinish = YES;
         }
-    }
 }
 
 - (void)openGame:(NSString*)gameSlug withEconomy:(NSString*)economy inViewController:(UIViewController*)viewController onHome:(BetableCancelHandler)onHome onFailure:(BetableFailureHandler)onFaiure{
@@ -433,6 +414,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     [self checkAccessToken:@"Unbacked Bet"];
     [self fireGenericAsynchronousRequestWithPath:[Betable getUnbackedBetPath:gameID] method:@"POST" data:data onSuccess:onComplete onFailure:onFailure];
 }
+
 - (void)creditBetForGame:(NSString*)gameID
                creditGame:(NSString*)creditGameID
                 withData:(NSDictionary*)data
@@ -442,6 +424,7 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     NSString *gameAndBonusID = [NSString stringWithFormat:@"%@/%@", gameID, creditGameID];
     [self betForGame:gameAndBonusID withData:data onComplete:onComplete onFailure:onFailure];
 }
+
 - (void)unbackedCreditBetForGame:(NSString*)gameID
                        creditGame:(NSString*)creditGameID
                         withData:(NSDictionary*)data
@@ -451,16 +434,19 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     NSString *gameAndBonusID = [NSString stringWithFormat:@"%@/%@", gameID, creditGameID];
     [self unbackedBetForGame:gameAndBonusID withData:data onComplete:onComplete onFailure:onFailure];
 }
+
 - (void)userAccountOnComplete:(BetableCompletionHandler)onComplete
                     onFailure:(BetableFailureHandler)onFailure{
     [self checkAccessToken:@"Account"];
     [self fireGenericAsynchronousRequestWithPath:[Betable getAccountPath] method:@"GET" onSuccess:onComplete onFailure:onFailure];
 }
+
 - (void)userWalletOnComplete:(BetableCompletionHandler)onComplete
                    onFailure:(BetableFailureHandler)onFailure {
     [self checkAccessToken:@"Wallet"];
     [self fireGenericAsynchronousRequestWithPath:[Betable getWalletPath] method:@"Get" onSuccess:onComplete onFailure:onFailure];
 }
+
 - (void)logout {
     //Get the cookie jar
     NSHTTPCookieStorage *cookieJar = [NSHTTPCookieStorage sharedHTTPCookieStorage];
@@ -569,31 +555,6 @@ NSString const *BetableNativeAuthorizeURL = @"betable-ios://authorize";
     }
     
     return [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-}
-
-
-/* The Betable app is our desired place to deal with authing and depositing
- *
- * This method will return an redirect url to the Betable app, only if the betable app exists
- * otherwise it returns nil.
- */
-- (NSURL*)redirectableBetableAppURL {
-    
-    CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
-    CFStringRef UUIDSRef = CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
-    NSString* UUID = [NSString stringWithFormat:@"%@", UUIDSRef];
-    NSString* urlFormat = @"%@?client_id=%@&redirect_uri=%@&state=%@&response_type=code";
-    NSString *nativeAuthURL = [NSString stringWithFormat:urlFormat,
-                               BetableNativeAuthorizeURL,
-                               [self urlEncode:clientID],
-                               [self urlEncode:redirectURI],
-                               UUID];
-    CFRelease(UUIDRef);
-    CFRelease(UUIDSRef);
-    if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:nativeAuthURL]] == YES) {
-        return [NSURL URLWithString:nativeAuthURL];
-    }
-    return nil;
 }
 
 #pragma mark - Request Handling
