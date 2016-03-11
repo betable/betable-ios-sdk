@@ -11,10 +11,7 @@
 
 @interface BetableProfile : NSObject <UIAlertViewDelegate>
 
-@property (readonly) BOOL loadedVerification;
-
 - (NSURL*)apiURL;
-- (void)verify:(void(^)(void))onComplete;
 
 @property (readonly) BOOL hasProfile;
 - (NSString*)decorateURL:(NSString*)path forClient:(NSString*)clientID withParams:(NSDictionary*)aParams;

@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AdSupport/ASIdentifierManager.h>
 #import "BetableProfile.h"
 #import "BetableHandlers.h"
 #import "Betable.h"
@@ -18,10 +19,21 @@ NSString *BetablePasteBoardAuthHostName = @"com.Betable.BetableSDK.sharedData.pr
 NSString *BetablePasteBoardClientIDName = @"com.Betable.BetableSDK.sharedData.profile:ClientID";
 NSString *BetablePasteBoardSignatureName = @"com.Betable.BetableSDK.sharedData.profile:Signature";
 NSString *BetablePasteBoardExpiryName = @"com.Betable.BetableSDK.sharedData.profile:Expiry";
+
+// Running a local betable server? Uncomment this
+// #define LOCALHOST 1
+
+#ifdef LOCALHOST
+// betable-id services
+NSString const *BetableAPIURL = @"http://localhost:8020";
+// betable-players services
+NSString const *BetableURL = @"http://localhost:8080";
+
+#else
 NSString const *BetableAPIURL = @"https://api.betable.com/1.0";
 NSString const *BetableURL = @"https://prospecthallcasino.com";
-//NSString const *BetableAuthorizeURL = @"https://betable.com/authorize";
-NSString const *BetableVerifyURL = @"developers.betable.com";
+
+#endif
 
 #define SDK_VERSION @"1.0"
 
@@ -31,15 +43,11 @@ NSString const *BetableVerifyURL = @"developers.betable.com";
     NSString *_signature;
     NSString *_expiry;
     NSString *_clientID;
-    BOOL _verified;
-    BOOL _loadedVerification;
 }
 
 @end
     
 @implementation BetableProfile
-
-@synthesize loadedVerification = _loadedVerification;
 
 - (id)init {
     self = [super init];
@@ -49,8 +57,6 @@ NSString const *BetableVerifyURL = @"developers.betable.com";
         _apiHost = [self stringFromSharedDataWithKey:BetablePasteBoardAPIHostName];
         _authHost = [self stringFromSharedDataWithKey:BetablePasteBoardAuthHostName];
         _expiry = [self stringFromSharedDataWithKey:BetablePasteBoardExpiryName];
-        _verified = NO;
-        _loadedVerification = NO;
     }
     return self;
 }
@@ -68,51 +74,11 @@ NSString const *BetableVerifyURL = @"developers.betable.com";
     [[self sharedDataWithKey:BetablePasteBoardExpiryName] setString:@""];
 }
 
-- (void)verify:(void(^)(void))onComplete {
-    if (self.hasProfile) {
-        NSLog(@"Using Profile API Host:%@ Auth Host:%@", _apiHost, _authHost);
-        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[self verifyProfileURL]];
-        [self fireGenericAsynchronousRequest:request onSuccess:^(NSDictionary *data) {
-            NSLog(@"Profile Verification Loaded: %@", data);
-            _verified = [data[@"verified"] boolValue];
-            _loadedVerification = YES;
-            [[[UIAlertView alloc] initWithTitle:@"Betable Profile" message:@"You are using a betable profile. If you do not know what this means then you are likely seeing this by mistake. Please remove the profile by tapping the remove button." delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:@"Remove", nil] show];
-            onComplete();
-        } onFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {
-            
-            NSLog(@"Verifcation Failed:%@", error);
-            _verified = NO;
-            _loadedVerification = YES;
-            onComplete();
-        }];
-    } else {
-        onComplete();
-    }
-}
-
 - (NSURL*)apiURL {
-    if (self.hasProfile) {
-        if (!_loadedVerification) {
-            [NSException raise:@"Verification not loaded"
-                        format:@"Trying to access Auth URL before verification has been loaded"];
-        } else if (_verified) {
-            NSString *urlString = [NSString stringWithFormat:@"http://%@", _apiHost];
-            return [NSURL URLWithString:urlString];
-        }
-    }
     return [NSURL URLWithString:[BetableAPIURL copy]];
 }
 
 - (NSURL*)betableURL {
-    if (self.hasProfile) {
-        if (!_loadedVerification) {
-            [NSException raise:@"Verification not loaded"
-                        format:@"Trying to access Auth URL before verification has been loaded"];
-        } else if (_verified) {
-            NSString *urlString = [NSString stringWithFormat:@"http://%@", _authHost];
-            return [NSURL URLWithString:urlString];
-        }
-    }
     return [NSURL URLWithString:[BetableURL copy]];
 }
 
@@ -166,19 +132,6 @@ NSString const *BetableVerifyURL = @"developers.betable.com";
     };
     
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:onComplete];
-}
-
-- (NSURL*)verifyProfileURL {
-    NSDictionary *params = @{
-                             @"signature":_signature,
-                             @"expiry":_expiry,
-                             @"api_url":_apiHost,
-                             @"auth_url":_authHost,
-                             @"client_id":_clientID
-                             };
-    
-    NSString *urlString = [NSString stringWithFormat:@"http://%@/profiles/verification/", BetableVerifyURL];
-    return [self urlForDomain:urlString andQuery:params];
 }
 
 #pragma mark - Utilities
