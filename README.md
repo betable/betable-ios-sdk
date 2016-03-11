@@ -10,7 +10,17 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 * For 5.1 support you need to set the AdSupport iAd and Foundation frameworks to optional under "Link Binary With Libraries" in the "Build Phases" section of your target's settings.
 * You must add `-ObjC` to your other linker flags inside your target's build settings
 
-## 1.0.5 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.0.5/BetableFramework-1.0.5.zip)
+## 1.0.7  [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.0.7/BetableFramework-1.0.7.zip)
+
+**Changes** 
+
+* Now targeting changes to iOS 9 sdk with xcode 7.2
+
+## 1.0.6
+
+ * Added operator support. Open any betable powered game inside of your app
+
+## 1.0.5
 
 **Changes** 
 
