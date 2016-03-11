@@ -193,7 +193,6 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     void (^onComplete)(NSURLResponse*, NSData*, NSError*) = ^(NSURLResponse *response, NSData *data, NSError *error) {
         NSString *responseBody = [[NSString alloc] initWithData:data
                                                        encoding:NSUTF8StringEncoding];
-        
         if (error) {
             if (self.onFailure) {
                 if (![NSThread isMainThread]) {
@@ -261,6 +260,40 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
      ];
 }
 
+#pragma mark - Reality Checks
+
+- (void)loadRealityCheck:(UIViewController*) gameController {
+    // TOD0 improve reference to gameController--ok for early debugging
+    // TODO start heartbeats on login
+    // halt heartbeats here
+    UIAlertController* alertController = [UIAlertController alloc];
+
+    void (^onRealityCheckLogout)(UIAlertAction*) = ^(UIAlertAction* action){
+        // TODO offer game an onLogout callback here
+        [self logout];
+    };
+    UIAlertAction* logoutAction = [UIAlertAction actionWithTitle:@"Logout" style:UIAlertActionStyleDefault handler:onRealityCheckLogout ];
+    [alertController addAction:logoutAction];
+
+    void (^onRealityCheckContinue)(UIAlertAction*) = ^(UIAlertAction* action){
+        // TODO resume heartbeats
+        // TODO offer game an onLogout callback here
+    };
+    UIAlertAction* continueAction = [UIAlertAction actionWithTitle:@"Continue Playing" style:UIAlertActionStyleDefault handler:onRealityCheckContinue ];
+    [alertController addAction:continueAction];
+
+    void (^onRealityCheckWallet)(UIAlertAction*) = ^(UIAlertAction* action){
+        // TODO resume heartbeats when wallet closes
+        // TODO offer game an onWallet callback here
+    };
+    UIAlertAction* walletAction = [UIAlertAction actionWithTitle:@"Check Balance" style:UIAlertActionStyleDefault handler:onRealityCheckWallet ];
+    [alertController addAction:walletAction];
+    
+    [gameController presentViewController:alertController animated:YES completion:nil];
+
+    
+}
+
 
 #pragma mark - External Methods
 
@@ -305,24 +338,24 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     self.currentWebView.onCancel = onCancel;
     self.onAuthorize = onAuthorize;
     self.onFailure = onFailure;
-        self.currentWebView.portraitOnly = YES;
-        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
-            UINavigationController *nvc = [[UINavigationController alloc] initWithRootViewController:self.currentWebView];
-            nvc.navigationBarHidden = YES;
-            self.currentWebView.modalPresentationStyle = UIModalPresentationFullScreen;
-            [viewController presentViewController:nvc animated:YES completion:nil];
-        } else {
-            [viewController presentViewController:self.currentWebView animated:YES completion:nil];
-        }
-        if (goToLogin) {
-            self.currentWebView.onLoadState = @"ext.nux.play";
-        }
-        if(self.currentWebView.finishedLoading) {
-            // This is a method in the webview's JS
-            [self.currentWebView loadCachedState];
-        } else {
-            self.currentWebView.loadCachedStateOnFinish = YES;
-        }
+    self.currentWebView.portraitOnly = YES;
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
+        UINavigationController *nvc = [[UINavigationController alloc] initWithRootViewController:self.currentWebView];
+        nvc.navigationBarHidden = YES;
+        self.currentWebView.modalPresentationStyle = UIModalPresentationFullScreen;
+        [viewController presentViewController:nvc animated:YES completion:nil];
+    } else {
+        [viewController presentViewController:self.currentWebView animated:YES completion:nil];
+    }
+    if (goToLogin) {
+        self.currentWebView.onLoadState = @"ext.nux.play";
+    }
+    if(self.currentWebView.finishedLoading) {
+        // This is a method in the webview's JS
+        [self.currentWebView loadCachedState];
+    } else {
+        self.currentWebView.loadCachedStateOnFinish = YES;
+    }
 }
 
 - (void)openGame:(NSString*)gameSlug withEconomy:(NSString*)economy inViewController:(UIViewController*)viewController onHome:(BetableCancelHandler)onHome onFailure:(BetableFailureHandler)onFaiure{
@@ -400,6 +433,7 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     [self checkAccessToken:@"Load Game"];
     [self fireGenericAsynchronousRequestWithPath:[Betable getGameURLPath:gameSlug] method:@"GET" data:data onSuccess:onComplete onFailure:onFailure];
 }
+
 - (void)betForGame:(NSString*)gameID
           withData:(NSDictionary*)data
         onComplete:(BetableCompletionHandler)onComplete
@@ -407,6 +441,7 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     [self checkAccessToken:@"Bet"];
     [self fireGenericAsynchronousRequestWithPath:[Betable getBetPath:gameID] method:@"POST" data:data onSuccess:onComplete onFailure:onFailure];
 }
+
 - (void)unbackedBetForGame:(NSString*)gameID
           withData:(NSDictionary*)data
         onComplete:(BetableCompletionHandler)onComplete
@@ -472,15 +507,19 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
 + (NSString*) getGameURLPath:(NSString*)gameSlug {
     return [NSString stringWithFormat:@"/application_manifests/slug/%@/play", gameSlug];
 }
+
 + (NSString*) getBetPath:(NSString*)gameID {
     return [NSString stringWithFormat:@"/games/%@/bet", gameID];
 }
+
 + (NSString*) getUnbackedBetPath:(NSString*)gameID {
     return [NSString stringWithFormat:@"/games/%@/unbacked-bet", gameID];
 }
+
 + (NSString*) getWalletPath{
     return [NSString stringWithFormat:@"/account/wallet"];
 }
+
 + (NSString*) getAccountPath{
     return [NSString stringWithFormat:@"/account"];
 }
