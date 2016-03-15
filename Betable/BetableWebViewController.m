@@ -392,7 +392,7 @@ BOOL isPad() {
     }
 }
 
--(NSUInteger)supportedInterfaceOrientations
+-(UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
     if (isPad() || !self.portraitOnly) {
         return UIInterfaceOrientationMaskAllButUpsideDown;
