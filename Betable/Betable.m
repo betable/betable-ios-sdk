@@ -36,6 +36,9 @@
 #import "BetableUtils.h"
 #import "STKeychain.h"
 
+NSString* const METHOD_GET = @"GET";
+NSString* const METHOD_POST = @"POST";
+
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
 NSString *BetablePasteBoardUserIDKey = @"com.Betable.BetableSDK.sharedData:UserID";
@@ -85,7 +88,7 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     }
     return self;
 }
-- (Betable*)initWithClientID:(NSString*)aClientID clientSecret:(NSString*)aClientSecret redirectURI:(NSString*)aRedirectURI {
+- (Betable*)initWithClientID:(NSString*)aClientID clientSecret:(NSString*)aClientSecret redirectURI:(NSString*)aRedirectURI realityCheckCallbacks:(BetableGameCallbacks*) callbacks{
     self = [self init];
     if (self) {
         self.clientID = aClientID;
@@ -95,6 +98,10 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
         [_tracking trackSession];
         [self fireDeferredRequests];
         [self setupAuthorizeWebView];
+
+        _callbacks = callbacks;
+        [self fireHeartbeatIn:0];
+
     }
     return self;
 }
@@ -153,10 +160,10 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     NSString *UUID = [NSString stringWithFormat:@"%@", UUIDSRef];
     
     NSDictionary *authorizeParameters = @{
-        @"redirect_uri":self.redirectURI,
-        @"state":UUID,
-        @"load":@"ext.nux.deposit"
-    };
+                                          @"redirect_uri":self.redirectURI,
+                                          @"state":UUID,
+                                          @"load":@"ext.nux.deposit"
+                                          };
     NSString *authURL = [_profile decorateURL:@"/ext/precache" forClient:self.clientID withParams:authorizeParameters];
     self.currentWebView.url = authURL;
     CFRelease(UUIDRef);
@@ -184,12 +191,12 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
     NSString *authValue = [NSString stringWithFormat:@"Basic %@", [Betable base64forData:authData]];
     [request setAllHTTPHeaderFields:[NSDictionary dictionaryWithObject:authValue forKey:@"Authorization"]];
-
-    [request setHTTPMethod:@"POST"]; 
+    
+    [request setHTTPMethod:METHOD_POST];
     NSString *body = [NSString stringWithFormat:@"grant_type=authorization_code&redirect_uri=%@&code=%@",
                       [self urlEncode:redirectURI],
                       code];
-
+    
     void (^onComplete)(NSURLResponse*, NSData*, NSError*) = ^(NSURLResponse *response, NSData *data, NSError *error) {
         NSString *responseBody = [[NSString alloc] initWithData:data
                                                        encoding:NSUTF8StringEncoding];
@@ -226,7 +233,7 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:self.queue
                            completionHandler:onComplete
-    ];
+     ];
 }
 
 - (void)unbackedToken:(NSString*)clientUserID onComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure {
@@ -237,7 +244,7 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     NSString *authValue = [NSString stringWithFormat:@"Basic %@", [Betable base64forData:authData]];
     [request setAllHTTPHeaderFields:[NSDictionary dictionaryWithObject:authValue forKey:@"Authorization"]];
     
-    [request setHTTPMethod:@"POST"];
+    [request setHTTPMethod:METHOD_POST];
     NSString *body = [NSString stringWithFormat:@"grant_type=client_credentials&redirect_uri=%@&client_user_id=%@",
                       [self urlEncode:redirectURI],
                       clientUserID];
@@ -248,7 +255,7 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
                                NSString *responseBody = [[NSString alloc] initWithData:data
                                                                               encoding:NSUTF8StringEncoding];
-
+                               
                                if (error) {
                                    onFailure(response, responseBody, error);
                                } else {
@@ -259,41 +266,6 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
                            }
      ];
 }
-
-#pragma mark - Reality Checks
-
-- (void)loadRealityCheck:(UIViewController*) gameController {
-    // TOD0 improve reference to gameController--ok for early debugging
-    // TODO start heartbeats on login
-    // halt heartbeats here
-    UIAlertController* alertController = [UIAlertController alloc];
-
-    void (^onRealityCheckLogout)(UIAlertAction*) = ^(UIAlertAction* action){
-        // TODO offer game an onLogout callback here
-        [self logout];
-    };
-    UIAlertAction* logoutAction = [UIAlertAction actionWithTitle:@"Logout" style:UIAlertActionStyleDefault handler:onRealityCheckLogout ];
-    [alertController addAction:logoutAction];
-
-    void (^onRealityCheckContinue)(UIAlertAction*) = ^(UIAlertAction* action){
-        // TODO resume heartbeats
-        // TODO offer game an onLogout callback here
-    };
-    UIAlertAction* continueAction = [UIAlertAction actionWithTitle:@"Continue Playing" style:UIAlertActionStyleDefault handler:onRealityCheckContinue ];
-    [alertController addAction:continueAction];
-
-    void (^onRealityCheckWallet)(UIAlertAction*) = ^(UIAlertAction* action){
-        // TODO resume heartbeats when wallet closes
-        // TODO offer game an onWallet callback here
-    };
-    UIAlertAction* walletAction = [UIAlertAction actionWithTitle:@"Check Balance" style:UIAlertActionStyleDefault handler:onRealityCheckWallet ];
-    [alertController addAction:walletAction];
-    
-    [gameController presentViewController:alertController animated:YES completion:nil];
-
-    
-}
-
 
 #pragma mark - External Methods
 
@@ -316,7 +288,7 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
             [self.currentWebView.presentingViewController dismissViewControllerAnimated:YES completion:nil];
         } else if (params[@"error"]) {
             NSError *error = [[NSError alloc] initWithDomain:@"BetableAuthorization" code:-1 userInfo:params];
-            self.onFailure(nil, nil, error);    
+            self.onFailure(nil, nil, error);
         }
     }
 }
@@ -324,11 +296,11 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
 - (void)authorizeInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onAuthorize onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel {
     [self authorizeInViewController:viewController login:NO onAuthorizationComplete:onAuthorize onFailure:onFailure onCancel:onCancel];
 }
-    
+
 - (void)authorizeLoginInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onAuthorize onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel {
     [self authorizeInViewController:viewController login:YES onAuthorizationComplete:onAuthorize onFailure:onFailure onCancel:onCancel];
 }
-    
+
 - (void)authorizeInViewController:(UIViewController*)viewController login:(BOOL)goToLogin onAuthorizationComplete:(BetableAccessTokenHandler)onAuthorize onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel {
     [self checkLaunchStatus];
     if (![_preCacheAuthToken isEqualToString:[self getBetableAuthCookie].value]) {
@@ -431,7 +403,7 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     data[@"type"] = @"mobile";
     data[@"sdk"] = @"true";
     [self checkAccessToken:@"Load Game"];
-    [self fireGenericAsynchronousRequestWithPath:[Betable getGameURLPath:gameSlug] method:@"GET" data:data onSuccess:onComplete onFailure:onFailure];
+    [self fireGenericAsynchronousRequestWithPath:[Betable getGameURLPath:gameSlug] method:METHOD_GET data:data onSuccess:onComplete onFailure:onFailure];
 }
 
 - (void)betForGame:(NSString*)gameID
@@ -439,19 +411,19 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
         onComplete:(BetableCompletionHandler)onComplete
          onFailure:(BetableFailureHandler)onFailure {
     [self checkAccessToken:@"Bet"];
-    [self fireGenericAsynchronousRequestWithPath:[Betable getBetPath:gameID] method:@"POST" data:data onSuccess:onComplete onFailure:onFailure];
+    [self fireGenericAsynchronousRequestWithPath:[Betable getBetPath:gameID] method:METHOD_POST data:data onSuccess:onComplete onFailure:onFailure];
 }
 
 - (void)unbackedBetForGame:(NSString*)gameID
-          withData:(NSDictionary*)data
-        onComplete:(BetableCompletionHandler)onComplete
-         onFailure:(BetableFailureHandler)onFailure {
+                  withData:(NSDictionary*)data
+                onComplete:(BetableCompletionHandler)onComplete
+                 onFailure:(BetableFailureHandler)onFailure {
     [self checkAccessToken:@"Unbacked Bet"];
-    [self fireGenericAsynchronousRequestWithPath:[Betable getUnbackedBetPath:gameID] method:@"POST" data:data onSuccess:onComplete onFailure:onFailure];
+    [self fireGenericAsynchronousRequestWithPath:[Betable getUnbackedBetPath:gameID] method:METHOD_POST data:data onSuccess:onComplete onFailure:onFailure];
 }
 
 - (void)creditBetForGame:(NSString*)gameID
-               creditGame:(NSString*)creditGameID
+              creditGame:(NSString*)creditGameID
                 withData:(NSDictionary*)data
               onComplete:(BetableCompletionHandler)onComplete
                onFailure:(BetableFailureHandler)onFailure {
@@ -461,7 +433,7 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
 }
 
 - (void)unbackedCreditBetForGame:(NSString*)gameID
-                       creditGame:(NSString*)creditGameID
+                      creditGame:(NSString*)creditGameID
                         withData:(NSDictionary*)data
                       onComplete:(BetableCompletionHandler)onComplete
                        onFailure:(BetableFailureHandler)onFailure {
@@ -473,13 +445,13 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
 - (void)userAccountOnComplete:(BetableCompletionHandler)onComplete
                     onFailure:(BetableFailureHandler)onFailure{
     [self checkAccessToken:@"Account"];
-    [self fireGenericAsynchronousRequestWithPath:[Betable getAccountPath] method:@"GET" onSuccess:onComplete onFailure:onFailure];
+    [self fireGenericAsynchronousRequestWithPath:[Betable getAccountPath] method:METHOD_GET onSuccess:onComplete onFailure:onFailure];
 }
 
 - (void)userWalletOnComplete:(BetableCompletionHandler)onComplete
                    onFailure:(BetableFailureHandler)onFailure {
     [self checkAccessToken:@"Wallet"];
-    [self fireGenericAsynchronousRequestWithPath:[Betable getWalletPath] method:@"Get" onSuccess:onComplete onFailure:onFailure];
+    [self fireGenericAsynchronousRequestWithPath:[Betable getWalletPath] method:METHOD_GET onSuccess:onComplete onFailure:onFailure];
 }
 
 - (void)logout {
@@ -524,8 +496,16 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     return [NSString stringWithFormat:@"/account"];
 }
 
++ (NSString*) getHeartbeatPath {
+    return [NSString stringWithFormat:@"/session/alive"];
+}
+
++ (NSString*) getRenewSessionPath {
+    return [NSString stringWithFormat:@"/session/keep-alive"];
+}
+
 #pragma mark - URL getters
-                         
+
 - (NSString*) getTokenURL {
     return [NSString stringWithFormat:@"%@/token", [_profile apiURL]];
 }
@@ -544,8 +524,8 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     urlString = [NSString stringWithFormat:@"%@?%@", urlString, [mutQuery urlEncodedString]];
     return [NSURL URLWithString:urlString];
 }
-                         
-                         
+
+
 #pragma mark - Utilities
 - (NSString*)urlEncode:(NSString*)string {
     NSString *encoded = (NSString*)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
@@ -560,8 +540,8 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     NSString *encoded = (NSString*)CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapesUsingEncoding(
                                                                                                              NULL,
                                                                                                              (CFStringRef)string,
-                                                                                             NULL,
-                                                                                             CFStringConvertNSStringEncodingToEncoding(NSASCIIStringEncoding)));
+                                                                                                             NULL,
+                                                                                                             CFStringConvertNSStringEncodingToEncoding(NSASCIIStringEncoding)));
     return encoded;
 }
 
@@ -617,14 +597,14 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     if (!_profile.hasProfile) {
         NSString *urlString = [NSString stringWithFormat:@"%@%@", _profile.apiURL, path];
         NSURL *url = [self getAPIWithURL:urlString];
-        if (data && [[method lowercaseString] isEqualToString:@"get"]) {
+        if (data && [[method lowercaseString] isEqualToString:METHOD_GET]) {
             url = [self getAPIWithURL:urlString withQuery:data];
         }
         NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:url];
         
         [request setHTTPMethod:method];
         if (data) {
-            if ([[method lowercaseString] isEqualToString:@"post"]) {
+            if ([[method lowercaseString] isEqualToString:METHOD_POST]) {
                 [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
                 [request setHTTPBody:[data JSONData]];
             }
@@ -632,18 +612,18 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
         [self fireGenericAsynchronousRequest:request onSuccess:onSuccess onFailure:onFailure];
     } else {
         NSDictionary *deferredRequest = @{
-          @"path": NULLIFY(path),
-          @"method": NULLIFY(method),
-          @"data": NULLIFY(data),
-          @"onSuccess": NULLIFY(onSuccess),
-          @"onFailure": NULLIFY(onFailure)
-        };
+                                          @"path": NULLIFY(path),
+                                          @"method": NULLIFY(method),
+                                          @"data": NULLIFY(data),
+                                          @"onSuccess": NULLIFY(onSuccess),
+                                          @"onFailure": NULLIFY(onFailure)
+                                          };
         [_deferredRequests addObject:deferredRequest];
     }
 }
 
 - (void)fireGenericAsynchronousRequest:(NSMutableURLRequest*)request onSuccess:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure{
-
+    
     void (^onComplete)(NSURLResponse*, NSData*, NSError*) = ^(NSURLResponse *response, NSData *data, NSError *error) {
         NSString *responseBody = [[NSString alloc] initWithData:data
                                                        encoding:NSUTF8StringEncoding];
@@ -687,4 +667,102 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     NSData *valueData = [[self sharedData] dataForPasteboardType:BetablePasteBoardUserIDKey];
     return [[NSString alloc] initWithData:valueData encoding:NSUTF8StringEncoding];
 }
+
+#pragma mark - Hearbeat / Reality Checks
+
+// Marker that next heartbeat call should request a reality check reset
+BOOL _resetRealityChecks = NO;
+
+// Maintains a healthy relationship with game while reality checks take control
+BetableGameCallbacks* _callbacks;
+
+- (void)fireHeartbeatIn:(NSTimeInterval)seconds  {
+    [self performSelector:@selector(onHeartbeat) withObject:self afterDelay:seconds];
+}
+
+- (void)onHeartbeat{
+    
+    NSDictionary* data;
+    if( _resetRealityChecks ) {
+        data = @{ @"keep_alive": @"true", @"reality_checked": @"true" };
+        _resetRealityChecks = false;
+    } else {
+        data = @{ @"keep_alive": @"true" };
+    }
+    
+    BetableCompletionHandler onSuccess = ^(NSDictionary* data) {
+
+        NSDictionary* realityCheck = data[@"reality_check"];
+        NSInteger msRemainingTime = [realityCheck[@"remaining_time"] integerValue];
+        NSInteger sInterval = [realityCheck[@"interval"] integerValue] / 1000;
+
+        
+        if( [@"true" isEqualToString:data[@"alive"]] ) {
+            // Session is no longer alive
+            [self logout];
+            
+        } else if( [@"true" isEqualToString:realityCheck[@"enabled"]] ) {
+            // Reality checks have been disabled by player, this is a keep-alive ping
+            [self fireHeartbeatIn:sInterval];
+            
+        } else if ( msRemainingTime > 0 ) {
+            // Reality checks are active, but not done countdown
+            [self fireHeartbeatIn:sInterval];
+
+        } else {
+            // Time's up, let user decide how to proceed
+            [self fireRealityCheck];
+            // TODO consider firing heartbeats even while check is open--guard against double-open, and auto-logout on double-open
+            
+        }
+        
+    };
+    
+    BetableFailureHandler onFailure = ^(NSURLResponse *response, NSString *responseBody, NSError *error) {
+        // TODO don't rush to make user's experience suck, offer user maybe 2 retries / 10 seconds; and then treat the session as ended.
+        // More debugging is needed
+        NSLog( @"Logging out after error on heartbeat:\nresponse: %@\nresponseBody: %@\nerror: %@", response, responseBody, error );
+        [self logout];
+    };
+    
+    [self fireGenericAsynchronousRequestWithPath:[Betable getHeartbeatPath] method:METHOD_POST data:data onSuccess:onSuccess onFailure:onFailure ];
+}
+
+- (void)fireRealityCheck {
+    UIAlertController* alertController = [UIAlertController alloc];
+    
+    // Propose player's decision to logout after reality check interval
+    void (^onRealityCheckLogout)(UIAlertAction*) = ^(UIAlertAction* action){
+        [[_callbacks currentGameView] dismissViewControllerAnimated:YES completion:^{[_callbacks onGameForegrounded];}];
+        [self logout];
+    };
+    UIAlertAction* logoutAction = [UIAlertAction actionWithTitle:@"Logout" style:UIAlertActionStyleDefault handler:onRealityCheckLogout ];
+    [alertController addAction:logoutAction];
+    
+    // Propose player's decision to continue playing after reality check interval
+    void (^onRealityCheckContinue)(UIAlertAction*) = ^(UIAlertAction* action){
+        [[_callbacks currentGameView] dismissViewControllerAnimated:YES completion:^{[_callbacks onGameForegrounded];}];
+        _resetRealityChecks = YES;
+        [self fireHeartbeatIn:0];
+        
+    };
+    UIAlertAction* continueAction = [UIAlertAction actionWithTitle:@"Continue Playing" style:UIAlertActionStyleDefault handler:onRealityCheckContinue ];
+    [alertController addAction:continueAction];
+    
+    // Propose player's decision to check their wallet balance after reality check interval
+    void (^onRealityCheckWallet)(UIAlertAction*) = ^(UIAlertAction* action){
+        [[_callbacks currentGameView] dismissViewControllerAnimated:YES completion:^{}];
+
+        [self walletInViewController:[_callbacks currentGameView] onClose:^{[_callbacks onGameForegrounded];}];
+        _resetRealityChecks = YES;
+        [self fireHeartbeatIn:0];
+    };
+    UIAlertAction* walletAction = [UIAlertAction actionWithTitle:@"Check Balance" style:UIAlertActionStyleDefault handler:onRealityCheckWallet ];
+    [alertController addAction:walletAction];
+    
+    [_callbacks onGameBackgrounded];
+    [[_callbacks currentGameView] presentViewController:alertController animated:YES completion:nil];
+}
+
+
 @end

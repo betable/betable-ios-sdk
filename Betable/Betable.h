@@ -43,7 +43,7 @@ static NSString * const BetableEnvironmentProduction = @"production";
 
 @property (nonatomic, strong) BetableProfile *profile;
 
-- (Betable*)initWithClientID:(NSString*)clientID clientSecret:(NSString*)clientSecret redirectURI:(NSString*)redirectURI;
+- (Betable*)initWithClientID:(NSString*)aClientID clientSecret:(NSString*)aClientSecret redirectURI:(NSString*)aRedirectURI realityCheckCallbacks:(BetableGameCallbacks*) callbacks;
 
 //This method is used to provide BetableSDK with the launch options for the app, it also allows betable to do install attribution for any ads that directed people to this app
 
