@@ -506,11 +506,11 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
 }
 
 + (NSString*) getHeartbeatPath {
-    return [NSString stringWithFormat:@"/session/alive"];
+    return [NSString stringWithFormat:@"/sessions/alive"];
 }
 
 + (NSString*) getupdateSessionPath {
-    return [NSString stringWithFormat:@"/session/keep-alive"];
+    return [NSString stringWithFormat:@"/sessions/keep-alive"];
 }
 
 #pragma mark - URL getters
@@ -708,7 +708,7 @@ id <BetableGameCallbacks> _callbacks;
         NSInteger sInterval = [realityCheck[@"interval"] integerValue] / 1000;
 
         
-        if( [@"true" isEqualToString:data[@"alive"]] ) {
+        if( ![@"true" isEqualToString:data[@"alive"]] ) {
             // Session is no longer alive
             [self logout];
             
