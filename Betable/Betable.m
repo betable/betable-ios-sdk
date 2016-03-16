@@ -28,6 +28,7 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import "Betable.h"
+#import "BetableHandlers.h"
 #import "BetableProfile.h"
 #import "BetableWebViewController.h"
 #import "BetableTracking.h"
@@ -88,7 +89,7 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     }
     return self;
 }
-- (Betable*)initWithClientID:(NSString*)aClientID clientSecret:(NSString*)aClientSecret redirectURI:(NSString*)aRedirectURI realityCheckCallbacks:(BetableGameCallbacks*) callbacks{
+- (Betable*)initWithClientID:(NSString*)aClientID clientSecret:(NSString*)aClientSecret redirectURI:(NSString*)aRedirectURI realityCheckCallbacks:(id<BetableGameCallbacks>) callbacks{
     self = [self init];
     if (self) {
         self.clientID = aClientID;
@@ -100,8 +101,6 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
         [self setupAuthorizeWebView];
 
         _callbacks = callbacks;
-        [self fireHeartbeatIn:0];
-
     }
     return self;
 }
@@ -125,6 +124,7 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
             NSLog(@"Error retrieving accessToken <%@>: %@", accessToken, error);
         }
         self.accessToken = pAccessToken;
+        [self fireHeartbeatIn:0];
     } else {
         NSError *error;
         [STKeychain deleteItemForUsername:USERNAME_KEY andServiceName:SERVICE_KEY error:&error];
@@ -214,11 +214,14 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
             NSDictionary *data = (NSDictionary*)[responseBody objectFromJSONString];
             NSString *newAccessToken = [data objectForKey:@"access_token"];
             self.accessToken = newAccessToken;
+            [self fireHeartbeatIn:0];
             if (self.onAuthorize) {
                 if (![NSThread isMainThread]) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         self.onAuthorize(accessToken);
                     });
+                } else {
+                    self.onAuthorize(accessToken);
                 }
             }
             [self userAccountOnComplete:^(NSDictionary *data) {
@@ -261,6 +264,7 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
                                } else {
                                    NSDictionary *data = (NSDictionary*)[responseBody objectFromJSONString];
                                    self.accessToken = [data objectForKey:@"access_token"];
+                                   [self fireHeartbeatIn:0];
                                    onComplete(self.accessToken);
                                }
                            }
@@ -271,6 +275,9 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
 
 - (void)handleAuthorizeURL:(NSURL*)url{
     NSURL *redirect = [NSURL URLWithString:self.redirectURI];
+
+    NSLog( @"handleAuthorizeURL( %@ ), rediect: %@", url, redirect );
+
     //First check that we should be handling this
     BOOL schemeSame = [[[redirect scheme] lowercaseString] isEqualToString:[[url scheme] lowercaseString]];
     BOOL hostSame = [[[redirect host] lowercaseString] isEqualToString:[[url host] lowercaseString]];
@@ -286,6 +293,7 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
         if (params[@"code"]) {
             [self token:[params objectForKey:@"code"]];
             [self.currentWebView.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+            
         } else if (params[@"error"]) {
             NSError *error = [[NSError alloc] initWithDomain:@"BetableAuthorization" code:-1 userInfo:params];
             self.onFailure(nil, nil, error);
@@ -471,6 +479,7 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     self.currentWebView = [[BetableWebViewController alloc] init];
     [self setupAuthorizeWebView];
     //And finally get rid of the access token
+    NSLog( @"self.accessToken set in logout()" );
     self.accessToken = nil;
 }
 
@@ -500,7 +509,7 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     return [NSString stringWithFormat:@"/session/alive"];
 }
 
-+ (NSString*) getRenewSessionPath {
++ (NSString*) getupdateSessionPath {
     return [NSString stringWithFormat:@"/session/keep-alive"];
 }
 
@@ -674,14 +683,15 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
 BOOL _resetRealityChecks = NO;
 
 // Maintains a healthy relationship with game while reality checks take control
-BetableGameCallbacks* _callbacks;
+id <BetableGameCallbacks> _callbacks;
 
 - (void)fireHeartbeatIn:(NSTimeInterval)seconds  {
+    NSLog( @">fireHeartbeatIn( %f )", seconds );
     [self performSelector:@selector(onHeartbeat) withObject:self afterDelay:seconds];
 }
 
 - (void)onHeartbeat{
-    
+    NSLog( @">onHeartbeat()" );
     NSDictionary* data;
     if( _resetRealityChecks ) {
         data = @{ @"keep_alive": @"true", @"reality_checked": @"true" };
@@ -691,6 +701,7 @@ BetableGameCallbacks* _callbacks;
     }
     
     BetableCompletionHandler onSuccess = ^(NSDictionary* data) {
+        NSLog( @">onHeartbeat()->onSuccess( %@ )", data );
 
         NSDictionary* realityCheck = data[@"reality_check"];
         NSInteger msRemainingTime = [realityCheck[@"remaining_time"] integerValue];
@@ -728,12 +739,33 @@ BetableGameCallbacks* _callbacks;
     [self fireGenericAsynchronousRequestWithPath:[Betable getHeartbeatPath] method:METHOD_POST data:data onSuccess:onSuccess onFailure:onFailure ];
 }
 
+- (void)performOnGameForegrounded {
+    // Runtime selector doesn't spew unnecessary warnings
+    if( [_callbacks respondsToSelector:NSSelectorFromString(@"onGameForegrounded")] ) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [_callbacks onGameForegrounded];
+        });
+    }
+    
+}
+
+- (void)performOnGameBackgrounded {
+    // Runtime selector doesn't spew unnecessary warnings
+    if( [_callbacks respondsToSelector:NSSelectorFromString(@"onGameBackgrounded")] ) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [_callbacks onGameBackgrounded];
+        });
+    }
+}
+
+
 - (void)fireRealityCheck {
+    NSLog( @">fireRealityCheck()" );
     UIAlertController* alertController = [UIAlertController alloc];
     
     // Propose player's decision to logout after reality check interval
     void (^onRealityCheckLogout)(UIAlertAction*) = ^(UIAlertAction* action){
-        [[_callbacks currentGameView] dismissViewControllerAnimated:YES completion:^{[_callbacks onGameForegrounded];}];
+        [[_callbacks currentGameView] dismissViewControllerAnimated:YES completion:^{ [self performOnGameForegrounded];}];
         [self logout];
     };
     UIAlertAction* logoutAction = [UIAlertAction actionWithTitle:@"Logout" style:UIAlertActionStyleDefault handler:onRealityCheckLogout ];
@@ -741,7 +773,7 @@ BetableGameCallbacks* _callbacks;
     
     // Propose player's decision to continue playing after reality check interval
     void (^onRealityCheckContinue)(UIAlertAction*) = ^(UIAlertAction* action){
-        [[_callbacks currentGameView] dismissViewControllerAnimated:YES completion:^{[_callbacks onGameForegrounded];}];
+        [[_callbacks currentGameView] dismissViewControllerAnimated:YES completion:^{[self performOnGameForegrounded];}];
         _resetRealityChecks = YES;
         [self fireHeartbeatIn:0];
         
@@ -753,14 +785,14 @@ BetableGameCallbacks* _callbacks;
     void (^onRealityCheckWallet)(UIAlertAction*) = ^(UIAlertAction* action){
         [[_callbacks currentGameView] dismissViewControllerAnimated:YES completion:^{}];
 
-        [self walletInViewController:[_callbacks currentGameView] onClose:^{[_callbacks onGameForegrounded];}];
+        [self walletInViewController:[_callbacks currentGameView] onClose:^{[self performOnGameForegrounded];}];
         _resetRealityChecks = YES;
         [self fireHeartbeatIn:0];
     };
     UIAlertAction* walletAction = [UIAlertAction actionWithTitle:@"Check Balance" style:UIAlertActionStyleDefault handler:onRealityCheckWallet ];
     [alertController addAction:walletAction];
     
-    [_callbacks onGameBackgrounded];
+    [self performOnGameBackgrounded];
     [[_callbacks currentGameView] presentViewController:alertController animated:YES completion:nil];
 }
 

@@ -12,7 +12,7 @@ typedef void (^BetableFailureHandler)(NSURLResponse *response, NSString *respons
 typedef void (^BetableCancelHandler)();
 
 // Game pust provide an implementation of interface to Betable to facilitate wallet features.
-@interface BetableGameCallbacks
+@protocol BetableGameCallbacks<NSObject>
 // Betable needs to know what the current view controller before game is backgrounded or foregrounded
 - (UIViewController*) currentGameView;
 
