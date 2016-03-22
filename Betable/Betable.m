@@ -28,6 +28,7 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import "Betable.h"
+#import "BetableCredentials.h"
 #import "BetableHandlers.h"
 #import "BetableProfile.h"
 #import "BetableWebViewController.h"
@@ -37,20 +38,17 @@
 #import "BetableUtils.h"
 #import "STKeychain.h"
 
-NSString* const METHOD_GET = @"GET";
-NSString* const METHOD_POST = @"POST";
-
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
 NSString *BetablePasteBoardUserIDKey = @"com.Betable.BetableSDK.sharedData:UserID";
 NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
 
 #define SERVICE_KEY @"com.betable.SDK"
-#define USERNAME_KEY @"com.betable.AccessToken"
+#define USERNAME_KEY @"com.betable.Credentials"
 #define FIRSTSTORE_KEY @"com.betable.FirstStore"
 
 @interface Betable () {
-    NSMutableArray *_deferredRequests;
+    NSMutableOrderedSet  *_deferredRequests;
     BetableProfile *_profile;
     // This holds the value of the betable auth cookie when we precache the page. If the
     // value of this cookie changes before then and the showing of the page, we need to
@@ -68,7 +66,7 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
 
 @implementation Betable
 
-@synthesize accessToken, clientID, clientSecret, redirectURI, queue, currentWebView;
+@synthesize credentials, clientID, clientSecret, redirectURI, queue, currentWebView;
 
 - (Betable*)init {
     self = [super init];
@@ -76,30 +74,29 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
         clientID = nil;
         clientSecret = nil;
         redirectURI = nil;
-        accessToken = nil;
         _launched = NO;
         _launchOptions = nil;
-        _deferredRequests = [NSMutableArray array];
+        _deferredRequests = [[NSMutableOrderedSet alloc] init];
         _profile = [[BetableProfile alloc] init];
-        self.currentWebView = [[BetableWebViewController alloc] init];
+        currentWebView = [[BetableWebViewController alloc] init];
         self.currentWebView.forcedOrientationWithNavController = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8");
         // If there is a testing profile, we need to verify it before we make
         // requests or set the URL for the authorize web view.
-        self.queue = [[NSOperationQueue alloc] init];
+        queue = [[NSOperationQueue alloc] init];
     }
     return self;
 }
 - (Betable*)initWithClientID:(NSString*)aClientID clientSecret:(NSString*)aClientSecret redirectURI:(NSString*)aRedirectURI realityCheckCallbacks:(id<BetableGameCallbacks>) callbacks{
     self = [self init];
     if (self) {
-        self.clientID = aClientID;
-        self.clientSecret = aClientSecret;
-        self.redirectURI = aRedirectURI;
+        clientID = aClientID;
+        clientSecret = aClientSecret;
+        redirectURI = aRedirectURI;
         _tracking = [[BetableTracking alloc] initWithClientID:aClientID andEnvironment:BetableEnvironmentProduction];
         [_tracking trackSession];
         [self fireDeferredRequests];
         [self setupAuthorizeWebView];
-
+        
         _callbacks = callbacks;
     }
     return self;
@@ -115,37 +112,39 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     [self checkLaunchStatus];
     // If a user deletes the app, their keychain item still exists.
     // If it hasn't been stored then delete it and don't retrieve it
-    NSString *pAccessToken = nil;
-    NSNumber *hasBeenStoredSinceInstall = (NSNumber*)[[NSUserDefaults standardUserDefaults] objectForKey:FIRSTSTORE_KEY];
+    NSNumber* hasBeenStoredSinceInstall = (NSNumber*)[[NSUserDefaults standardUserDefaults] objectForKey:FIRSTSTORE_KEY];
+    NSError* error;
+    BetableCredentials* newCredentials;
     if ([hasBeenStoredSinceInstall boolValue]) {
-        NSError *error;
-        pAccessToken = [STKeychain getPasswordForUsername:USERNAME_KEY andServiceName:SERVICE_KEY error:&error];
+        NSString* serialisedCredentials = [STKeychain getPasswordForUsername:USERNAME_KEY andServiceName:SERVICE_KEY error:&error];
         if (error) {
-            NSLog(@"Error retrieving accessToken <%@>: %@", accessToken, error);
+            NSLog(@"Error retrieving credentials <%@>: %@", serialisedCredentials, error);
+        } else {
+            newCredentials = [[BetableCredentials alloc] initWithSerialised:serialisedCredentials];
+            [self beginSessionWithCredentials:newCredentials];
         }
-        self.accessToken = pAccessToken;
-        [self fireHeartbeatIn:0];
     } else {
-        NSError *error;
         [STKeychain deleteItemForUsername:USERNAME_KEY andServiceName:SERVICE_KEY error:&error];
         if (error) {
-            NSLog(@"Error removing accessToken: %@", error);
+            NSLog(@"Error removing credentials: %@", error);
         }
     }
-    return !!pAccessToken;
+    
+    return newCredentials != nil;
 }
 
 - (void)storeAccessToken {
-    [self checkAccessToken:@"storeAccessToken"];
+    [self checkAccessToken:@"storeAccessMarker"];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:[NSNumber numberWithBool:YES] forKey:FIRSTSTORE_KEY];
     [defaults synchronize];
     
     NSError *error;
-    [STKeychain storeUsername:USERNAME_KEY andPassword:accessToken forServiceName:SERVICE_KEY updateExisting:YES error:&error];
+    NSString* password = [credentials description];
+    [STKeychain storeUsername:USERNAME_KEY andPassword:password forServiceName:SERVICE_KEY updateExisting:YES error:&error];
     if (error) {
-        NSLog(@"Error storing accessToken <%@>: %@", accessToken, error);
+        NSLog(@"Error storing accessMarker <%@>: %@", password, error);
     }
 }
 
@@ -185,6 +184,8 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
 }
 
 - (void)token:(NSString*)code {
+    NSLog( @">token(%@)", code );
+    
     NSURL *apiURL = [NSURL URLWithString:[self getTokenURL]];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:apiURL];
     NSString *authStr = [NSString stringWithFormat:@"%@:%@", clientID, clientSecret];
@@ -212,9 +213,12 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
             }
         } else {
             NSDictionary *data = (NSDictionary*)[responseBody objectFromJSONString];
-            NSString *newAccessToken = [data objectForKey:@"access_token"];
-            self.accessToken = newAccessToken;
-            [self fireHeartbeatIn:0];
+            NSString *accessToken = [data objectForKey:@"access_token"];
+            NSString *sessionID = [data objectForKey:@"session_id"];
+            
+            BetableCredentials* newCredentials = [[BetableCredentials alloc] initWithAccessToken:accessToken andSessionID:sessionID];
+            [self beginSessionWithCredentials:newCredentials];
+            
             if (self.onAuthorize) {
                 if (![NSThread isMainThread]) {
                     dispatch_async(dispatch_get_main_queue(), ^{
@@ -263,9 +267,12 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
                                    onFailure(response, responseBody, error);
                                } else {
                                    NSDictionary *data = (NSDictionary*)[responseBody objectFromJSONString];
-                                   self.accessToken = [data objectForKey:@"access_token"];
-                                   [self fireHeartbeatIn:0];
-                                   onComplete(self.accessToken);
+                                   NSString* accessToken = [data objectForKey:@"access_token"];
+                                   NSString* sessionID = [data objectForKey:@"session_id"];
+                                   BetableCredentials* newCredentials = [[BetableCredentials alloc] initWithAccessToken:accessToken andSessionID:sessionID];
+                                   [self beginSessionWithCredentials:newCredentials];
+                                   
+                                   onComplete(accessToken);
                                }
                            }
      ];
@@ -273,11 +280,12 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
 
 #pragma mark - External Methods
 
+// Translates betable-id's 302 response (including a code query param) from GET /authorize to running app
 - (void)handleAuthorizeURL:(NSURL*)url{
     NSURL *redirect = [NSURL URLWithString:self.redirectURI];
-
+    
     NSLog( @"handleAuthorizeURL( %@ ), rediect: %@", url, redirect );
-
+    
     //First check that we should be handling this
     BOOL schemeSame = [[[redirect scheme] lowercaseString] isEqualToString:[[url scheme] lowercaseString]];
     BOOL hostSame = [[[redirect host] lowercaseString] isEqualToString:[[url host] lowercaseString]];
@@ -381,7 +389,7 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
 }
 
 - (void)checkAccessToken:(NSString*)method {
-    if (self.accessToken == nil) {
+    if (self.credentials == nil) {
         [NSException raise:[NSString stringWithFormat:@"User is not authorized %@", method]
                     format:@"User must have an access token to use this feature"];
     }
@@ -478,9 +486,19 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     //After the cookies are destroyed, reload the webpage
     self.currentWebView = [[BetableWebViewController alloc] init];
     [self setupAuthorizeWebView];
-    //And finally get rid of the access token
+    
+    // get rid of the access token
     NSLog( @"self.accessToken set in logout()" );
-    self.accessToken = nil;
+    [self beginSessionWithCredentials:nil];
+    
+    // request player log in again
+    [self authorizeInViewController:[_callbacks currentGameView]
+                              login:TRUE
+            onAuthorizationComplete:^(NSString *accessToken) {[_callbacks onAccessSuccess:accessToken];}
+                          onFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {[_callbacks onAccessFailure];}
+                           onCancel:^{[_callbacks onAccessFailure];}
+    ];
+
 }
 
 #pragma mark - Path getters
@@ -529,7 +547,7 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     if (query) {
         mutQuery = [query mutableCopy];
     }
-    mutQuery[@"access_token"] = self.accessToken;
+    mutQuery[@"access_token"] = credentials.accessToken;
     urlString = [NSString stringWithFormat:@"%@?%@", urlString, [mutQuery urlEncodedString]];
     return [NSURL URLWithString:urlString];
 }
@@ -606,7 +624,7 @@ NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
     if (!_profile.hasProfile) {
         NSString *urlString = [NSString stringWithFormat:@"%@%@", _profile.apiURL, path];
         NSURL *url = [self getAPIWithURL:urlString];
-        if (data && [[method lowercaseString] isEqualToString:METHOD_GET]) {
+        if (data && [method isEqualToString:METHOD_GET]) {
             url = [self getAPIWithURL:urlString withQuery:data];
         }
         NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:url];
@@ -685,47 +703,74 @@ BOOL _resetRealityChecks = NO;
 // Maintains a healthy relationship with game while reality checks take control
 id <BetableGameCallbacks> _callbacks;
 
+
+- (void)beginSessionWithCredentials:(BetableCredentials*)newCredentials {
+    credentials = newCredentials;
+    [self fireHeartbeatIn:0];
+    
+}
+
 - (void)fireHeartbeatIn:(NSTimeInterval)seconds  {
     NSLog( @">fireHeartbeatIn( %f )", seconds );
-    [self performSelector:@selector(onHeartbeat) withObject:self afterDelay:seconds];
+    // Selectors in 0 seconds do nothing, so increment by nominal amount
+    [self performSelector:@selector(onHeartbeat) withObject:self afterDelay:seconds + 0.1];
 }
 
 - (void)onHeartbeat{
-    NSLog( @">onHeartbeat()" );
+    NSLog( @">onHeartbeat() with %@", credentials );
+    if( nil == credentials ) {
+        NSLog( @"guard...no credentials" );
+        [self fireHeartbeatIn:5];
+        return;
+    }
+    
+    if( [credentials isUnbacked] ) {
+        // No heartbeats for unbacked access credentials
+        NSLog( @"guard...no credential backing means no session and no heartbeat" );
+        return;
+    }
     NSDictionary* data;
     if( _resetRealityChecks ) {
-        data = @{ @"keep_alive": @"true", @"reality_checked": @"true" };
+        data = @{ @"keep_alive": @"true", @"reality_checked": @"true", @"session_id" : credentials.sessionID };
         _resetRealityChecks = false;
     } else {
-        data = @{ @"keep_alive": @"true" };
+        data = @{ @"keep_alive": @"true", @"session_id": credentials.sessionID };
     }
     
     BetableCompletionHandler onSuccess = ^(NSDictionary* data) {
-        NSLog( @">onHeartbeat()->onSuccess( %@ )", data );
-
-        NSDictionary* realityCheck = data[@"reality_check"];
-        NSInteger msRemainingTime = [realityCheck[@"remaining_time"] integerValue];
-        NSInteger sInterval = [realityCheck[@"interval"] integerValue] / 1000;
-
         
-        if( ![@"true" isEqualToString:data[@"alive"]] ) {
+        NSLog( @">onHeartbeat()->onSuccess( %@ )", data );
+        
+        if( ! [data[@"alive"] boolValue] ) {
             // Session is no longer alive
             [self logout];
-            
-        } else if( [@"true" isEqualToString:realityCheck[@"enabled"]] ) {
-            // Reality checks have been disabled by player, this is a keep-alive ping
-            [self fireHeartbeatIn:sInterval];
-            
-        } else if ( msRemainingTime > 0 ) {
-            // Reality checks are active, but not done countdown
-            [self fireHeartbeatIn:sInterval];
+            NSLog( @"onSuccess()...session not alive, calling logout" );
+            return;
+        }
 
-        } else {
-            // Time's up, let user decide how to proceed
-            [self fireRealityCheck];
-            // TODO consider firing heartbeats even while check is open--guard against double-open, and auto-logout on double-open
+        NSDictionary* realityCheck = data[@"reality_check"];
+        
+        if( ! [realityCheck[@"enabled"] boolValue] ) {
+            NSLog( @"onSuccess()...reality checks disabled, check in a minute to see if session has died ");
+            [self fireHeartbeatIn:60];
+            return;
+        }
+
+        NSInteger msRemainingTime = [realityCheck[@"remaining_time"] integerValue];
+        if ( msRemainingTime > 0 ) {
+            NSInteger sInterval = [realityCheck[@"interval"] integerValue] / 1000;
+            NSLog( @"onSuccess()...keepalive as instructed" );
+            [self fireHeartbeatIn:sInterval];
+            return;
             
         }
+        
+        // Time's up, let user decide how to proceed
+        NSLog( @"onSuccess()...time up, fire reality check" );
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self fireRealityCheck];
+        });
+        // TODO consider firing heartbeats even while check is open--guard against double-open, and auto-logout on double-open
         
     };
     
@@ -736,7 +781,8 @@ id <BetableGameCallbacks> _callbacks;
         [self logout];
     };
     
-    [self fireGenericAsynchronousRequestWithPath:[Betable getHeartbeatPath] method:METHOD_POST data:data onSuccess:onSuccess onFailure:onFailure ];
+    [self fireGenericAsynchronousRequestWithPath:[Betable getHeartbeatPath] method:METHOD_GET data:data onSuccess:onSuccess onFailure:onFailure ];
+    
 }
 
 - (void)performOnGameForegrounded {
@@ -761,7 +807,7 @@ id <BetableGameCallbacks> _callbacks;
 
 - (void)fireRealityCheck {
     NSLog( @">fireRealityCheck()" );
-    UIAlertController* alertController = [UIAlertController alloc];
+    UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"Reality Check" message:@"You've been playing a while" preferredStyle:UIAlertControllerStyleAlert ];
     
     // Propose player's decision to logout after reality check interval
     void (^onRealityCheckLogout)(UIAlertAction*) = ^(UIAlertAction* action){
@@ -784,7 +830,7 @@ id <BetableGameCallbacks> _callbacks;
     // Propose player's decision to check their wallet balance after reality check interval
     void (^onRealityCheckWallet)(UIAlertAction*) = ^(UIAlertAction* action){
         [[_callbacks currentGameView] dismissViewControllerAnimated:YES completion:^{}];
-
+        
         [self walletInViewController:[_callbacks currentGameView] onClose:^{[self performOnGameForegrounded];}];
         _resetRealityChecks = YES;
         [self fireHeartbeatIn:0];

@@ -29,12 +29,16 @@
 #import <Betable/BetableWebViewController.h>
 #import <Betable/BetableHandlers.h>
 #import <Betable/BetableBatchRequest.h>
+#import <Betable/BetableCredentials.h>
 #import <Betable/BetableTracking.h>
 #import <Betable/BetableTrackingHistory.h>
 #import <Betable/BetableTrackingUtil.h>
 
 static NSString * const BetableEnvironmentSandbox    = @"sandbox";
 static NSString * const BetableEnvironmentProduction = @"production";
+
+static NSString* const METHOD_GET = @"GET";
+static NSString* const METHOD_POST = @"POST";
 
 
 @class BetableWebViewController;
@@ -317,14 +321,15 @@ inViewController:(UIViewController*)viewController
 - (void)logout;
 
 // All of the betable server endpoint urls.
-- (NSString*)getTokenURL;
+- (NSString*) getTokenURL;
 + (NSString*) getGameURLPath:(NSString*)gameSlug;
 + (NSString*) getBetPath:(NSString*)gameID;
 + (NSString*) getUnbackedBetPath:(NSString*)gameID;
 + (NSString*) getWalletPath;
 + (NSString*) getAccountPath;
 
-@property (strong, nonatomic) NSString *accessToken;
+@property (strong, nonatomic, readonly) BetableCredentials* credentials;
+
 @property (strong, nonatomic) NSString *clientSecret;
 @property (strong, nonatomic) NSString *clientID;
 @property (strong, nonatomic) NSString *redirectURI;

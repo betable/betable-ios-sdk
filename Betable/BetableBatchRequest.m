@@ -88,7 +88,7 @@
 
 - (void)runBatchOnComplete:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure{
     [self.betable checkAccessToken:@"Run Batch"];
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[self betableBatchURL:self.betable.accessToken]];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[self betableBatchURL:self.betable.credentials.accessToken]];
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     [request setHTTPBody:[@{@"requests": self.requests} JSONData]];
