@@ -87,9 +87,9 @@
 }
 
 - (void)runBatchOnComplete:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure{
-    [self.betable checkAccessToken:@"Run Batch"];
+    // Note the reference to credentials.accessToken wil expolde if betable has no credentials--this is deliberate
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[self betableBatchURL:self.betable.credentials.accessToken]];
-    [request setHTTPMethod:@"POST"];
+    [request setHTTPMethod:METHOD_POST];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     [request setHTTPBody:[@{@"requests": self.requests} JSONData]];
     void (^onComplete)(NSURLResponse*, NSData*, NSError*) = ^(NSURLResponse *response, NSData *data, NSError *error) {
