@@ -125,7 +125,6 @@ typedef enum heartbeatPeriods {
 }
 
 - (void)checkCredentials {
-    NSLog(@">checkCredentials()");  
     [self checkLaunchStatus];
     
     // If a user deletes the app, their keychain item still exists.
@@ -137,15 +136,13 @@ typedef enum heartbeatPeriods {
         NSString* serialisedCredentials = [STKeychain getPasswordForUsername:USERNAME_KEY andServiceName:SERVICE_KEY error:&error];
         if (error) {
             NSLog(@"Error retrieving credentials <%@>: %@", serialisedCredentials, error);
-        } else if ( nil == serialisedCredentials) {
-            NSLog(@"Error retrieving serialized credentials <%@>:", serialisedCredentials);
-        } else {
+        } else if ( nil != serialisedCredentials) {
             newCredentials = [[BetableCredentials alloc] initWithSerialised:serialisedCredentials];
             if ( newCredentials ) {
                 [self beginSessionWithCredentials:newCredentials];
                 return;
             } else {
-                NSLog(@"Error applying serialized credentials <%@>", serialisedCredentials);
+                NSLog(@"Error interpreting serialized credentials <%@>", serialisedCredentials);
             }
         }
     } else {
@@ -161,9 +158,6 @@ typedef enum heartbeatPeriods {
                           onFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {}
                            onCancel:^{ [self performCredentialFailure:nil withBody:nil orError:nil];}
      ];
-
-    NSLog(@"/checkCredentials()");
-
 }
 
 - (void)storeAccessToken {
@@ -232,8 +226,6 @@ typedef enum heartbeatPeriods {
 }
 
 - (void)token:(NSString*)code {
-    NSLog( @">token(%@)", code );
-    
     NSURL *apiURL = [NSURL URLWithString:[self getTokenURL]];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:apiURL];
     NSString *authStr = [NSString stringWithFormat:@"%@:%@", clientID, clientSecret];
@@ -333,8 +325,6 @@ typedef enum heartbeatPeriods {
 // Translates betable-id's 302 response (including the query param "code") from GET /authorize to running app
 - (void)handleAuthorizeURL:(NSURL*)url{
     NSURL *redirect = [NSURL URLWithString:self.redirectURI];
-    
-    NSLog( @"handleAuthorizeURL( %@ ), rediect: %@", url, redirect );
     
     //First check that we should be handling this
     BOOL schemeSame = [[[redirect scheme] lowercaseString] isEqualToString:[[url scheme] lowercaseString]];
@@ -757,6 +747,7 @@ typedef enum heartbeatPeriods {
 
 #pragma mark - Hearbeat / Reality Checks
 
+// TODO this enum would be better served by a counter of outstanding heartbeats instead of asynchronous state
 // As session calls are made back to betable ID's differnt emergent behaviours should occur
 typedef enum sessionBehaviour
 {
@@ -789,9 +780,9 @@ id <BetableGameCallbacks> _callbacks;
     }
                        andOnFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {
        
-       // Assume error here is session attached to credentials so purge them and get them again
-       [self logout];
-       [self checkCredentials];
+        // TODO explicit "session has expired" check instead of implicit assumption here
+        [self logout];
+        [self checkCredentials];
    }];
 }
 
@@ -803,14 +794,14 @@ id <BetableGameCallbacks> _callbacks;
 }
 
 - (void)resetSessionAndOnComplete:(BetableCompletionHandler) onSuccess andOnFailure:(BetableFailureHandler) onFailure {
-    // here we would be guarded against forget, heartbeat and suspened leaving some manner of reset
     NSString* path = [Betable getResetSessionPath];
     NSString* method = METHOD_POST;
     if ( nil == credentials ) {
-        NSLog( @"faulty credentials--this shouldn't happen but has" );
+        NSLog( @"faulty credentials--this shouldn't happen" );
         return;
     } else if ( [credentials isUnbacked] ) {
-        NSLog( @"unbacked credentials--should not be reset" );
+        NSLog( @"unbacked credentials--should not get reset" );
+        // TODO consider this might be a failure and report, or a detectable success for the given credentials and report
         return;
     }
     NSDictionary* data = @{ @"keep_alive": @YES, @"reality_checked": @YES, @"session_id" : credentials.sessionID };
@@ -819,24 +810,19 @@ id <BetableGameCallbacks> _callbacks;
 }
 
 - (void)onHeartbeat{
-    NSLog( @">onHeartbeat() with %@", credentials );
     if ( FORGET == nextSessionBehaviour ) {
-        NSLog( @"guard...forget session" );
         // User was explicitly logged out and heartbeats shouldn't resume until logged in again
         nextSessionBehaviour = HEARTBEAT;
         return;
-        
     }
     
     if( nil == credentials ) {
-        NSLog( @"guard...no credentials" );
         [self extendSessionIn:UNHEALTHY_PERIOD withBehaviour:nextSessionBehaviour];
         return;
     }
     
     if( [credentials isUnbacked] ) {
         // No heartbeats for unbacked access credentials
-        NSLog( @"guard...no credential backing means no session and no heartbeat" );
         return;
     }
     
@@ -845,20 +831,15 @@ id <BetableGameCallbacks> _callbacks;
     NSDictionary* data = @{ @"session_id": credentials.sessionID };
    
     BetableCompletionHandler onSuccess = ^(NSDictionary* data) {
-        
-        NSLog( @">onHeartbeat()->onSuccess( %@ )", data );
-        
         if( ! [data[@"alive"] boolValue] ) {
             // Session is no longer alive
             [self logout];
-            NSLog( @"onSuccess()...session not alive, calling logout" );
             return;
         }
 
         NSDictionary* realityCheck = data[@"reality_check"];
         
         if( ! [realityCheck[@"enabled"] boolValue] ) {
-            NSLog( @"onSuccess()...reality checks disabled, check in a minute to see if session has died ");
             [self extendSessionIn:HEALTHY_PERIOD withBehaviour:nextSessionBehaviour];
             return;
         }
@@ -870,24 +851,19 @@ id <BetableGameCallbacks> _callbacks;
         if ( msRemainingTime < msRemainingEpsilon ) {
             
             // Time's up, let user decide how to proceed
-            NSLog( @"onSuccess()...time up, fire reality check" );
-            // Note that right heare, heartbeats have stopped and will not resume until user decides to continue
+            // Note that right here, heartbeats have stopped and will not resume until user decides to continue
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self fireRealityCheck];
             });
         } else {
             // cap number of seconds to a healthy period before next check
             NSTimeInterval nextHeartbeatPeriod = MIN( msRemainingTime / 1000.0, HEALTHY_PERIOD);
-            
-            NSLog( @"onSuccess()...hearbeat again for next reality check in %fs", nextHeartbeatPeriod );
             [self extendSessionIn:nextHeartbeatPeriod withBehaviour:nextSessionBehaviour];
             
         }
     };
     
     BetableFailureHandler onFailure = ^(NSURLResponse *response, NSString *responseBody, NSError *error) {
-        // TODO don't rush to make user's experience suck, offer user maybe 2 retries / 10 seconds; and then treat the session as ended.
-        // More debugging is needed
         NSLog( @"Logging out after error on heartbeat:\nresponse: %@\nresponseBody: %@\nerror: %@", response, responseBody, error );
         [self logout];
     };
@@ -917,7 +893,6 @@ id <BetableGameCallbacks> _callbacks;
 
 
 - (void)fireRealityCheck {
-    NSLog( @">fireRealityCheck()" );
     UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"Reality Check" message:@"You've been playing a while" preferredStyle:UIAlertControllerStyleAlert ];
     
     // Propose player's decision to logout after reality check interval
@@ -960,7 +935,7 @@ id <BetableGameCallbacks> _callbacks;
     
     [self performOnGameBackgrounded];
     
-    // TODO --should probably handle a timeout on this
+    // TODO --should probably provide a timeout on this that explicitly logs player out
     [[_callbacks currentGameView] presentViewController:alertController animated:YES completion:nil];
 }
 
