@@ -923,7 +923,8 @@ id <BetableGameCallbacks> _callbacks;
         // reset reality checks on next heartbeat, once session is extended, open the player's wallet
         [self resetSessionAndOnComplete:^(NSDictionary* data){
             [self walletInViewController:[_callbacks currentGameView] onClose:^{
-                [self performOnGameForegrounded];
+                // User must decide whether to logout or continue; regardless of wallet experience
+                [self fireRealityCheck];
             }];
             [self extendSessionIn:NOW withBehaviour:HEARTBEAT];
         }
