@@ -12,7 +12,7 @@
 
 -(id) initWithAccessToken:(NSString*)accessToken andSessionID:(NSString*) sessionID {
     
-    // This container won't exist without both fields being present
+    // This container won't exist without accessToken being present
     if( accessToken == nil) {
         return nil;
     }

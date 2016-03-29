@@ -209,19 +209,15 @@ typedef enum heartbeatPeriods {
     NSHTTPCookie *cookie;
     NSHTTPCookieStorage *cookieJar = [NSHTTPCookieStorage sharedHTTPCookieStorage];
     for (cookie in [cookieJar cookies]) {
-        BOOL isAuthCookie = [cookie.name isEqualToString:@"betable-players"];
 #ifdef USE_LOCALHOST
-        BOOL isLocalhostCookie = [cookie.domain rangeOfString:@"127.0.0.1"].location != NSNotFound;
-        if( isLocalhostCookie && isAuthCookie ) {
-            return cookie;
-        }
+        BOOL isBetableCookie = [cookie.domain rangeOfString:@"127.0.0.1"].location != NSNotFound;
 #else
         BOOL isBetableCookie = [cookie.domain rangeOfString:@"betable.com"].location != NSNotFound;
+#endif
+        BOOL isAuthCookie = [cookie.name isEqualToString:@"betable-players"];
         if (isBetableCookie && isAuthCookie) {
             return cookie;
         }
-        
-#endif
     }
     return nil;
 }
@@ -312,7 +308,6 @@ typedef enum heartbeatPeriods {
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
                                NSString *responseBody = [[NSString alloc] initWithData:data
                                                                               encoding:NSUTF8StringEncoding];
-                               
                                if (error) {
                                    onFailure(response, responseBody, error);
                                } else {
@@ -373,7 +368,7 @@ typedef enum heartbeatPeriods {
     }
     self.currentWebView.onCancel = onCancel;
     
-    // Depricated fields and parameters can stary a while longer...
+    // Depricated fields and parameters can stay a while longer...
     self.onAuthorize = onAuthorize;
     self.onFailure = onFailure;
     
@@ -545,7 +540,7 @@ typedef enum heartbeatPeriods {
     if (error) {
         NSLog(@"Error removing accessToken: %@", error);
     }
-    //After the cookies are destroyed, reload the webpage on the UI thread
+    //After the cookies are destroyed, reload the webpage
     self.currentWebView = [[BetableWebViewController alloc] init];
     [self setupAuthorizeWebView];
     
@@ -759,17 +754,17 @@ typedef enum heartbeatPeriods {
 
 // TODO this enum would be better served by a counter of outstanding heartbeats instead of asynchronous state
 // As session calls are made back to betable ID's differnt emergent behaviours should occur
-typedef enum sessionBehaviour
+typedef enum heartbeatBehaviour
 {
     // simple "is alive" check
     HEARTBEAT,
     // don't request another heartbeat
     FORGET,
-} SessionBehaviour;
+} HeartbeatBehaviour;
 
 
 // Marker that next heartbeats
-SessionBehaviour nextSessionBehaviour = FORGET;
+HeartbeatBehaviour nextHeartbeatBehaviour = FORGET;
 
 // Maintains a healthy relationship with game while reality checks take control
 id <BetableCredentialCallbacks> _credentialCallbacks;
@@ -793,8 +788,8 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
    }];
 }
 
-- (void)extendSessionIn:(NSTimeInterval)seconds withBehaviour:(SessionBehaviour) behavior {
-    nextSessionBehaviour = behavior;
+- (void)extendSessionIn:(NSTimeInterval)seconds withBehaviour:(HeartbeatBehaviour) behavior {
+    nextHeartbeatBehaviour = behavior;
 
     // Selectors in 0 seconds do nothing, so increment by nominal amount
     [self performSelector:@selector(onHeartbeat) withObject:self afterDelay:seconds + 0.1];
@@ -817,14 +812,14 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
 }
 
 - (void)onHeartbeat{
-    if ( FORGET == nextSessionBehaviour ) {
+    if ( FORGET == nextHeartbeatBehaviour ) {
         // User was explicitly logged out and heartbeats shouldn't resume until logged in again
-        nextSessionBehaviour = HEARTBEAT;
+        nextHeartbeatBehaviour = HEARTBEAT;
         return;
     }
     
     if( nil == credentials ) {
-        [self extendSessionIn:UNHEALTHY_PERIOD withBehaviour:nextSessionBehaviour];
+        [self extendSessionIn:UNHEALTHY_PERIOD withBehaviour:nextHeartbeatBehaviour];
         return;
     }
     
@@ -847,7 +842,7 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
         NSDictionary* realityCheck = data[@"reality_check"];
         
         if( ! [realityCheck[@"enabled"] boolValue] ) {
-            [self extendSessionIn:HEALTHY_PERIOD withBehaviour:nextSessionBehaviour];
+            [self extendSessionIn:HEALTHY_PERIOD withBehaviour:nextHeartbeatBehaviour];
             return;
         }
 
@@ -865,7 +860,7 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
         } else {
             // cap number of seconds to a healthy period before next check
             NSTimeInterval nextHeartbeatPeriod = MIN( msRemainingTime / 1000.0, HEALTHY_PERIOD);
-            [self extendSessionIn:nextHeartbeatPeriod withBehaviour:nextSessionBehaviour];
+            [self extendSessionIn:nextHeartbeatPeriod withBehaviour:nextHeartbeatBehaviour];
             
         }
     };
