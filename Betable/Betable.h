@@ -347,6 +347,8 @@ inViewController:(UIViewController*)viewController
 @property (strong, nonatomic) BetableWebViewController *currentWebView;
 @property (strong, nonatomic) BetableAccessTokenHandler onAuthorize DEPRECATED_MSG_ATTRIBUTE(REALITY_CHECK_DEPRICATION);
 @property (strong, nonatomic) BetableFailureHandler onFailure DEPRECATED_MSG_ATTRIBUTE(REALITY_CHECK_DEPRICATION);
+// Public callback for when player has explicitly logged out of game--doesn't report session timeouts or other invalidation
+@property (strong, nonatomic) BetableLogoutHandler onLogout;
 
 
 @end

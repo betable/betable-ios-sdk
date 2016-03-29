@@ -77,7 +77,7 @@ typedef enum heartbeatPeriods {
 
 @implementation Betable
 
-@synthesize credentials, clientID, clientSecret, redirectURI, queue, currentWebView;
+@synthesize credentials, clientID, clientSecret, redirectURI, queue, currentWebView, onLogout;
 
 - (Betable*)init {
     self = [super init];
@@ -898,6 +898,9 @@ id <BetableGameCallbacks> _callbacks;
     // Propose player's decision to logout after reality check interval
     void (^onRealityCheckLogout)(UIAlertAction*) = ^(UIAlertAction* action){
         [self logout];
+        if( onLogout ) {
+            onLogout();
+        }
         [self performOnGameForegrounded];
     };
     UIAlertAction* logoutAction = [UIAlertAction actionWithTitle:@"Logout" style:UIAlertActionStyleDefault handler:onRealityCheckLogout ];
