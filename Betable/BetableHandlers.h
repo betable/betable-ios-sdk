@@ -14,12 +14,13 @@ typedef void (^BetableCancelHandler)();
 typedef void (^BetableLogoutHandler)();
 
 // Game pust provide an implementation of this to betable to facilitate proper game event interactions
-@protocol BetableGameCallbacks<NSObject>
+@protocol BetableCredentialCallbacks<NSObject>
 
 @required
 // Betable needs up-to-date insight to current view controller is should game be backgrounded and foregrounded
 - (UIViewController*) currentGameView;
 
+@optional
 // Game is notified player has API credentials, and SDK calls can be made to Betable
 -(void) onCredentialsSuccess:(BetableCredentials*) credentials;
 
@@ -31,10 +32,9 @@ typedef void (^BetableLogoutHandler)();
 // until game recieves another call to checkCredentails
 -(void) onCredentialsFailure;
 
-@optional
-// Game is given an opportunity for housekeeping prior to handing control to betable
-- (void) onGameBackgrounded;
+// Game is given an opportunity for housekeeping prior to handing control to betable when reality checks engage
+- (void) onPreRealityCheck;
 
-// Game is given an opportunity for housekeeping prior to handing control from betable back to game
-- (void) onGameForegrounded;
+// Game is given an opportunity for housekeeping prior to handing control from betable back to game after reality checks have finished
+- (void) onPostRealityCheck;
 @end

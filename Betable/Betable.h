@@ -49,7 +49,7 @@ static NSString* const METHOD_POST = @"POST";
 
 @property (nonatomic, strong) BetableProfile *profile;
 
-- (Betable*)initWithClientID:(NSString*)aClientID clientSecret:(NSString*)aClientSecret redirectURI:(NSString*)aRedirectURI gameCallbacks: (id<BetableGameCallbacks>) callbacks;
+- (Betable*)initWithClientID:(NSString*)aClientID clientSecret:(NSString*)aClientSecret redirectURI:(NSString*)aRedirectURI;
 
 //This method is used to provide BetableSDK with the launch options for the app, it also allows betable to do install attribution for any ads that directed people to this app
 
@@ -97,7 +97,7 @@ static NSString* const METHOD_POST = @"POST";
 
 // Game should call this before betting--doing so will initialize a system of time-based reality checks and proper session managment.
 // Not doing so may result in undefined behaviour on other betable calls
-- (void)checkCredentials;
+- (void)checkCredentials: (id<BetableCredentialCallbacks>) callbacks;
 
 // This method is will open a game referenced by the passed in game slug to open a webview for that game in the viewcontroller that is passed in.
 

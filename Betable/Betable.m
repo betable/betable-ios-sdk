@@ -97,7 +97,7 @@ typedef enum heartbeatPeriods {
     }
     return self;
 }
-- (Betable*)initWithClientID:(NSString*)aClientID clientSecret:(NSString*)aClientSecret redirectURI:(NSString*)aRedirectURI gameCallbacks:(id<BetableGameCallbacks>) callbacks{
+- (Betable*)initWithClientID:(NSString*)aClientID clientSecret:(NSString*)aClientSecret redirectURI:(NSString*)aRedirectURI {
     self = [self init];
     if (self) {
         clientID = aClientID;
@@ -107,8 +107,6 @@ typedef enum heartbeatPeriods {
         [_tracking trackSession];
         [self fireDeferredRequests];
         [self setupAuthorizeWebView];
-        
-        _callbacks = callbacks;
     }
     return self;
 }
@@ -124,9 +122,12 @@ typedef enum heartbeatPeriods {
     return NO;
 }
 
-- (void)checkCredentials {
+
+- (void)checkCredentials:(id<BetableCredentialCallbacks> _Nonnull) callbacks
+ {
     [self checkLaunchStatus];
-    
+     _credentialCallbacks = callbacks;
+
     // If a user deletes the app, their keychain item still exists.
     // If it hasn't been stored then delete it and don't retrieve it
     NSNumber* hasBeenStoredSinceInstall = (NSNumber*)[[NSUserDefaults standardUserDefaults] objectForKey:FIRSTSTORE_KEY];
@@ -152,7 +153,7 @@ typedef enum heartbeatPeriods {
         }
     }
     
-    [self authorizeInViewController:[_callbacks currentGameView]
+    [self authorizeInViewController:[_credentialCallbacks currentGameView]
                               login:YES
             onAuthorizationComplete:^(NSString *accessToken) {}
                           onFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {}
@@ -267,8 +268,13 @@ typedef enum heartbeatPeriods {
 }
 
 -(void) performCredentialSuccess {
+    
     dispatch_async(dispatch_get_main_queue(), ^{
-        [_callbacks onCredentialsSuccess:credentials];
+        // Runtime selector doesn't spew unnecessary warnings
+        if( [_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onCredentialsSuccess:")] ) {
+            [_credentialCallbacks onCredentialsSuccess:credentials];
+        }
+        
         if( self.onAuthorize ) {
             self.onAuthorize( credentials.accessToken );
         }
@@ -277,7 +283,9 @@ typedef enum heartbeatPeriods {
 
 -(void) performCredentialFailure:(NSURLResponse*) response withBody:(NSString*) responseBody orError:(NSError*) error {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [_callbacks onCredentialsFailure];
+        if( [_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onCredentialsFailure:")] ) {
+            [_credentialCallbacks onCredentialsFailure];
+        }
         if( self.onFailure ) {
             self.onFailure(response, responseBody, error );
         }
@@ -548,7 +556,9 @@ typedef enum heartbeatPeriods {
     [self extendSessionIn:NOW withBehaviour:FORGET];
     
     // Notify game
-    [_callbacks onCredentialsRevoked];
+    if( [_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onCredentialsRevoked" )] ) {
+        [_credentialCallbacks onCredentialsRevoked];
+    }
 }
 
 #pragma mark - Path getters
@@ -762,7 +772,7 @@ typedef enum sessionBehaviour
 SessionBehaviour nextSessionBehaviour = FORGET;
 
 // Maintains a healthy relationship with game while reality checks take control
-id <BetableGameCallbacks> _callbacks;
+id <BetableCredentialCallbacks> _credentialCallbacks;
 
 
 - (void)beginSessionWithCredentials:(BetableCredentials*)newCredentials {
@@ -775,14 +785,11 @@ id <BetableGameCallbacks> _callbacks;
         return;
     }
 
-    [self resetSessionAndOnComplete:^(NSDictionary* data) {
-        [self extendSessionIn:HEALTHY_PERIOD withBehaviour:HEARTBEAT];
-    }
+    [self resetSessionAndOnComplete:^(NSDictionary* data) { [self extendSessionIn:HEALTHY_PERIOD withBehaviour:HEARTBEAT]; }
                        andOnFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {
-       
-        // TODO explicit "session has expired" check instead of implicit assumption here
-        [self logout];
-        [self checkCredentials];
+                           // TODO explicit "session has expired" check instead of implicit assumption here
+                           [self logout];
+                           [self checkCredentials:_credentialCallbacks];
    }];
 }
 
@@ -872,21 +879,21 @@ id <BetableGameCallbacks> _callbacks;
     
 }
 
-- (void)performOnGameForegrounded {
+- (void)performPostRealityCheck {
     // Runtime selector doesn't spew unnecessary warnings
-    if( [_callbacks respondsToSelector:NSSelectorFromString(@"onGameForegrounded")] ) {
+    if( [_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onPostRealityCheck")] ) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [_callbacks onGameForegrounded];
+            [_credentialCallbacks onPostRealityCheck];
         });
     }
     
 }
 
-- (void)performOnGameBackgrounded {
+- (void)performPreRealityCheck {
     // Runtime selector doesn't spew unnecessary warnings
-    if( [_callbacks respondsToSelector:NSSelectorFromString(@"onGameBackgrounded")] ) {
+    if( [_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onPreRealityCheck")] ) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [_callbacks onGameBackgrounded];
+            [_credentialCallbacks onPreRealityCheck];
         });
     }
 }
@@ -901,7 +908,7 @@ id <BetableGameCallbacks> _callbacks;
         if( onLogout ) {
             onLogout();
         }
-        [self performOnGameForegrounded];
+        [self performPostRealityCheck];
     };
     UIAlertAction* logoutAction = [UIAlertAction actionWithTitle:@"Logout" style:UIAlertActionStyleDefault handler:onRealityCheckLogout ];
     [alertController addAction:logoutAction];
@@ -910,7 +917,7 @@ id <BetableGameCallbacks> _callbacks;
     void (^onRealityCheckContinue)(UIAlertAction*) = ^(UIAlertAction* action){
         // reset reality checks on next heartbeat
         [self resetSessionAndOnComplete:^(NSDictionary* data){
-            [self performOnGameForegrounded];
+            [self performPostRealityCheck];
             [self extendSessionIn:NOW withBehaviour:HEARTBEAT];
 
         }
@@ -925,7 +932,7 @@ id <BetableGameCallbacks> _callbacks;
     void (^onRealityCheckWallet)(UIAlertAction*) = ^(UIAlertAction* action){
         // reset reality checks on next heartbeat, once session is extended, open the player's wallet
         [self resetSessionAndOnComplete:^(NSDictionary* data){
-            [self walletInViewController:[_callbacks currentGameView] onClose:^{
+            [self walletInViewController:[_credentialCallbacks currentGameView] onClose:^{
                 // User must decide whether to logout or continue; regardless of wallet experience
                 [self fireRealityCheck];
             }];
@@ -937,10 +944,10 @@ id <BetableGameCallbacks> _callbacks;
     UIAlertAction* walletAction = [UIAlertAction actionWithTitle:@"Check Balance" style:UIAlertActionStyleDefault handler:onRealityCheckWallet ];
     [alertController addAction:walletAction];
     
-    [self performOnGameBackgrounded];
+    [self performPreRealityCheck];
     
     // TODO --should probably provide a timeout on this that explicitly logs player out
-    [[_callbacks currentGameView] presentViewController:alertController animated:YES completion:nil];
+    [[_credentialCallbacks currentGameView] presentViewController:alertController animated:YES completion:nil];
 }
 
 
