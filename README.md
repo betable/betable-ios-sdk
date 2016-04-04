@@ -10,7 +10,16 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 * For 5.1 support you need to set the AdSupport iAd and Foundation frameworks to optional under "Link Binary With Libraries" in the "Build Phases" section of your target's settings.
 * You must add `-ObjC` to your other linker flags inside your target's build settings
 
-## 1.0.7  [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.0.7/BetableFramework-1.0.7.zip)
+## 1.1.0  [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.0/BetableFramework-1.1.0.zip)
+
+* Added player reality checks to coincide with session compatablity changes in Betable's SDK
+* Note: The notion of accessToken in the game is now handled by a Credentials class and methods requiring
+backed access tokens are all depricated in favour of a checkCredentials method and a number of callbacks.
+The callback will be called asynchronously over the livetime of the session because player reality checks 
+may be triggered repeatedly over the lifetime of the given session.  
+
+
+## 1.0.7
 
 **Changes** 
 
