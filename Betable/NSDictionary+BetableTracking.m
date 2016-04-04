@@ -42,8 +42,6 @@ MAKE_CATEGORIES_LOADABLE(NSDictionary_BetableTracking);
 }
 
 - (void)parameterizeBool:(BOOL)value forKey:(NSString *)key {
-    if (value < 0) return;
-    
     int valueInt = [[NSNumber numberWithBool:value] intValue];
     
     [self parameterizeInt:valueInt forKey:key];

@@ -388,11 +388,12 @@ BOOL isPad() {
     if (isPad() || !self.portraitOnly) {
         return YES;
     } else {
-        return NO;
+        return [[UIDevice currentDevice] orientation] != UIDeviceOrientationPortrait;
+;
     }
 }
 
--(NSUInteger)supportedInterfaceOrientations
+-(UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
     if (isPad() || !self.portraitOnly) {
         return UIInterfaceOrientationMaskAllButUpsideDown;

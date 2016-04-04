@@ -20,10 +20,8 @@ NSString *BetablePasteBoardClientIDName = @"com.Betable.BetableSDK.sharedData.pr
 NSString *BetablePasteBoardSignatureName = @"com.Betable.BetableSDK.sharedData.profile:Signature";
 NSString *BetablePasteBoardExpiryName = @"com.Betable.BetableSDK.sharedData.profile:Expiry";
 
-// Running a local betable server? Uncomment this
-// #define LOCALHOST 1
-
-#ifdef LOCALHOST
+// If this exists it should be in BetableProfile.h
+#ifdef USE_LOCALHOST
 // betable-id services
 NSString const *BetableAPIURL = @"http://localhost:8020";
 // betable-players services

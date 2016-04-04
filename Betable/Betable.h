@@ -29,12 +29,18 @@
 #import <Betable/BetableWebViewController.h>
 #import <Betable/BetableHandlers.h>
 #import <Betable/BetableBatchRequest.h>
+#import <Betable/BetableCredentials.h>
 #import <Betable/BetableTracking.h>
 #import <Betable/BetableTrackingHistory.h>
 #import <Betable/BetableTrackingUtil.h>
 
+#define REALITY_CHECK_DEPRICATION "May work as intended, but credential managment is now reccomended via checkCredentials and gameCallbacks"
+
 static NSString * const BetableEnvironmentSandbox    = @"sandbox";
 static NSString * const BetableEnvironmentProduction = @"production";
+
+static NSString* const METHOD_GET = @"GET";
+static NSString* const METHOD_POST = @"POST";
 
 
 @class BetableWebViewController;
@@ -43,7 +49,7 @@ static NSString * const BetableEnvironmentProduction = @"production";
 
 @property (nonatomic, strong) BetableProfile *profile;
 
-- (Betable*)initWithClientID:(NSString*)clientID clientSecret:(NSString*)clientSecret redirectURI:(NSString*)redirectURI;
+- (Betable*)initWithClientID:(NSString*)aClientID clientSecret:(NSString*)aClientSecret redirectURI:(NSString*)aRedirectURI;
 
 //This method is used to provide BetableSDK with the launch options for the app, it also allows betable to do install attribution for any ads that directed people to this app
 
@@ -51,19 +57,21 @@ static NSString * const BetableEnvironmentProduction = @"production";
 //          delegate method applicationDidLaunchWithOptions: is called.
 - (void)launchWithOptions:(NSDictionary*)launchOptions;
 
+
 //This method is used to retrieve a stored access token for a player who
 //   has authorized with betable.
 //
 //    Throws exception if you have not launched betable yet
 //
-- (BOOL)loadStoredAccessToken;
+- (BOOL)loadStoredAccessToken DEPRECATED_MSG_ATTRIBUTE(REALITY_CHECK_DEPRICATION) ;
 
 //This method is used to store the access token for a player who has
 //authorized with betable.
 //
 //    Throws exception if the player has not authorized already
 //
-- (void)storeAccessToken;
+- (void)storeAccessToken DEPRECATED_MSG_ATTRIBUTE(REALITY_CHECK_DEPRICATION);
+
 
 // This method is called when no access token exists for the current user. It
 // will initiate the OAuth flow. It will bounce the user to the Safari app that
@@ -81,11 +89,15 @@ static NSString * const BetableEnvironmentProduction = @"production";
 //
 // From your UIApplicationDelegate method application:handleOpenURL: you can
 // handle the response.
-- (void)authorizeInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel;
+- (void)authorizeInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel DEPRECATED_MSG_ATTRIBUTE(REALITY_CHECK_DEPRICATION);
 
 // Same as authorizeInViewController excepts takes them to login instead of
 // register
-- (void)authorizeLoginInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel;
+- (void)authorizeLoginInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel DEPRECATED_MSG_ATTRIBUTE(REALITY_CHECK_DEPRICATION);
+
+// Game should call this before betting--doing so will initialize a system of time-based reality checks and proper session managment.
+// Not doing so may result in undefined behaviour on other betable calls
+- (void)checkCredentials: (id<BetableCredentialCallbacks>) callbacks;
 
 // This method is will open a game referenced by the passed in game slug to open a webview for that game in the viewcontroller that is passed in.
 
@@ -309,7 +321,7 @@ inViewController:(UIViewController*)viewController
                       onComplete:(BetableCompletionHandler)onComplete
                        onFailure:(BetableFailureHandler)onFailure;
 
-// raises "User is not authroized" exception if there doesn't exist an access token
+// raises "User is not authroized" exception if credentials are missing
 - (void)checkAccessToken:(NSString*)method;
 
 // This method is used to clear a user out as the authroized user on a Betable Object. It
@@ -317,21 +329,26 @@ inViewController:(UIViewController*)viewController
 - (void)logout;
 
 // All of the betable server endpoint urls.
-- (NSString*)getTokenURL;
+- (NSString*) getTokenURL;
 + (NSString*) getGameURLPath:(NSString*)gameSlug;
 + (NSString*) getBetPath:(NSString*)gameID;
 + (NSString*) getUnbackedBetPath:(NSString*)gameID;
 + (NSString*) getWalletPath;
 + (NSString*) getAccountPath;
 
-@property (strong, nonatomic) NSString *accessToken;
+// For the most part, following a call to checkCredentials, Betable will callback to game about credentais,
+// If this is present there is a high liklihood (but no guarantee) that the credentails are valid
+@property (strong, nonatomic, readonly) BetableCredentials* credentials;
+
 @property (strong, nonatomic) NSString *clientSecret;
 @property (strong, nonatomic) NSString *clientID;
 @property (strong, nonatomic) NSString *redirectURI;
 @property (strong, nonatomic) NSOperationQueue *queue;
 @property (strong, nonatomic) BetableWebViewController *currentWebView;
-@property (strong, nonatomic) BetableAccessTokenHandler onAuthorize;
-@property (strong, nonatomic) BetableFailureHandler onFailure;
+@property (strong, nonatomic) BetableAccessTokenHandler onAuthorize DEPRECATED_MSG_ATTRIBUTE(REALITY_CHECK_DEPRICATION);
+@property (strong, nonatomic) BetableFailureHandler onFailure DEPRECATED_MSG_ATTRIBUTE(REALITY_CHECK_DEPRICATION);
+// Public callback for when player has explicitly logged out of game--doesn't report session timeouts or other invalidation
+@property (strong, nonatomic) BetableLogoutHandler onLogout;
 
 
 @end
