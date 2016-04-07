@@ -96,63 +96,68 @@ You must now launch your app before you can authorize or use any API's. This mus
 
     - (void)launchWithOptions:(NSDictionary*)launcOptions;
 
-### Storing and Retrieving the access token
 
-If you have asked for the user's permission you may store their access token on the device to recall it when they start a session in the future. To do this call
+### Credentials
+
+As of Betable v1.1; session lifetimes are no longer scoped within the SDK and relying on <pre><code>accessToken</code></pre> alone may result in undesired behaviours 
+
+* Note that unbacked betting does not require a session and will continue to work as before
+
+Calls to
 
     - (void)storeAccessToken
-
-It will store the current access token on the Betable object to the KeyChain. To later retrieve and auth with this call
-
     - (BOOL)loadStoredAccessToken
+    - (void)authorizeInViewController
 
-This will load and store the access token on the current Betable instance. It will return `YES` if the access token existed and could be retrieved and `NO` otherwise. If this method has return `YES` you can skip the authorization step and take them directly to the game.
+and their respective callbacks will continue to work for the interim, but may result in poor experience for players as they cannot properly manage the player's session.
 
-If you have stored the access token your self in some other form, simply add the access token to the Betable object after initilization and skip the authorization flow.
+    - (void)checkCredentials:(id<BetableCredentialCallbacks> _Nonnull) callbacks
 
-<pre><code>self.accessToken = <em>accessToken</em></code></pre>
+You should then call this method as soon as credentials are required and your game is comfortable asking the player to log in.
 
-### Authorization
+The SDK will begin monitoring the lifetime of the player's session via regular heartbeats, and will extend the session as player behaviour demands--which may involve removing control from the game to facilitate player decision-making regarding timed reality checks.  If the player doesn't have a live session when called, it will prompt the player to log in.
 
-    - (void)authorizeInViewController:(UIViewController*)viewController
-                          onAuthorize:(BetableAccessTokenHandler)onAuthorize
-                            onFailure:(BetableFailureHandler)onFailure
-                             onCancel:(BetableCancelHandler)onCancel;
-
-This method should be called when no access token exists for the current user.  It will initiate the OAuth protocol.  It will open a UIWebView in portrait and direct it to the Betable signup/login page.  After the person authorizes your app at <https://betable.com>, Betable will redirect them to your redirect URI which can be registered at <https://developers.betable.com> after configuring your game. This will be handled by the `Betable` object's `handleAuthroizeURL:` method inside of your applicaiton delegate's `application:handleURLOpen:`.
+Prompting the user to log in will be done via OAuth protocol.  It will open a UIWebView in portrait and direct it to the Betable signup/login page.  After the person authorizes your app at <https://betable.com>, Betable will redirect them to your redirect URI which can be registered at <https://developers.betable.com> when configuring your game. This will be handled by the `Betable` object's `handleAuthroizeURL:` method inside of your applicaiton delegate's `application:handleURLOpen:`.
 
 The redirect URI should have a protocol that opens your app.  See [Apple's documentation](http://developer.apple.com/library/ios/#documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/AdvancedAppTricks/AdvancedAppTricks.html#//apple_ref/doc/uid/TP40007072-CH7-SW50) for details.  It is suggested that your URL scheme be <code>betable+<em>game_id</em></code> and that your redirect URI be <code>betable+<em>game_id</em>://authorize</code>.  After the user has authorized your app, the authroize view will invoke your app'a `application:handleOpenURL:` in your `UIApplicationDelegate`.  Inside that method you need to call the `Betable` objects `handleAuthorizeURL:`.
 
-There are 3 handlers to pass in to this call: `onAuthroize`, `onFailure`, and `onCancel`. onAuthorize and onFailure can be set at anytime on the betable object between when this call is made and when the response is handled inside of `application:handleURLOpen:`
-
-#### onAuthorize(NSString *accessToken)
-
-This is called when the person successfully completes the authorize flow. It gets passed the accessToken. You should store this accessToken with your user so that subsequent launches do not require reauthorization.
-
-#### onFailure(NSURLResponse *response, NSString *responseBody, NSError *error)
-
-This is called when the server rejects the authorization attempt by a user. `error` will have more information on why it was rejected.
-
-#### onCancel()
-
-This is called when the person cancels out of the authorization at some point during the authroization flow.
-
-
-### Getting the Access Token
-
-    - (void)handleAuthorizeURL:(NSURL*)url
-
 Once your app receives the redirect uri in `application:handleOpenURL:` of your `UIApplicationDelegate` you can pass the uri to the `handleAuthorizeURL:` method of your `Betable` object.
 
-This is the final step in the OAuth protocol.  In the `onComplete` handler that you passed into the `authorizeInViewController:onAuthorizationComplete:onFailure:onCancel:` you will recieve your access token for the user associated with this `Betable` object.  You will want to store this with the user so you can make future requests on their behalf.
+This is the final step in the OAuth protocol.
+
+Implementing `BetableCredentialCallbacks` is mostly a matter of the `Betable` object notifying the game what is going on where player's credentials are concerned,  
+
+    - (UIViewController*) currentGameView;
+    
+Is the only required method in the protocol--it needs to return the `UIViewController` currently active when a reality check asynchronously goes off--for simplicity, it may be enough to return `[UIApplication sharedApplication].delegate.window.rootViewController` but more complicated UIs may warrant more complicated controller reporting.
+
+    -(void) onCredentialsSuccess:(BetableCredentials*) credentials;
+
+Will notify the game that the player has valid credentials--possibly after a login, or possibly extended from a previous credential check.  Consider this a cue that SDK calls requiring an `accessToken` or a `sessionID` are now feasible--both are readonly properties of the passed `BetableCredentials` object.
+
+    -(void) onCredentialsRevoked;
+
+Will notify the game that while at some point earlier `onCredentialsSuccess` indicated the player has credentials--this is no longer the case.  A call to `checkCredentials` again may be required--though its possible the the game called `logout` or the player decided to stop playing after a reality check.
+
+    -(void) onCredentialsFailure;
+
+Will notify the game that `onCredentialsSuccess` is not going to be called and a call to `checkCredentials` again may be required.
+
+    - (void) onPreRealityCheck;
+
+Will notify the game that a reality check is in order.  This is an opportunity for the game to block the `Betable` object before it engages with the player in a reality check--and offers the game an opportunity to do housekeeping before relinquishing control back to `Betable`.
+
+    - (void) onPostRealityCheck;
+
+Will notify the game that a reality check has finished--this is an opportunity for the game to recover following a reality check.  Note that the reality check may also revoke credentials during this time as per the player's indication to do so.
 
 ### Loggging out
 
     - (void)logout
 
-If you need to disassociate the current player with the betable object simply call the logout method.  This handles destroying the cookies, resetting the authorize web browser, and removing the betable token.
+If you need to disassociate the current player with the betable object and end their session; simply call the logout method.  This handles destroying the cookies, resetting the authorize web browser, and removing the `BetableCredentials` object from the `Betable` object.
 
-### Launching Other Web Views
+### Launching Web Views
 
 You can launch a couple of other web views for the other track endpoints. They all require you give the viewController that they will be displayed over modally. They all take an onClose method. To protect the user the onClose method does not return any information about what actions the user has taken while the webview is displayed. It will simply notifiy you that they browser has closed.
 
