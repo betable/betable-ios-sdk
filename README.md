@@ -99,7 +99,7 @@ You must now launch your app before you can authorize or use any API's. This mus
 
 ### Credentials
 
-As of Betable v1.1; session lifetimes are no longer scoped within the SDK and relying on <pre><code>accessToken</code></pre> alone may result in undesired behaviours 
+As of Betable v1.1; session lifetimes are no longer scoped within the SDK and relying on `accessToken` alone may result in undesired behaviours 
 
 * Note that unbacked betting does not require a session and will continue to work as before
 
@@ -117,7 +117,7 @@ You should then call this method as soon as credentials are required and your ga
 
 The SDK will begin monitoring the lifetime of the player's session via regular heartbeats, and will extend the session as player behaviour demands--which may involve removing control from the game to facilitate player decision-making regarding timed reality checks.  If the player doesn't have a live session when called, it will prompt the player to log in.
 
-Prompting the user to log in will be done via OAuth protocol.  It will open a UIWebView in portrait and direct it to the Betable signup/login page.  After the person authorizes your app at <https://betable.com>, Betable will redirect them to your redirect URI which can be registered at <https://developers.betable.com> when configuring your game. This will be handled by the `Betable` object's `handleAuthroizeURL:` method inside of your applicaiton delegate's `application:handleURLOpen:`.
+Prompting the player to log in will be done via OAuth protocol.  It will open a UIWebView in portrait and direct it to the Betable signup/login page.  After the player authorizes your app at <https://betable.com>, Betable will redirect them to your redirect URI which can be registered at <https://developers.betable.com> when configuring your game. This will be handled by the `Betable` object's `handleAuthroizeURL:` method inside of your applicaiton delegate's `application:handleURLOpen:`.
 
 The redirect URI should have a protocol that opens your app.  See [Apple's documentation](http://developer.apple.com/library/ios/#documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/AdvancedAppTricks/AdvancedAppTricks.html#//apple_ref/doc/uid/TP40007072-CH7-SW50) for details.  It is suggested that your URL scheme be <code>betable+<em>game_id</em></code> and that your redirect URI be <code>betable+<em>game_id</em>://authorize</code>.  After the user has authorized your app, the authroize view will invoke your app'a `application:handleOpenURL:` in your `UIApplicationDelegate`.  Inside that method you need to call the `Betable` objects `handleAuthorizeURL:`.
 
@@ -125,7 +125,7 @@ Once your app receives the redirect uri in `application:handleOpenURL:` of your 
 
 This is the final step in the OAuth protocol.
 
-Implementing `BetableCredentialCallbacks` is mostly a matter of the `Betable` object notifying the game what is going on where player's credentials are concerned,  
+Implementing `BetableCredentialCallbacks` is mostly a matter of the `Betable` object notifying the game what is going on where player's credentials are concerned...
 
     - (UIViewController*) currentGameView;
     
