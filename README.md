@@ -92,7 +92,7 @@ To create a `Betable` object simply initilize it with your client ID, client sec
 
 ### Launching
 
-You must now launch your app before you can authorize or use any API's. This must be done in your application delegate's `+applicationDidFinishLaunchingWithOptions:` method. to launch, simply call the `launchWithOptions:` method on the betable object and pass in the launchOptions from the `+applicationDidFinishLaunchingWithOptions:` method.
+You must now launch your app before the game can authorize or use any API's. This must be done in the `UIApplicationDelegate`'s `+applicationDidFinishLaunchingWithOptions:` method. to launch, simply call the `launchWithOptions:` method on the betable object and pass in the launchOptions from the `+applicationDidFinishLaunchingWithOptions:` method.
 
     - (void)launchWithOptions:(NSDictionary*)launcOptions;
 
@@ -113,15 +113,15 @@ and their respective callbacks will continue to work for the interim, but may re
 
     - (void)checkCredentials:(id<BetableCredentialCallbacks> _Nonnull) callbacks
 
-You should then call this method as soon as credentials are required and your game is comfortable asking the player to log in.
+The game should then call this method as soon as credentials are required and the game is comfortable asking the player to log in.
 
 The SDK will begin monitoring the lifetime of the player's session via regular heartbeats, and will extend the session as player behaviour demands--which may involve removing control from the game to facilitate player decision-making regarding timed reality checks.  If the player doesn't have a live session when called, it will prompt the player to log in.
 
-Prompting the player to log in will be done via OAuth protocol.  It will open a UIWebView in portrait and direct it to the Betable signup/login page.  After the player authorizes your app at <https://betable.com>, Betable will redirect them to your redirect URI which can be registered at <https://developers.betable.com> when configuring your game. This will be handled by the `Betable` object's `handleAuthroizeURL:` method inside of your applicaiton delegate's `application:handleURLOpen:`.
+Prompting the player to log in will be done via OAuth protocol.  It will open a UIWebView in portrait and direct it to the Betable signup/login page.  After the player authorizes your app at <https://betable.com>, Betable will redirect them to your redirect URI which can be registered at <https://developers.betable.com> when configuring your game.
 
-The redirect URI should have a protocol that opens your app.  See [Apple's documentation](http://developer.apple.com/library/ios/#documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/AdvancedAppTricks/AdvancedAppTricks.html#//apple_ref/doc/uid/TP40007072-CH7-SW50) for details.  It is suggested that your URL scheme be <code>betable+<em>game_id</em></code> and that your redirect URI be <code>betable+<em>game_id</em>://authorize</code>.  After the user has authorized your app, the authroize view will invoke your app'a `application:handleOpenURL:` in your `UIApplicationDelegate`.  Inside that method you need to call the `Betable` objects `handleAuthorizeURL:`.
+The redirect URI should have a protocol that opens your app.  See [Apple's documentation](http://developer.apple.com/library/ios/#documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/AdvancedAppTricks/AdvancedAppTricks.html#//apple_ref/doc/uid/TP40007072-CH7-SW50) for details.  It is suggested that your URL scheme be `betable+<em>game_id</em>` and that your redirect URI be `betable+<em>game_id</em>://authorize<`.
 
-Once your app receives the redirect uri in `application:handleOpenURL:` of your `UIApplicationDelegate` you can pass the uri to the `handleAuthorizeURL:` method of your `Betable` object.
+After the player has authorized the player, the authorize view will invoke your app's `handleOpenURL:` in the game's `UIApplicationDelegate`.  In that method, the game should pass the redirect URI to the `Betable` object's `handleAuthorizeURL:` method.
 
 This is the final step in the OAuth protocol.
 
@@ -137,7 +137,7 @@ Will notify the game that the player has valid credentials--possibly after a log
 
     -(void) onCredentialsRevoked;
 
-Will notify the game that while at some point earlier `onCredentialsSuccess` indicated the player has credentials--this is no longer the case.  A call to `checkCredentials` again may be required--though its possible the the game called `logout` or the player decided to stop playing after a reality check.
+Will notify the game that while at some point earlier `onCredentialsSuccess` indicated the player had credentials--this is no longer the case.  A call to `checkCredentials` again may be required--though its possible the the game called `logout` or the player decided to stop playing after a reality check.
 
     -(void) onCredentialsFailure;
 
@@ -151,11 +151,11 @@ Will notify the game that a reality check is in order.  This is an opportunity f
 
 Will notify the game that a reality check has finished--this is an opportunity for the game to recover following a reality check.  Note that the reality check may also revoke credentials during this time as per the player's indication to do so.
 
-### Loggging out
+### Logging out
 
     - (void)logout
 
-If you need to disassociate the current player with the betable object and end their session; simply call the logout method.  This handles destroying the cookies, resetting the authorize web browser, and removing the `BetableCredentials` object from the `Betable` object.
+If the game needs to disassociate the current player with the betable object and end their session; simply call the logout method.  This handles destroying the cookies, resetting the authorize web browser, and removing the `BetableCredentials` object from the `Betable` object.
 
 ### Launching Web Views
 
