@@ -10,6 +10,12 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 * For 5.1 support you need to set the AdSupport iAd and Foundation frameworks to optional under "Link Binary With Libraries" in the "Build Phases" section of your target's settings.
 * You must add `-ObjC` to your other linker flags inside your target's build settings
 
+## 1.1.1  [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.1/BetableFramework-1.1.1.zip)
+
+* Housekeeping.  Removed some clutter
+* Pulled CFBundleExecutable key from bundled plist
+
+
 ## 1.1.0  [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.0/BetableFramework-1.1.0.zip)
 
 * Added player reality checks to coincide with session compatablity changes in Betable's SDK

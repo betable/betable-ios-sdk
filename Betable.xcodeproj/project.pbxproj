@@ -270,6 +270,9 @@
 		A59ABF0B194913D3005466CC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				KnownAssetTags = (
+					New,
+				);
 				LastUpgradeCheck = 0640;
 				ORGANIZATIONNAME = betable;
 			};
