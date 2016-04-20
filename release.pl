@@ -84,8 +84,8 @@ unless ( $zip->writeToFileNamed($zip_file) == AZ_OK ) {
 
 # mush all the stuff this script just did into git and tag it for release
 system( 'git', 'add', $publish_directory, $latest_directory, $zip_file );
-system( 'git', 'tag', $tag_version );
 system( 'git', 'commit', '-m',     "Publishing $tag_version" );
+system( 'git', 'tag', $tag_version );
 system( 'git', 'push',   'origin', $tag_version );
 
 # TODO oauth our way into api.github.com and automate the last bit here...

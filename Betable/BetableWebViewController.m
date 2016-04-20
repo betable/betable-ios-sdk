@@ -9,11 +9,12 @@
 #import "BetableWebViewController.h"
 
 BOOL isPad() {
-#ifdef UI_USER_INTERFACE_IDIOM
-    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
-#else
-    return NO;
-#endif
+    UIDevice* device = [UIDevice currentDevice];
+    return
+        // App was built for iPad
+        [device userInterfaceIdiom] == UIUserInterfaceIdiomPad ||
+        // It's been reported the idiom result misses some iPads--so fall back to harware model
+        [device.model rangeOfString:@"iPad"].location != NSNotFound;
 }
 
 @interface UIImage (BetableBundle)
@@ -383,33 +384,31 @@ BOOL isPad() {
 
 #pragma mark - Orientation Stuff
 
+
+//
+//- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
+//    return UIInterfaceOrientationPortrait;
+//    
+//}
+//
 -(BOOL)shouldAutorotate
 {
     if (isPad() || !self.portraitOnly) {
         return YES;
     } else {
         return [[UIDevice currentDevice] orientation] != UIDeviceOrientationPortrait;
-;
     }
 }
 
 -(UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
     if (isPad() || !self.portraitOnly) {
-        return UIInterfaceOrientationMaskAllButUpsideDown;
+        return UIInterfaceOrientationMaskAll;
     } else {
         return UIInterfaceOrientationMaskPortrait;
     }
 }
 
-// pre-iOS 6 support
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
-    if (isPad() || !self.portraitOnly) {
-        return YES;
-    } else {
-        return (toInterfaceOrientation == UIInterfaceOrientationPortrait);
-    }
-}
 
 - (void)dealloc {
     self.webView.delegate = nil;
