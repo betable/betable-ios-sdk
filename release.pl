@@ -41,7 +41,7 @@ my $latest_directory = "framework/Latest";
 my $update = <<"UPDATE";
 # Changelog
 
-$version [Download](https://github.com/betable/betable-ios-sdk/releases/download/${tag_version}/${publish_name}.zip)
+## $version [Download](https://github.com/betable/betable-ios-sdk/releases/download/${tag_version}/${publish_name}.zip)
 
 UPDATE
 
