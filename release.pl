@@ -3,8 +3,8 @@
 # Lootwinner expressed concern I did a build where not all "sources" were the same, so this
 # not only endeavours to make everything the same, but it caters to the fact I'm lazy.
 
-# MAKE SURE ALL THE CHANGES YOU WANT FOR A REALEASE ARE COMITTED TO GITHUB BEFORE RUNNING --
-# YOU WILL BE AT RELEASE BY THE END
+# MAKE SURE ALL THE CHANGES YOU WANT FOR A REALEASE ARE ON MASTER AND COMITTED TO GITHUB 
+# BEFORE RUNNING -- YOU WILL BE AT RELEASE BY THE END
 
 use strict;
 use warnings;
@@ -55,11 +55,12 @@ while (1) {
 }
 
 # Update README.pm
-my $readme_contents = read_file('README.md');
+my $readme_file = 'README.md';
+my $readme_contents = read_file($readme_file);
 
 # Abuse the position of the "# Changelog" text in the README to insert all the happy update info
 $readme_contents =~ s/\# Changelog/${update}${user_md_update}/s;
-write_file( 'README.md', $readme_contents );
+write_file( $readme_file, $readme_contents );
 
 # create and fill the stuff for the requested version
 mkdir($publish_directory);
@@ -83,7 +84,7 @@ unless ( $zip->writeToFileNamed($zip_file) == AZ_OK ) {
 }
 
 # mush all the stuff this script just did into git and tag it for release
-system( 'git', 'add', $publish_directory, $latest_directory, $zip_file );
+system( 'git', 'add', $readme_file, $publish_directory, $latest_directory, $zip_file );
 system( 'git', 'commit', '-m',     "Publishing $tag_version" );
 system( 'git', 'tag', $tag_version );
 system( 'git', 'push',   'origin', $tag_version );
