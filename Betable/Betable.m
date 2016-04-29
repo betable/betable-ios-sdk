@@ -279,7 +279,7 @@ typedef enum heartbeatPeriods {
 
 -(void) performCredentialFailure:(NSURLResponse*) response withBody:(NSString*) responseBody orError:(NSError*) error {
     dispatch_async(dispatch_get_main_queue(), ^{
-        if( [_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onCredentialsFailure:")] ) {
+        if( [_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onCredentialsFailure")] ) {
             [_credentialCallbacks onCredentialsFailure];
         }
         if( self.onFailure ) {
