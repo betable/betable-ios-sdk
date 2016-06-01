@@ -321,6 +321,10 @@ inViewController:(UIViewController*)viewController
                       onComplete:(BetableCompletionHandler)onComplete
                        onFailure:(BetableFailureHandler)onFailure;
 
+// This method is used to record when the user is active so that the session
+// can be prolonged.
+- (void)recordUserActivity;
+
 // raises "User is not authroized" exception if credentials are missing
 - (void)checkAccessToken:(NSString*)method;
 

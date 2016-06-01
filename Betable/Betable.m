@@ -42,6 +42,7 @@
 
 NSString *BetablePasteBoardUserIDKey = @"com.Betable.BetableSDK.sharedData:UserID";
 NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
+BOOL _userIsActive;
 
 #define SERVICE_KEY @"com.betable.SDK"
 #define USERNAME_KEY @"com.betable.Credentials"
@@ -449,6 +450,10 @@ typedef enum heartbeatPeriods {
     }
 }
 
+- (void)recordUserActivity {
+    _userIsActive = YES;
+}
+
 #pragma mark - API Calls
 - (void)gameManifestForSlug:(NSString*)gameSlug
                     economy:(NSString*)economy
@@ -830,6 +835,11 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
     
     NSString* path = [Betable getHeartbeatPath];
     NSString* method = METHOD_GET;
+    if (_userIsActive) {
+        path = [Betable getResetSessionPath];
+        method = METHOD_POST;
+    }
+    _userIsActive = NO;
     NSDictionary* data = @{ @"session_id": credentials.sessionID };
    
     BetableCompletionHandler onSuccess = ^(NSDictionary* data) {
