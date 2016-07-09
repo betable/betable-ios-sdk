@@ -277,11 +277,12 @@ BOOL isPad() {
     }
 }
 - (void)closeWindow {
-    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
-    if (self.onCancel) {
-        self.onCancel();
-    }
-    self.onCancel = nil;
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:^{
+        if (self.onCancel) {
+            self.onCancel();
+        }
+        self.onCancel = nil;
+    }];
 }
 - (void)loadCachedState {
     NSString *javacript = @"window.loadCachedState()";
