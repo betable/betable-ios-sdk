@@ -396,7 +396,8 @@ typedef enum heartbeatPeriods {
 - (void)openGame:(NSString*)gameSlug withEconomy:(NSString*)economy inViewController:(UIViewController*)viewController onHome:(BetableCancelHandler)onHome onFailure:(BetableFailureHandler)onFaiure{
     //TODO Make request to get url
     [self gameManifestForSlug:gameSlug economy:economy onComplete:^(NSDictionary *data) {
-        NSString* url = [NSString stringWithFormat:@"https://prospecthallcasino.com%@", data[@"url"]];
+        //TODO don't hastily slap on this client_id
+        NSString* url = [NSString stringWithFormat:@"https://prospecthallcasino.com%@&client_id=%@", data[@"url"], self.clientID];
         BetableWebViewController *webController = [[BetableWebViewController alloc]initWithURL:url onCancel:onHome showInternalCloseButton:NO];
         [viewController presentViewController:webController animated:YES completion:nil];
     } onFailure:onFaiure];
