@@ -427,7 +427,13 @@ typedef enum heartbeatPeriods {
 }
 
 - (void)walletInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
-    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"wallet"] onCancel:onClose];
+    NSDictionary* params;
+    if (self.credentials == nil || [self.credentials isUnbacked]) {
+        params = @{@"session_id": @"none"};
+    } else {
+        params = @{@"session_id": self.credentials.sessionID};
+    }
+    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"wallet" andParams:params] onCancel:onClose];
     [viewController presentViewController:webController animated:YES completion:nil];
 }
 
