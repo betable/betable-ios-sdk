@@ -17,6 +17,7 @@
 - (NSURL*)apiURL;
 
 @property (readonly) BOOL hasProfile;
+- (NSString*)simpleURL:(NSString*)path withParams:(NSDictionary*)params;
 - (NSString*)decorateURL:(NSString*)path forClient:(NSString*)clientID withParams:(NSDictionary*)aParams;
 - (NSString*)decorateTrackURLForClient:(NSString*)clientID withAction:(NSString*)action;
 - (NSString*)decorateTrackURLForClient:(NSString*)clientID withAction:(NSString*)action andParams:(NSDictionary*)aParams;

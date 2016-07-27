@@ -190,16 +190,28 @@ typedef enum heartbeatPeriods {
     _preCacheAuthToken = [self getBetableAuthCookie].value;
     CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
     CFStringRef UUIDSRef = CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
-    NSString *UUID = [NSString stringWithFormat:@"%@", UUIDSRef];
+    NSString* UUID = [NSString stringWithFormat:@"%@", UUIDSRef];
     CFRelease(UUIDRef);
     CFRelease(UUIDSRef);
     
-    NSDictionary *authorizeParameters = @{
+    NSDictionary* params;
+    NSDictionary* authorizeParams = @{
                                           @"redirect_uri":self.redirectURI,
                                           @"state":UUID,
                                           @"load":@"ext.nux.deposit"
                                           };
-    NSString *authURL = [_profile decorateURL:@"/ext/precache" forClient:self.clientID withParams:authorizeParameters];
+    
+    // This auth url call isn't set up to deal with none as a session param, so only send it when not none
+    if (self.credentials == nil || [self.credentials isUnbacked]) {
+        params = authorizeParams;
+    } else {
+        NSMutableDictionary* sessionParams = [self sessionParams];
+        [sessionParams addEntriesFromDictionary:authorizeParams];
+        params = sessionParams;
+    }
+    
+    
+    NSString* authURL = [_profile decorateURL:@"/ext/precache" forClient:self.clientID withParams:params];
     dispatch_async(dispatch_get_main_queue(), ^{
         self.currentWebView.url = authURL;
     });
@@ -213,9 +225,16 @@ typedef enum heartbeatPeriods {
 #ifdef USE_LOCALHOST
         BOOL isBetableCookie = [cookie.domain rangeOfString:@"127.0.0.1"].location != NSNotFound;
 #else
-        BOOL isBetableCookie = [cookie.domain rangeOfString:@"betable.com"].location != NSNotFound;
+        BOOL isBetableCookie = [cookie.domain rangeOfString:@"betable.com"].location != NSNotFound ||
+            [cookie.domain rangeOfString:@"prospecthallcasino.com"].location != NSNotFound;
 #endif
-        BOOL isAuthCookie = [cookie.name isEqualToString:@"betable-players"];
+        
+        NSSet* authNames = [NSSet setWithObjects:@"players-sid-players",
+                            @"players-sid-games-wallet",
+                            @"betable-players",
+                            @"betable-games-wallet",
+                            nil];
+        BOOL isAuthCookie = [authNames containsObject:cookie.name];
         if (isBetableCookie && isAuthCookie) {
             return cookie;
         }
@@ -396,49 +415,52 @@ typedef enum heartbeatPeriods {
 - (void)openGame:(NSString*)gameSlug withEconomy:(NSString*)economy inViewController:(UIViewController*)viewController onHome:(BetableCancelHandler)onHome onFailure:(BetableFailureHandler)onFaiure{
     //TODO Make request to get url
     [self gameManifestForSlug:gameSlug economy:economy onComplete:^(NSDictionary *data) {
+        NSMutableDictionary* params = [self sessionParams];
+
         //TODO don't hastily slap on this client_id
-        NSString* url = [NSString stringWithFormat:@"https://prospecthallcasino.com%@&client_id=%@", data[@"url"], self.clientID];
+        params[@"client_id"] = self.clientID;
+        
+        NSString* url = [_profile simpleURL:data[@"url"] withParams:params];
         BetableWebViewController *webController = [[BetableWebViewController alloc]initWithURL:url onCancel:onHome showInternalCloseButton:NO];
         [viewController presentViewController:webController animated:YES completion:nil];
     } onFailure:onFaiure];
 }
 
 - (void)depositInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
-    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"deposit"] onCancel:onClose];
+    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"deposit" andParams:[self sessionParams]] onCancel:onClose];
     [viewController presentViewController:webController animated:YES completion:nil];
 }
 
 
 - (void)supportInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
-    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"support"] onCancel:onClose];
+    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"support" andParams:[self sessionParams]] onCancel:onClose];
     [viewController presentViewController:webController animated:YES completion:nil];
 }
 
 - (void)withdrawInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
-    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"withdraw"] onCancel:onClose];
+    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"withdraw" andParams:[self sessionParams]] onCancel:onClose];
     [viewController presentViewController:webController animated:YES completion:nil];
 }
 
 - (void)redeemPromotion:(NSString*)promotionURL inViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
-    NSDictionary *params = @{@"promotion": promotionURL};
+    NSMutableDictionary *params = [self sessionParams];
+    params[@"promotion"] = promotionURL;
     NSString *url = [_profile decorateTrackURLForClient:self.clientID withAction:@"redeem" andParams:params];
     BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onClose];
     [viewController presentViewController:webController animated:YES completion:nil];
 }
 
 - (void)walletInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
-    NSDictionary* params;
-    if (self.credentials == nil || [self.credentials isUnbacked]) {
-        params = @{@"session_id": @"none"};
-    } else {
-        params = @{@"session_id": self.credentials.sessionID};
-    }
-    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"wallet" andParams:params] onCancel:onClose];
+    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"wallet" andParams:[self sessionParams]] onCancel:onClose];
     [viewController presentViewController:webController animated:YES completion:nil];
 }
 
 - (void)loadBetablePath:(NSString*)path inViewController:(UIViewController*)viewController withParams:(NSDictionary*)params onClose:(BetableCancelHandler)onClose {
-    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateURL:path forClient:self.clientID withParams:params] onCancel:onClose];
+    NSMutableDictionary* sessionParams = [self sessionParams];
+    if (params != nil ) {
+        [sessionParams addEntriesFromDictionary:params];
+    }
+    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateURL:path forClient:self.clientID withParams:sessionParams] onCancel:onClose];
     [viewController presentViewController:webController animated:YES completion:nil];
 }
 
@@ -540,12 +562,16 @@ typedef enum heartbeatPeriods {
 }
 
 - (void)logout {
-    //Get the cookie jar
+
     NSHTTPCookieStorage *cookieJar = [NSHTTPCookieStorage sharedHTTPCookieStorage];
-    NSHTTPCookie *cookie = [self getBetableAuthCookie];
-    if (cookie) {
+    NSHTTPCookie* cookie = [self getBetableAuthCookie];
+    // In reality there'll be only one auth cookie, but in paranoid coder space there can be more (or less)...
+    // https://www.youtube.com/watch?v=8CP9dg38cAI
+    while (cookie) {
         [cookieJar deleteCookie:cookie];
+        cookie = [self getBetableAuthCookie];
     }
+    
     //Remove any stored tokens
     NSError *error;
     [STKeychain deleteItemForUsername:USERNAME_KEY andServiceName:SERVICE_KEY error:&error];
@@ -847,7 +873,6 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
         method = METHOD_POST;
     }
     _userIsActive = NO;
-    NSDictionary* data = @{ @"session_id": credentials.sessionID };
    
     BetableCompletionHandler onSuccess = ^(NSDictionary* data) {
         if( ! [data[@"alive"] boolValue] ) {
@@ -886,9 +911,21 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
         NSLog( @"Logging out after error on heartbeat:\nresponse: %@\nresponseBody: %@\nerror: %@", response, responseBody, error );
         [self logout];
     };
-    
+
+    NSDictionary* data = [self sessionParams];
     [self fireGenericAsynchronousRequestWithPath:path method:method data:data onSuccess:onSuccess onFailure:onFailure ];
     
+}
+
+// NSMutableDictionary is good for merging with another set of params
+- (NSMutableDictionary*)sessionParams {
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    if (self.credentials == nil || [self.credentials isUnbacked]) {
+        params[@"session_id"] = @"none";
+    } else {
+        params[@"session_id"] = self.credentials.sessionID;
+    }
+    return params;
 }
 
 - (void)performPostRealityCheck {

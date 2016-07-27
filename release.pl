@@ -54,7 +54,7 @@ while (1) {
     $user_md_update .= scalar <STDIN>;
 }
 
-# Update README.pm
+# Update README.md
 my $readme_file = 'README.md';
 my $readme_contents = read_file($readme_file);
 

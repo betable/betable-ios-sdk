@@ -154,22 +154,31 @@ NSString const *BetableURL = @"https://prospecthallcasino.com";
     urlString = [NSString stringWithFormat:@"%@?%@", urlString, [parts componentsJoinedByString: @"&"]];
     return [NSURL URLWithString:urlString];
 }
-- (NSString*)decorateURL:(NSString*)path forClient:(NSString*)clientID withParams:(NSDictionary*)aParams {
-    NSString *IDFA = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
-    
-    NSMutableDictionary *params = [aParams mutableCopy];
-    if (params == nil) {
-        params = [NSMutableDictionary dictionary];
-    }
-    [params setObject:clientID forKey:@"client_id"];
-    if (IDFA) {
-        [params setObject:IDFA forKey:@"device_identifier"];
-    }
-    [params setObject:SDK_VERSION forKey:@"sdk_version"];
+
+- (NSString*)simpleURL:(NSString*)path withParams:(NSDictionary* _Nonnull)params {
     NSString *url = [NSString stringWithFormat:@"%@%@", BetableURL, path];
     NSString *fullURL = [[self urlForDomain:url andQuery:params] absoluteString];
     return fullURL;
 }
+
+- (NSString*)decorateURL:(NSString*)path forClient:(NSString*)clientID withParams:(NSDictionary*)aParams {
+    
+    NSMutableDictionary *params = [aParams mutableCopy];
+    if (aParams == nil) {
+        params = [NSMutableDictionary dictionary];
+    }
+    params[@"client_id"] = clientID;
+
+    NSString *IDFA = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+    if (IDFA) {
+        params[@"device_identifier"] = IDFA;
+    }
+
+    params[@"sdk_version"] = SDK_VERSION;
+
+    return [self simpleURL:path withParams:params];
+}
+
 - (NSString*)decorateTrackURLForClient:(NSString*)clientID withAction:(NSString*)action andParams:(NSDictionary*)aParams {
     NSMutableDictionary *params = [aParams mutableCopy];
     if (params == nil) {
