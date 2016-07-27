@@ -164,9 +164,10 @@ NSString const *BetableURL = @"https://prospecthallcasino.com";
 - (NSString*)decorateURL:(NSString*)path forClient:(NSString*)clientID withParams:(NSDictionary*)aParams {
     
     NSMutableDictionary *params = [aParams mutableCopy];
-    if (aParams == nil) {
+    if (params == nil) {
         params = [NSMutableDictionary dictionary];
     }
+    
     params[@"client_id"] = clientID;
 
     NSString *IDFA = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
