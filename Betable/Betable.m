@@ -242,8 +242,6 @@ typedef enum heartbeatPeriods {
                       [self urlEncode:redirectURI],
                       code];
     
-    NSLog( @"token... sending %@ with body %@", request, body );
-
     void (^onComplete)(NSURLResponse*, NSData*, NSError*) = ^(NSURLResponse *response, NSData *data, NSError *error) {
         NSString *responseBody = [[NSString alloc] initWithData:data
                                                        encoding:NSUTF8StringEncoding];
@@ -446,7 +444,7 @@ typedef enum heartbeatPeriods {
 
 - (void)loadBetablePath:(NSString*)path inViewController:(UIViewController*)viewController withParams:(NSDictionary*)params onClose:(BetableCancelHandler)onClose {
     NSMutableDictionary* sessionParams = [self sessionParams];
-    if (params != nil ) {
+    if (params != nil) {
         [sessionParams addEntriesFromDictionary:params];
     }
     BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateURL:path forClient:self.clientID withParams:sessionParams] onCancel:onClose];
