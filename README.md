@@ -10,6 +10,11 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 
 # Changelog
 
+## 1.1.4 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.4/BetableFramework-1.1.4.zip)
+
+Update naming of authentication cookies, ensure calls all provide a session_id
+
+
 ## 1.1.2 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.2/BetableFramework-1.1.2.zip)
 
 * Fixed selector for onCredentialsFailure
