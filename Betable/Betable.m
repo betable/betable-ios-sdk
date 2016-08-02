@@ -214,14 +214,8 @@ typedef enum heartbeatPeriods {
     NSHTTPCookie *cookie;
     NSHTTPCookieStorage *cookieJar = [NSHTTPCookieStorage sharedHTTPCookieStorage];
     for (cookie in [cookieJar cookies]) {
-#ifdef USE_LOCALHOST
-        BOOL isBetableCookie = [cookie.domain rangeOfString:@"127.0.0.1"].location != NSNotFound ||
-            [cookie.domain rangeOfString:@"prospecthallcasino.com"].location != NSNotFound;
-#else
-        BOOL isBetableCookie = [cookie.domain rangeOfString:@"betable.com"].location != NSNotFound ||
-            [cookie.domain rangeOfString:@"prospecthallcasino.com"].location != NSNotFound;
-#endif
-        
+        // TODO long term; betable wallet will be on betable.com and this will need to reflect that change
+        BOOL isBetableCookie = [cookie.domain rangeOfString:@"prospecthallcasino.com"].location != NSNotFound;
         NSSet* authNames = [NSSet setWithObjects:@"players-sid-players",
                             @"players-sid-games-wallet",
                             @"betable-players",
