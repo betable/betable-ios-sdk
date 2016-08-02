@@ -24,8 +24,8 @@ NSString *BetablePasteBoardExpiryName = @"com.Betable.BetableSDK.sharedData.prof
 #ifdef USE_LOCALHOST
 // betable-id services
 NSString const *BetableAPIURL = @"http://localhost:8020";
-// betable-players services
-NSString const *BetableURL = @"http://localhost:8080";
+// betable-players services --name matches cookie and should still resolve to localhost
+NSString const *BetableURL = @"http://players.dev.prospecthallcasino.com:8080";
 
 #else
 NSString const *BetableAPIURL = @"https://api.betable.com/1.0";

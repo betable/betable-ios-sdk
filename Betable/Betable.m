@@ -194,24 +194,16 @@ typedef enum heartbeatPeriods {
     CFRelease(UUIDRef);
     CFRelease(UUIDSRef);
     
-    NSDictionary* params;
     NSDictionary* authorizeParams = @{
                                           @"redirect_uri":self.redirectURI,
                                           @"state":UUID,
                                           @"load":@"ext.nux.deposit"
                                           };
     
-    // This auth url call isn't set up to deal with none as a session param, so only send it when not none
-    if (self.credentials == nil || [self.credentials isUnbacked]) {
-        params = authorizeParams;
-    } else {
-        NSMutableDictionary* sessionParams = [self sessionParams];
-        [sessionParams addEntriesFromDictionary:authorizeParams];
-        params = sessionParams;
-    }
+    NSMutableDictionary* sessionParams = [self sessionParams];
+   [sessionParams addEntriesFromDictionary:authorizeParams];
     
-    
-    NSString* authURL = [_profile decorateURL:@"/ext/precache" forClient:self.clientID withParams:params];
+    NSString* authURL = [_profile decorateURL:@"/ext/precache" forClient:self.clientID withParams:sessionParams ];
     dispatch_async(dispatch_get_main_queue(), ^{
         self.currentWebView.url = authURL;
     });
@@ -223,7 +215,8 @@ typedef enum heartbeatPeriods {
     NSHTTPCookieStorage *cookieJar = [NSHTTPCookieStorage sharedHTTPCookieStorage];
     for (cookie in [cookieJar cookies]) {
 #ifdef USE_LOCALHOST
-        BOOL isBetableCookie = [cookie.domain rangeOfString:@"127.0.0.1"].location != NSNotFound;
+        BOOL isBetableCookie = [cookie.domain rangeOfString:@"127.0.0.1"].location != NSNotFound ||
+            [cookie.domain rangeOfString:@"prospecthallcasino.com"].location != NSNotFound;
 #else
         BOOL isBetableCookie = [cookie.domain rangeOfString:@"betable.com"].location != NSNotFound ||
             [cookie.domain rangeOfString:@"prospecthallcasino.com"].location != NSNotFound;
@@ -255,6 +248,8 @@ typedef enum heartbeatPeriods {
                       [self urlEncode:redirectURI],
                       code];
     
+    NSLog( @"token... sending %@ with body %@", request, body );
+
     void (^onComplete)(NSURLResponse*, NSData*, NSError*) = ^(NSURLResponse *response, NSData *data, NSError *error) {
         NSString *responseBody = [[NSString alloc] initWithData:data
                                                        encoding:NSUTF8StringEncoding];
