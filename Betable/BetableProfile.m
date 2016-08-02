@@ -24,8 +24,8 @@ NSString *BetablePasteBoardExpiryName = @"com.Betable.BetableSDK.sharedData.prof
 #ifdef USE_LOCALHOST
 // betable-id services
 NSString const *BetableAPIURL = @"http://localhost:8020";
-// betable-players services
-NSString const *BetableURL = @"http://localhost:8080";
+// betable-players services --name matches cookie and should still resolve to localhost
+NSString const *BetableURL = @"http://players.dev.prospecthallcasino.com:8080";
 
 #else
 NSString const *BetableAPIURL = @"https://api.betable.com/1.0";
@@ -154,22 +154,32 @@ NSString const *BetableURL = @"https://prospecthallcasino.com";
     urlString = [NSString stringWithFormat:@"%@?%@", urlString, [parts componentsJoinedByString: @"&"]];
     return [NSURL URLWithString:urlString];
 }
+
+- (NSString*)simpleURL:(NSString*)path withParams:(NSDictionary* _Nonnull)params {
+    NSString *url = [NSString stringWithFormat:@"%@%@", BetableURL, path];
+    NSString *fullURL = [[self urlForDomain:url andQuery:params] absoluteString];
+    return fullURL;
+}
+
 - (NSString*)decorateURL:(NSString*)path forClient:(NSString*)clientID withParams:(NSDictionary*)aParams {
-    NSString *IDFA = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
     
     NSMutableDictionary *params = [aParams mutableCopy];
     if (params == nil) {
         params = [NSMutableDictionary dictionary];
     }
-    [params setObject:clientID forKey:@"client_id"];
+    
+    params[@"client_id"] = clientID;
+
+    NSString *IDFA = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
     if (IDFA) {
-        [params setObject:IDFA forKey:@"device_identifier"];
+        params[@"device_identifier"] = IDFA;
     }
-    [params setObject:SDK_VERSION forKey:@"sdk_version"];
-    NSString *url = [NSString stringWithFormat:@"%@%@", BetableURL, path];
-    NSString *fullURL = [[self urlForDomain:url andQuery:params] absoluteString];
-    return fullURL;
+
+    params[@"sdk_version"] = SDK_VERSION;
+
+    return [self simpleURL:path withParams:params];
 }
+
 - (NSString*)decorateTrackURLForClient:(NSString*)clientID withAction:(NSString*)action andParams:(NSDictionary*)aParams {
     NSMutableDictionary *params = [aParams mutableCopy];
     if (params == nil) {
