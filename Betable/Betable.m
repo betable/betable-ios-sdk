@@ -982,8 +982,11 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
     
     [self performPreRealityCheck];
     
-    // TODO --should probably provide a timeout on this that explicitly logs player out
-    [[_credentialCallbacks currentGameView] presentViewController:alertController animated:YES completion:nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // TODO --should probably provide a timeout on this that explicitly logs player out
+        [[_credentialCallbacks currentGameView] presentViewController:alertController animated:YES completion:nil];
+
+    });
 }
 
 
