@@ -13,6 +13,7 @@
 #import "Betable.h"
 #import "NSString+Betable.h"        
 #import "BetableUtils.h"
+#import "Environment.h"
 
 NSString *BetablePasteBoardAPIHostName = @"com.Betable.BetableSDK.sharedData.profile:APIHost";
 NSString *BetablePasteBoardAuthHostName = @"com.Betable.BetableSDK.sharedData.profile:AuthHost";
@@ -20,7 +21,7 @@ NSString *BetablePasteBoardClientIDName = @"com.Betable.BetableSDK.sharedData.pr
 NSString *BetablePasteBoardSignatureName = @"com.Betable.BetableSDK.sharedData.profile:Signature";
 NSString *BetablePasteBoardExpiryName = @"com.Betable.BetableSDK.sharedData.profile:Expiry";
 
-// If this exists it should be in BetableProfile.h
+// If this exists it should be in Environment.h
 #ifdef USE_LOCALHOST
 // betable-id services
 NSString const *BetableAPIURL = @"http://localhost:8020";
