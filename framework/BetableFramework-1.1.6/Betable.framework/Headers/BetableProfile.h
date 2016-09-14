@@ -10,7 +10,7 @@
 #import <CoreFoundation/CoreFoundation.h>
 
 // Running a local betable server? Uncomment this
-#define USE_LOCALHOST 1
+//#define USE_LOCALHOST 1
 
 @interface BetableProfile : NSObject <UIAlertViewDelegate>
 
