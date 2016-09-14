@@ -10,6 +10,11 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 
 # Changelog
 
+## 1.1.6 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.6/BetableFramework-1.1.6.zip)
+
+Ensure reality checks are displayed from the correct thread (main)
+
+
 ## 1.1.5 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.5/BetableFramework-1.1.5.zip)
 
 Release 1.1.4 included some debugging that would cause problems on production systems.
