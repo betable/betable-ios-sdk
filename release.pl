@@ -62,14 +62,39 @@ my $readme_contents = read_file($readme_file);
 $readme_contents =~ s/\# Changelog/${update}${user_md_update}/s;
 write_file( $readme_file, $readme_contents );
 
+
+# Do a build that has no "development" on it
+# If 'Betable/Environment.h' ever needs to be permanently changed, 
+# do `git update-index--no-assume-unchanged Betable/Environment.h` first
+
+my $env_file = 'Betable/Environment.h';
+
+# backup the original build environment
+rename( $env_file, $env_file . $version );
+
+# install the production build environment
+system( 'git', 'checkout',  );
+
+my $build_directory = '/tmp/betable-build';
+# Make xcode do a production build
+system( 'xcodebuild', 
+			'-target', 'Betable',
+			'ONLY_ACTIVE_ARCH=NO',
+			'-configuration', 'Release',
+			'-sdk', 'iphoneos',
+			"BUILD_DIR=${build_directory}",
+			"BUILD_ROOT=${build_directory}",
+			'clean', 'build' );
+
+#restore the original build environment
+rename( $env_file . $version, $env_file );
+
 # create and fill the stuff for the requested version
 mkdir($publish_directory);
-dircopy( 'Betable.framework', "${publish_directory}/Betable.framework" )
+dircopy( "${build_directory}/Release-iphoneos/Betable.framework", "${publish_directory}/Betable.framework" )
   or die $!;
-dircopy(
-    "${latest_directory}/Betable.bundle",
-    "${publish_directory}/Betable.bundle"
-) or die $!;
+dircopy( "${latest_directory}/Betable.bundle", "${publish_directory}/Betable.bundle") 
+  or die $!;
 
 # Set up latest
 unlink( \1, $latest_directory );

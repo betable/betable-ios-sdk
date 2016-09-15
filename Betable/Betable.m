@@ -238,14 +238,14 @@ typedef enum heartbeatPeriods {
     NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
     NSString *authValue = [NSString stringWithFormat:@"Basic %@", [Betable base64forData:authData]];
     [request setAllHTTPHeaderFields:[NSDictionary dictionaryWithObject:authValue forKey:@"Authorization"]];
-    
     [request setHTTPMethod:METHOD_POST];
+
     NSString *body = [NSString stringWithFormat:@"grant_type=authorization_code&redirect_uri=%@&code=%@",
                       [self urlEncode:redirectURI],
                       code];
     
-    if (self.credentials) {
-        body = [NSString stringWithFormat:@"%@&session_id=%@", body, self.credentials.sessionID];
+    if (credentials != nil) {
+        body = [NSString stringWithFormat:@"%@&session_id=%@", body, credentials.sessionID];
     }
     
     void (^onComplete)(NSURLResponse*, NSData*, NSError*) = ^(NSURLResponse *response, NSData *data, NSError *error) {
@@ -314,6 +314,9 @@ typedef enum heartbeatPeriods {
     NSString *body = [NSString stringWithFormat:@"grant_type=client_credentials&redirect_uri=%@&client_user_id=%@",
                       [self urlEncode:redirectURI],
                       clientUserID];
+    if (credentials != nil) {
+        body = [NSString stringWithFormat:@"%@&session_id=%@", body, credentials.sessionID];
+    }
     
     [request setHTTPBody:[body dataUsingEncoding:NSUTF8StringEncoding]];
     [NSURLConnection sendAsynchronousRequest:request
@@ -464,7 +467,7 @@ typedef enum heartbeatPeriods {
 }
 
 - (void)checkAccessToken:(NSString*)method {
-    if (self.credentials == nil) {
+    if (credentials == nil) {
         [NSException raise:[NSString stringWithFormat:@"User is not authorized %@", method]
                     format:@"User must have an access token to use this feature"];
     }
@@ -919,10 +922,10 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
 // NSMutableDictionary is good for merging with another set of params
 - (NSMutableDictionary*)sessionParams {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-    if (self.credentials == nil || [self.credentials isUnbacked]) {
+    if (credentials == nil || [credentials isUnbacked]) {
         params[@"session_id"] = @"none";
     } else {
-        params[@"session_id"] = self.credentials.sessionID;
+        params[@"session_id"] = credentials.sessionID;
     }
     return params;
 }
