@@ -10,6 +10,12 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 
 # Changelog
 
+## 1.1.7alpha [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.7alpha/BetableFramework-1.1.7alpha.zip)
+
+*   New UI widget for presenting reality checks
+*  /token call propagets session_id
+
+
 ## 1.1.6a [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.6a/BetableFramework-1.1.6a.zip)
 
 Ensure localhost is off in both source and binary
