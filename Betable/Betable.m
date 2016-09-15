@@ -37,12 +37,14 @@
 #import "NSDictionary+Betable.h"
 #import "BetableUtils.h"
 #import "STKeychain.h"
+#import "UIAlertController+Window.h"
 
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
 NSString *BetablePasteBoardUserIDKey = @"com.Betable.BetableSDK.sharedData:UserID";
 NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
 BOOL _userIsActive;
+BOOL _rcIsActive;
 
 #define SERVICE_KEY @"com.betable.SDK"
 #define USERNAME_KEY @"com.betable.Credentials"
@@ -242,6 +244,10 @@ typedef enum heartbeatPeriods {
                       [self urlEncode:redirectURI],
                       code];
     
+    if (self.credentials) {
+        body = [NSString stringWithFormat:@"%@&session_id=%@", body, self.credentials.sessionID];
+    }
+    
     void (^onComplete)(NSURLResponse*, NSData*, NSError*) = ^(NSURLResponse *response, NSData *data, NSError *error) {
         NSString *responseBody = [[NSString alloc] initWithData:data
                                                        encoding:NSUTF8StringEncoding];
@@ -438,7 +444,13 @@ typedef enum heartbeatPeriods {
 }
 
 - (void)walletInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
-    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"wallet" andParams:[self sessionParams]] onCancel:onClose];
+    
+    NSMutableDictionary *params = [self sessionParams];
+//    if (self.credentials != nil) {
+//        params[@"access_token"] = self.credentials.accessToken;
+//    }
+    
+    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"wallet" andParams:params] onCancel:onClose];
     [viewController presentViewController:webController animated:YES completion:nil];
 }
 
@@ -879,12 +891,12 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
 
         // Lets not be pedantic--if a reality check is due in the next second, don't waste cycles and bandwidth
         double msRemainingEpsilon = 1000;
-        if ( msRemainingTime < msRemainingEpsilon ) {
+        if (msRemainingTime < msRemainingEpsilon) {
             
-            // Time's up, let user decide how to proceed
-            // Note that right here, heartbeats have stopped and will not resume until user decides to continue
+            // Time's up, Continue to fire regular heartbeats, but notify user and allow them to intervene
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self fireRealityCheck];
+                [self extendSessionIn:HEALTHY_PERIOD withBehaviour:nextHeartbeatBehaviour];
             });
         } else {
             // cap number of seconds to a healthy period before next check
@@ -936,6 +948,12 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
 
 
 - (void)fireRealityCheck {
+    
+    if( _rcIsActive ) {
+        return;
+    }
+    _rcIsActive = true;
+    
     UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"Reality Check" message:@"You've been playing a while" preferredStyle:UIAlertControllerStyleAlert ];
     
     // Propose player's decision to logout after reality check interval
@@ -945,6 +963,7 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
             onLogout();
         }
         [self performPostRealityCheck];
+        _rcIsActive = false;
     };
     UIAlertAction* logoutAction = [UIAlertAction actionWithTitle:@"Logout" style:UIAlertActionStyleDefault handler:onRealityCheckLogout ];
     [alertController addAction:logoutAction];
@@ -954,10 +973,11 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
         // reset reality checks on next heartbeat
         [self resetSessionAndOnComplete:^(NSDictionary* data){
             [self performPostRealityCheck];
-            [self extendSessionIn:NOW withBehaviour:HEARTBEAT];
-
+            _rcIsActive = false;
         }
-                           andOnFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {}
+                           andOnFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {
+                               _rcIsActive = false;
+                           }
          ];
         
     };
@@ -970,11 +990,13 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
         [self resetSessionAndOnComplete:^(NSDictionary* data){
             [self walletInViewController:[_credentialCallbacks currentGameView] onClose:^{
                 // User must decide whether to logout or continue; regardless of wallet experience
+                _rcIsActive = false;
                 [self fireRealityCheck];
             }];
-            [self extendSessionIn:NOW withBehaviour:HEARTBEAT];
         }
-                           andOnFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {}
+                           andOnFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {
+                               _rcIsActive = false;
+                           }
          ];
     };
     UIAlertAction* walletAction = [UIAlertAction actionWithTitle:@"Check Balance" style:UIAlertActionStyleDefault handler:onRealityCheckWallet ];
@@ -982,11 +1004,7 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
     
     [self performPreRealityCheck];
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        // TODO --should probably provide a timeout on this that explicitly logs player out
-        [[_credentialCallbacks currentGameView] presentViewController:alertController animated:YES completion:nil];
-
-    });
+    [alertController show];
 }
 
 
