@@ -3,7 +3,7 @@
 # Lootwinner expressed concern I did a build where not all "sources" were the same, so this
 # not only endeavours to make everything the same, but it caters to the fact I'm lazy.
 
-# MAKE SURE ALL THE CHANGES YOU WANT FOR A REALEASE ARE ON MASTER AND COMITTED TO GITHUB 
+# MAKE SURE ALL THE CHANGES YOU WANT FOR A REALEASE ARE ON MASTER AND COMITTED TO GITHUB
 # BEFORE RUNNING -- YOU WILL BE AT RELEASE BY THE END
 
 use strict;
@@ -55,17 +55,16 @@ while (1) {
 }
 
 # Update README.md
-my $readme_file = 'README.md';
-my $readme_contents = read_file($readme_file);
+my $readme_file     = 'README.md';
+my $readme_contents = read_file( $readme_file );
 
 # Abuse the position of the "# Changelog" text in the README to insert all the happy update info
 $readme_contents =~ s/\# Changelog/${update}${user_md_update}/s;
 write_file( $readme_file, $readme_contents );
 
-
 # Do a build that has no "development" on it
-# If 'Betable/Environment.h' ever needs to be permanently changed, 
-# do `git update-index--no-assume-unchanged Betable/Environment.h` first
+# If 'Betable/Environment.h' ever needs to be permanently changed,
+# do `git update-index --no-assume-unchanged Betable/Environment.h` first
 
 my $env_file = 'Betable/Environment.h';
 
@@ -73,9 +72,17 @@ my $env_file = 'Betable/Environment.h';
 rename( $env_file, $env_file . $version );
 
 # install the production build environment
-system( 'git', 'checkout',  );
+system( 'git', 'checkout', $env_file );
+
+# mark the revision in the build environment
+my $env_contents = read_file( $env_file );
+
+$env_contents =~ s/\BETABLE_SDK_REVISION @"development"/BETABLE_SDK_REVISION @"${$tag_version}"/s;
+
+write_file( $env_file, $env_contents );
 
 my $build_directory = '/tmp/betable-build';
+
 # Make xcode do a production build
 system( 'xcodebuild', 
 			'-target', 'Betable',
@@ -89,12 +96,18 @@ system( 'xcodebuild',
 #restore the original build environment
 rename( $env_file . $version, $env_file );
 
+system( 'git', 'update-index', '--assume-unchanged',  $env_file );
+
 # create and fill the stuff for the requested version
 mkdir($publish_directory);
-dircopy( "${build_directory}/Release-iphoneos/Betable.framework", "${publish_directory}/Betable.framework" )
+dircopy( 
+    "${build_directory}/Release-iphoneos/Betable.framework",
+    "${publish_directory}/Betable.framework" )
   or die $!;
-dircopy( "${latest_directory}/Betable.bundle", "${publish_directory}/Betable.bundle") 
-  or die $!;
+dircopy(
+    "${latest_directory}/Betable.bundle",
+    "${publish_directory}/Betable.bundle"
+) or die $!;
 
 # Set up latest
 unlink( \1, $latest_directory );
@@ -109,9 +122,10 @@ unless ( $zip->writeToFileNamed($zip_file) == AZ_OK ) {
 }
 
 # mush all the stuff this script just did into git and tag it for release
-system( 'git', 'add', $readme_file, $publish_directory, $latest_directory, $zip_file );
+system( 'git', 'add', $readme_file, $publish_directory, $latest_directory,
+    $zip_file );
 system( 'git', 'commit', '-m',     "Publishing $tag_version" );
-system( 'git', 'tag', $tag_version );
+system( 'git', 'tag',    $tag_version );
 system( 'git', 'push',   'origin', $tag_version );
 
 # TODO oauth our way into api.github.com and automate the last bit here...

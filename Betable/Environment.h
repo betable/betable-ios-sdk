@@ -10,6 +10,8 @@
 #define Environment_h
 
 // Running a local betable server? Uncomment this
-//#define USE_LOCALHOST 1
+// #define USE_LOCALHOST 1
+
+#define BETABLE_SDK_REVISION @"development"
 
 #endif /* Environment_h */
