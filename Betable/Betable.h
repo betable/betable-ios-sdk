@@ -97,7 +97,8 @@ static NSString* const METHOD_POST = @"POST";
 
 // Game should call this before betting--doing so will initialize a system of time-based reality checks and proper session managment.
 // Not doing so may result in undefined behaviour on other betable calls
-- (void)checkCredentials: (id<BetableCredentialCallbacks>) callbacks;
+// Setting loginOverRegister to YES should drop the player on a login page, to NO should take the user to registration
+- (void)checkCredentials:(id<BetableCredentialCallbacks>) callbacks loginOverRegister:(BOOL) login;
 
 // This method is will open a game referenced by the passed in game slug to open a webview for that game in the viewcontroller that is passed in.
 
@@ -348,7 +349,6 @@ inViewController:(UIViewController*)viewController
 @property (strong, nonatomic) NSString *clientID;
 @property (strong, nonatomic) NSString *redirectURI;
 @property (strong, nonatomic) NSOperationQueue *queue;
-@property (strong, nonatomic) BetableWebViewController *currentWebView;
 @property (strong, nonatomic) BetableAccessTokenHandler onAuthorize DEPRECATED_MSG_ATTRIBUTE(REALITY_CHECK_DEPRICATION);
 @property (strong, nonatomic) BetableFailureHandler onFailure DEPRECATED_MSG_ATTRIBUTE(REALITY_CHECK_DEPRICATION);
 // Public callback for when player has explicitly logged out of game--doesn't report session timeouts or other invalidation

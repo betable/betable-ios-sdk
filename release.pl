@@ -63,9 +63,6 @@ $readme_contents =~ s/\# Changelog/${update}${user_md_update}/s;
 write_file( $readme_file, $readme_contents );
 
 # Do a build that has no "development" on it
-# If 'Betable/Environment.h' ever needs to be permanently changed,
-# do `git update-index --no-assume-unchanged Betable/Environment.h` first
-
 my $env_file = 'Betable/Environment.h';
 
 # backup the original build environment
@@ -77,7 +74,7 @@ system( 'git', 'checkout', $env_file );
 # mark the revision in the build environment
 my $env_contents = read_file( $env_file );
 
-$env_contents =~ s/\BETABLE_SDK_REVISION @"development"/BETABLE_SDK_REVISION @"${$tag_version}"/s;
+$env_contents =~ s/\BETABLE_SDK_REVISION.*"/BETABLE_SDK_REVISION @"${$tag_version}"/s;
 
 write_file( $env_file, $env_contents );
 
@@ -96,6 +93,9 @@ system( 'xcodebuild',
 #restore the original build environment
 rename( $env_file . $version, $env_file );
 
+# If 'Betable/Environment.h' ever needs to be permanently changed,
+# do `git update-index --no-assume-unchanged Betable/Environment.h` first
+# --this call keeps it away from git
 system( 'git', 'update-index', '--assume-unchanged',  $env_file );
 
 # create and fill the stuff for the requested version

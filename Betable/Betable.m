@@ -37,13 +37,15 @@
 #import "NSDictionary+Betable.h"
 #import "BetableUtils.h"
 #import "STKeychain.h"
+#import "Environment.h"
 #import "UIAlertController+Window.h"
 
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
 NSString *BetablePasteBoardUserIDKey = @"com.Betable.BetableSDK.sharedData:UserID";
 NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
-BOOL _userIsActive;
+
+// Boolean to guard against multiple reality check windows opening
 BOOL _rcIsActive;
 
 #define SERVICE_KEY @"com.betable.SDK"
@@ -67,6 +69,8 @@ typedef enum heartbeatPeriods {
     BetableTracking *_tracking;
     BOOL _launched;
     NSDictionary *_launchOptions;
+
+    BetableWebViewController *currentWebView;
 }
 
 - (NSString *)urlEncode:(NSString*)string;
@@ -80,7 +84,7 @@ typedef enum heartbeatPeriods {
 
 @implementation Betable
 
-@synthesize credentials, clientID, clientSecret, redirectURI, queue, currentWebView, onLogout;
+@synthesize credentials, clientID, clientSecret, redirectURI, queue, onLogout;
 
 - (Betable*)init {
     self = [super init];
@@ -92,12 +96,12 @@ typedef enum heartbeatPeriods {
         _launchOptions = nil;
         _deferredRequests = [[NSMutableOrderedSet alloc] init];
         _profile = [[BetableProfile alloc] init];
-        currentWebView = [[BetableWebViewController alloc] init];
-        self.currentWebView.forcedOrientationWithNavController = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8");
         // If there is a testing profile, we need to verify it before we make
         // requests or set the URL for the authorize web view.
         queue = [[NSOperationQueue alloc] init];
     }
+    NSLog( @"Betable %@ starting...", BETABLE_SDK_REVISION );
+    
     return self;
 }
 - (Betable*)initWithClientID:(NSString*)aClientID clientSecret:(NSString*)aClientSecret redirectURI:(NSString*)aRedirectURI {
@@ -109,7 +113,7 @@ typedef enum heartbeatPeriods {
         _tracking = [[BetableTracking alloc] initWithClientID:aClientID andEnvironment:BetableEnvironmentProduction];
         [_tracking trackSession];
         [self fireDeferredRequests];
-        [self setupAuthorizeWebView];
+        _preCacheAuthToken = [self getBetableAuthCookie].value;
     }
     return self;
 }
@@ -126,8 +130,7 @@ typedef enum heartbeatPeriods {
 }
 
 
-- (void)checkCredentials:(id<BetableCredentialCallbacks> _Nonnull) callbacks
- {
+- (void)checkCredentials:(id<BetableCredentialCallbacks> _Nonnull) callbacks loginOverRegister:(BOOL) login {
     [self checkLaunchStatus];
      _credentialCallbacks = callbacks;
 
@@ -157,7 +160,7 @@ typedef enum heartbeatPeriods {
     }
     
     [self authorizeInViewController:[_credentialCallbacks currentGameView]
-                              login:YES
+                              login:login
             onAuthorizationComplete:^(NSString *accessToken) {}
                           onFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {}
                            onCancel:^{ [self performCredentialFailure:nil withBody:nil orError:nil];}
@@ -185,11 +188,7 @@ typedef enum heartbeatPeriods {
 }
 
 
-- (void)setupAuthorizeWebView {
-    //It will be inside of a navcontroller to protect its alignment.
-    [self.currentWebView resetView];
-    self.currentWebView.forcedOrientationWithNavController = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8");
-    _preCacheAuthToken = [self getBetableAuthCookie].value;
+- (NSString*) getAuthorizeWebViewURL {
     CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
     CFStringRef UUIDSRef = CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
     NSString* UUID = [NSString stringWithFormat:@"%@", UUIDSRef];
@@ -205,10 +204,7 @@ typedef enum heartbeatPeriods {
     NSMutableDictionary* sessionParams = [self sessionParams];
    [sessionParams addEntriesFromDictionary:authorizeParams];
     
-    NSString* authURL = [_profile decorateURL:@"/ext/precache" forClient:self.clientID withParams:sessionParams ];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self.currentWebView.url = authURL;
-    });
+    return [_profile decorateURL:@"/ext/precache" forClient:self.clientID withParams:sessionParams ];
 }
 
 - (NSHTTPCookie*)getBetableAuthCookie {
@@ -231,7 +227,7 @@ typedef enum heartbeatPeriods {
     return nil;
 }
 
-- (void)token:(NSString*)code {
+- (void)token:(NSString*)code forSession:(NSString*)sessionID{
     NSURL *apiURL = [NSURL URLWithString:[self getTokenURL]];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:apiURL];
     NSString *authStr = [NSString stringWithFormat:@"%@:%@", clientID, clientSecret];
@@ -239,14 +235,15 @@ typedef enum heartbeatPeriods {
     NSString *authValue = [NSString stringWithFormat:@"Basic %@", [Betable base64forData:authData]];
     [request setAllHTTPHeaderFields:[NSDictionary dictionaryWithObject:authValue forKey:@"Authorization"]];
     [request setHTTPMethod:METHOD_POST];
-
-    NSString *body = [NSString stringWithFormat:@"grant_type=authorization_code&redirect_uri=%@&code=%@",
-                      [self urlEncode:redirectURI],
-                      code];
     
-    if (credentials != nil) {
-        body = [NSString stringWithFormat:@"%@&session_id=%@", body, credentials.sessionID];
+    if (nil == sessionID) {
+        sessionID = @"none";
     }
+
+    NSString *body = [NSString stringWithFormat:@"grant_type=authorization_code&redirect_uri=%@&code=%@&session_id=%@",
+                      [self urlEncode:redirectURI],
+                      code,
+                      sessionID];
     
     void (^onComplete)(NSURLResponse*, NSData*, NSError*) = ^(NSURLResponse *response, NSData *data, NSError *error) {
         NSString *responseBody = [[NSString alloc] initWithData:data
@@ -358,8 +355,8 @@ typedef enum heartbeatPeriods {
             [params setObject:[elts objectAtIndex:1] forKey:[elts objectAtIndex:0]];
         }
         if (params[@"code"]) {
-            [self token:[params objectForKey:@"code"]];
-            [self.currentWebView.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+            [self token:params[@"code"] forSession:params[@"session_id"]];
+            [currentWebView.presentingViewController dismissViewControllerAnimated:YES completion:nil];
             
         } else if (params[@"error"]) {
             NSError *error = [[NSError alloc] initWithDomain:@"BetableAuthorization" code:-1 userInfo:params];
@@ -378,33 +375,33 @@ typedef enum heartbeatPeriods {
 
 - (void)authorizeInViewController:(UIViewController*)viewController login:(BOOL)goToLogin onAuthorizationComplete:(BetableAccessTokenHandler)onAuthorize onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel {
     [self checkLaunchStatus];
-    if (![_preCacheAuthToken isEqualToString:[self getBetableAuthCookie].value]) {
-        self.currentWebView = [[BetableWebViewController alloc] init];
-        [self setupAuthorizeWebView];
-    }
-    self.currentWebView.onCancel = onCancel;
+
+    NSString* url = [self getAuthorizeWebViewURL];
     
+    currentWebView = [[BetableWebViewController alloc]initWithURL:url onCancel:onCancel showInternalCloseButton:YES];
+   
     // Depricated fields and parameters can stay a while longer...
     self.onAuthorize = onAuthorize;
     self.onFailure = onFailure;
     
-    self.currentWebView.portraitOnly = YES;
+    currentWebView.portraitOnly = YES;
     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
-        UINavigationController *nvc = [[UINavigationController alloc] initWithRootViewController:self.currentWebView];
+        UINavigationController *nvc = [[UINavigationController alloc] initWithRootViewController:currentWebView];
         nvc.navigationBarHidden = YES;
-        self.currentWebView.modalPresentationStyle = UIModalPresentationFullScreen;
+        currentWebView.forcedOrientationWithNavController = YES;
+        currentWebView.modalPresentationStyle = UIModalPresentationFullScreen;
         [viewController presentViewController:nvc animated:YES completion:nil];
     } else {
-        [viewController presentViewController:self.currentWebView animated:YES completion:nil];
+        [viewController presentViewController:currentWebView animated:YES completion:nil];
     }
     if (goToLogin) {
-        self.currentWebView.onLoadState = @"ext.nux.play";
+        currentWebView.onLoadState = @"ext.nux.play";
     }
-    if(self.currentWebView.finishedLoading) {
+    if(currentWebView.finishedLoading) {
         // This is a method in the webview's JS
-        [self.currentWebView loadCachedState];
+        [currentWebView loadCachedState];
     } else {
-        self.currentWebView.loadCachedStateOnFinish = YES;
+        currentWebView.loadCachedStateOnFinish = YES;
     }
 }
 
@@ -449,11 +446,9 @@ typedef enum heartbeatPeriods {
 - (void)walletInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
     
     NSMutableDictionary *params = [self sessionParams];
-//    if (self.credentials != nil) {
-//        params[@"access_token"] = self.credentials.accessToken;
-//    }
     
-    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"wallet" andParams:params] onCancel:onClose];
+    NSString *url = [_profile decorateTrackURLForClient:self.clientID withAction:@"wallet" andParams:params];
+    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onClose];
     [viewController presentViewController:webController animated:YES completion:nil];
 }
 
@@ -482,7 +477,7 @@ typedef enum heartbeatPeriods {
 }
 
 - (void)recordUserActivity {
-    _userIsActive = YES;
+    nextHeartbeatBehaviour = EXTEND_SESSION;
 }
 
 #pragma mark - API Calls
@@ -580,9 +575,6 @@ typedef enum heartbeatPeriods {
     if (error) {
         NSLog(@"Error removing accessToken: %@", error);
     }
-    //After the cookies are destroyed, reload the webpage
-    self.currentWebView = [[BetableWebViewController alloc] init];
-    [self setupAuthorizeWebView];
     
     // clear user's live credentials
     credentials = nil;
@@ -798,6 +790,10 @@ typedef enum heartbeatBehaviour
 {
     // simple "is alive" check
     HEARTBEAT,
+
+    // extend the session next heartbeat
+    EXTEND_SESSION,
+    
     // don't request another heartbeat
     FORGET,
 } HeartbeatBehaviour;
@@ -824,7 +820,9 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
                        andOnFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {
                            // TODO explicit "session has expired" check instead of implicit assumption here
                            [self logout];
-                           [self checkCredentials:_credentialCallbacks];
+                           // Its safe to assume that because this method gets called with assumed non-null credentais, registration is overkill
+                           BOOL loginOverRegister = YES;
+                           [self checkCredentials:_credentialCallbacks loginOverRegister:loginOverRegister];
    }];
 }
 
@@ -870,11 +868,12 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
     
     NSString* path = [Betable getHeartbeatPath];
     NSString* method = METHOD_GET;
-    if (_userIsActive) {
+    
+    if (nextHeartbeatBehaviour == EXTEND_SESSION) {
         path = [Betable getResetSessionPath];
         method = METHOD_POST;
+        nextHeartbeatBehaviour = HEARTBEAT;
     }
-    _userIsActive = NO;
    
     BetableCompletionHandler onSuccess = ^(NSDictionary* data) {
         if( ! [data[@"alive"] boolValue] ) {
