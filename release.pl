@@ -73,9 +73,7 @@ system( 'git', 'checkout', $env_file );
 
 # mark the revision in the build environment
 my $env_contents = read_file( $env_file );
-
-$env_contents =~ s/\BETABLE_SDK_REVISION.*"/BETABLE_SDK_REVISION @"${$tag_version}"/s;
-
+$env_contents =~ s/BETABLE_SDK_REVISION.*?\n/BETABLE_SDK_REVISION @"${tag_version}"\n/s;
 write_file( $env_file, $env_contents );
 
 my $build_directory = '/tmp/betable-build';
