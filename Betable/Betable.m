@@ -891,19 +891,17 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
 
         double msRemainingTime = [realityCheck[@"remaining_time"] doubleValue ];
 
-        // Lets not be pedantic--if a reality check is due in the next 2 seconds, don't waste cycles and bandwidth
-        double msRemainingEpsilon = 2000;
+        // Lets not be pedantic--if a reality check is due in the next 1 1/2 second, don't waste cycles and bandwidth
+        double msRemainingEpsilon = 1500;
         if (msRemainingTime < msRemainingEpsilon) {
             // Time's up, Continue to fire regular heartbeats, but notify user and allow them to intervene
-            [self performPreRealityCheck];
-
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self fireRealityCheck];
                 [self extendSessionIn:HEALTHY_PERIOD withBehaviour:nextHeartbeatBehaviour];
             });
         } else {
             // cap number of seconds to a healthy period before next check
-            NSTimeInterval nextHeartbeatPeriod = MIN( msRemainingTime - msRemainingEpsilon, HEALTHY_PERIOD);
+            NSTimeInterval nextHeartbeatPeriod = MIN( (msRemainingTime - msRemainingEpsilon) / 1000.0, HEALTHY_PERIOD);
             [self extendSessionIn:nextHeartbeatPeriod withBehaviour:nextHeartbeatBehaviour];
             
         }
@@ -951,6 +949,8 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
         return;
     }
     _rcIsActive = true;
+    
+    [self performPreRealityCheck];
     
     UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"Reality Check" message:@"You've been playing a while" preferredStyle:UIAlertControllerStyleAlert ];
     
