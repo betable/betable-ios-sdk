@@ -7,6 +7,7 @@
 //
 
 #import "BetableWebViewController.h"
+#import "UIAlertController+Window.h"
 
 BOOL isPad() {
     UIDevice* device = [UIDevice currentDevice];
@@ -61,7 +62,7 @@ BOOL isPad() {
 }
 
 
-@property (nonatomic, strong) UIWebView *webView;
+@property (nonatomic, strong) UIView *webView;
 @property (nonatomic, strong) UIView *betableLoader;
 @property (nonatomic, strong) UIActivityIndicatorView *spinner;
 
@@ -117,11 +118,24 @@ BOOL isPad() {
         url = [NSURL URLWithString:adjustedURLString];
     }
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
-    self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, -20, self.view.frame.size.width, self.view.frame.size.height+20)];
+    
+    CGRect rect = CGRectMake(0, -20, self.view.frame.size.width, self.view.frame.size.height+20);
+    if (NSClassFromString(@"WKWebView")) {
+        WKWebView* webView = [[WKWebView alloc] initWithFrame:rect];
+        [webView setNavigationDelegate:self];
+        [webView loadRequest:request];
+        self.webView = webView;
+        NSLog( @"webView is WKWebView" );
+    
+    } else {
+        UIWebView* webView = [[UIWebView alloc] initWithFrame:rect];
+        webView.delegate = self;
+        [webView loadRequest:request];
+        self.webView = webView;
+        NSLog( @"webView is UIWebView" );
+    }
     self.webView.clipsToBounds = YES;
-    [self.webView loadRequest:request];
     self.webView.hidden = YES;
-    self.webView.delegate = self;
     
     [self.view insertSubview:self.webView atIndex:0];
     [self addWebViewConstraints];
@@ -289,86 +303,83 @@ BOOL isPad() {
     if (self.onLoadState) {
         [NSString stringWithFormat:@"window.loadCachedState(%@)", self.onLoadState];
     }
-    [self.webView stringByEvaluatingJavaScriptFromString:javacript];
-}
-
-#pragma mark - Web View Delegate
-
-- (void)webViewDidFinishLoad:(UIWebView *)webView {
-    self.webView.hidden = NO;
-    [self.spinner stopAnimating];
-    self.finishedLoading = YES;
-    _closeButton.hidden = YES;
     
-    if (self.loadCachedStateOnFinish) {
-        [self loadCachedState];
-    }
-    
-    if (!self.betableLoader.hidden) {
-        [UIView animateWithDuration:.2 animations:^{
-            CGRect frame = self.betableLoader.frame;
-            frame.origin.y = -10;
-            self.betableLoader.frame = frame;
-        } completion:^(BOOL finished) {
-            [UIView animateWithDuration:.2 animations:^{
-                CGRect frame = self.betableLoader.frame;
-                frame.origin.y = -frame.size.height;
-                self.betableLoader.frame = frame;
-            } completion:^(BOOL finished) {
-                self.betableLoader.hidden = YES;
-            }];
+    if ([self.webView isKindOfClass:[WKWebView class]]) {
+        [((WKWebView*)self.webView) evaluateJavaScript:javacript completionHandler:^(id result, NSError *error) {
+            if (error != nil) {
+                [self showErrorAlert:error];
+                return;
+            }
         }];
-    }
-}
+        
+    } else if ( [self.webView isKindOfClass:[UIWebView class]] ) {
+        [((UIWebView*)self.webView) stringByEvaluatingJavaScriptFromString:javacript];
 
-- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-    NSURL *url = request.URL;
-    NSDictionary *params = [self paramsFromURL:url];
-    if (![[url scheme] isEqualToString:@"http"] && ![[url scheme] isEqualToString:@"https"]) {
-        BOOL userCloseError = params[@"error"] && [params[@"error_description"] isEqualToString:@"user_close"];
-        BOOL userCloseAction = [params[@"action"] isEqualToString:@"close"];
-        if (userCloseAction || userCloseError) {
-            [self closeWindow];
-        } else {
-            [[UIApplication sharedApplication] openURL:url];
-        }
-        return NO;
-    } else if ([[url host] isEqualToString:@"prospecthallcasino.com"] && params[@"reason"] && params[@"gameId"] && params[@"sessId"]) {
-        //This is enough to determine that the home button was hit with netent
-        [self closeWindow];
-    }
-    return YES;
-}
-
-- (void)webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error {
-    if (_viewLoaded) {
-        NSLog(@"Showing Error on failure");
-        [self showErrorAlert:error];
-    } else if (!_errorShown) {
-        _errorLoading = error;
     } else {
-        _errorLoading = nil;
+        NSLog( @"CRITICAL! BetableWebViewController cannot run javascript" );
     }
+    
+    
 }
 
 - (void)showErrorAlert:(NSError*)error {
     _errorShown = YES;
+    UIAlertController* alert;
     if ([error.domain isEqualToString:@"NSURLErrorDomain"] && error.userInfo[NSURLErrorFailingURLPeerTrustErrorKey]) {
-        [[[UIAlertView alloc] initWithTitle:@"Error connecting to Betable" message:@"There was an issue connecting to Betable.  Please ensure that the time and date on this device are correct by going to Settings > General > Date & Time." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+        alert = [UIAlertController alertControllerWithTitle:@"Error connecting to Betable"
+                                                    message:@"There was an issue connecting to Betable.  Please ensure that the time and date on this device are correct by going to Settings > General > Date & Time."
+                                            preferredStyle:UIAlertControllerStyleAlert];
     } else {
-        [[[UIAlertView alloc] initWithTitle:@"Error connecting to Betable" message:@"There was a problem connecting to betable.com at this time. Make sure you are connected to the internet and then try again shortly." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+        alert = [UIAlertController alertControllerWithTitle:@"Error connecting to Betable"
+                                                    message:@"There was a problem connecting to betable.com at this time. Make sure you are connected to the internet and then try again shortly."
+                                             preferredStyle:UIAlertControllerStyleAlert];
     }
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
+                                                              _errorShown = NO;
+                                                              [self closeWindow];
+                                                          }];
+    [alert addAction:defaultAction];
+    [alert show];
+    
     [self.webView removeFromSuperview];
     self.webView = nil;
     self.finishedLoading = NO;
     _errorLoading = nil;
 }
 
-#pragma mark - Alert View Delegate
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    _errorShown = NO;
-    [self closeWindow];
+#pragma mark - UIWebViewDelegate
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    [self delegateFinishedLoading];
+}
+
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+    return [self shouldDelegateLoadRequest:request];
+}
+
+- (void)webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error {
+    [self delegateLoadingError:error];
+}
+
+#pragma mark - WKNavigationDelegate
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
+    [self delegateFinishedLoading];
+}
+
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {
+    if ([self shouldDelegateLoadRequest:navigationAction.request ]) {
+        decisionHandler(WKNavigationActionPolicyAllow);
+    } else {
+        decisionHandler(WKNavigationActionPolicyCancel);
+    }
+}
+
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error {
+    [self delegateLoadingError:error];
 }
 
 #pragma mark - Utilities
@@ -410,8 +421,67 @@ BOOL isPad() {
     }
 }
 
+#pragma mark - commonalities for web delegate methods
 
-- (void)dealloc {
-    self.webView.delegate = nil;
+- (void)delegateFinishedLoading {
+    self.webView.hidden = NO;
+    [self.spinner stopAnimating];
+    self.finishedLoading = YES;
+    _closeButton.hidden = YES;
+    
+    if (self.loadCachedStateOnFinish) {
+        [self loadCachedState];
+    }
+    
+    if (!self.betableLoader.hidden) {
+        [UIView animateWithDuration:.2 animations:^{
+            CGRect frame = self.betableLoader.frame;
+            frame.origin.y = -10;
+            self.betableLoader.frame = frame;
+        } completion:^(BOOL finished) {
+            [UIView animateWithDuration:.2 animations:^{
+                CGRect frame = self.betableLoader.frame;
+                frame.origin.y = -frame.size.height;
+                self.betableLoader.frame = frame;
+            } completion:^(BOOL finished) {
+                self.betableLoader.hidden = YES;
+            }];
+        }];
+    }
 }
+
+- (BOOL)shouldDelegateLoadRequest:(NSURLRequest *) request {
+    NSURL *url = request.URL;
+    NSDictionary *params = [self paramsFromURL:url];
+    if (![[url scheme] isEqualToString:@"http"] && ![[url scheme] isEqualToString:@"https"]) {
+        BOOL userCloseError = params[@"error"] && [params[@"error_description"] isEqualToString:@"user_close"];
+        BOOL userCloseAction = [params[@"action"] isEqualToString:@"close"];
+        if (userCloseAction || userCloseError) {
+            [self closeWindow];
+        } else {
+            
+            [[UIApplication sharedApplication] openURL:url];
+        }
+        return NO;
+    } else if ([[url host] isEqualToString:@"prospecthallcasino.com"] && params[@"reason"] && params[@"gameId"] && params[@"sessId"]) {
+               
+        //This is enough to determine that the home button was hit with netent
+        [self closeWindow];
+    }
+    return YES;
+}
+
+- (void) delegateLoadingError:(NSError*) error {
+    if (_viewLoaded) {
+        NSLog(@"Showing Error on failure");
+        [self showErrorAlert:error];
+    } else if (!_errorShown) {
+        _errorLoading = error;
+    } else {
+        _errorLoading = nil;
+    }
+}
+
+
+
 @end
