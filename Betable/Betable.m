@@ -457,7 +457,10 @@ typedef enum heartbeatPeriods {
     if (params != nil) {
         [sessionParams addEntriesFromDictionary:params];
     }
-    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateURL:path forClient:self.clientID withParams:sessionParams] onCancel:onClose];
+    
+    NSString *url = [_profile decorateURL:path forClient:self.clientID withParams:sessionParams];
+    //    NSLog( url );
+    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onClose];
     [viewController presentViewController:webController animated:YES completion:nil];
 }
 
@@ -884,7 +887,7 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
 
         NSDictionary* realityCheck = data[@"reality_check"];
         
-        if( ! [realityCheck[@"enabled"] boolValue] ) {
+        if (![realityCheck[@"enabled"] boolValue]) {
             [self extendSessionIn:HEALTHY_PERIOD withBehaviour:nextHeartbeatBehaviour];
             return;
         }
@@ -900,7 +903,8 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
                 [self extendSessionIn:HEALTHY_PERIOD withBehaviour:nextHeartbeatBehaviour];
             });
         } else {
-            // cap number of seconds to a healthy period before next check
+            // cap number of seconds to a healthy period before next check,
+            // Aim for the start of epsilon window, not the end b/c latency
             NSTimeInterval nextHeartbeatPeriod = MIN( (msRemainingTime - msRemainingEpsilon) / 1000.0, HEALTHY_PERIOD);
             [self extendSessionIn:nextHeartbeatPeriod withBehaviour:nextHeartbeatBehaviour];
             
