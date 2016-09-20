@@ -891,18 +891,19 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
 
         double msRemainingTime = [realityCheck[@"remaining_time"] doubleValue ];
 
-        // Lets not be pedantic--if a reality check is due in the next second, don't waste cycles and bandwidth
-        double msRemainingEpsilon = 1000;
+        // Lets not be pedantic--if a reality check is due in the next 2 seconds, don't waste cycles and bandwidth
+        double msRemainingEpsilon = 2000;
         if (msRemainingTime < msRemainingEpsilon) {
-            
             // Time's up, Continue to fire regular heartbeats, but notify user and allow them to intervene
+            [self performPreRealityCheck];
+
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self fireRealityCheck];
                 [self extendSessionIn:HEALTHY_PERIOD withBehaviour:nextHeartbeatBehaviour];
             });
         } else {
             // cap number of seconds to a healthy period before next check
-            NSTimeInterval nextHeartbeatPeriod = MIN( msRemainingTime / 1000.0, HEALTHY_PERIOD);
+            NSTimeInterval nextHeartbeatPeriod = MIN( msRemainingTime - msRemainingEpsilon, HEALTHY_PERIOD);
             [self extendSessionIn:nextHeartbeatPeriod withBehaviour:nextHeartbeatBehaviour];
             
         }
@@ -932,9 +933,7 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
 - (void)performPostRealityCheck {
     // Runtime selector doesn't spew unnecessary warnings
     if( [_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onPostRealityCheck")] ) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [_credentialCallbacks onPostRealityCheck];
-        });
+         [_credentialCallbacks onPostRealityCheck];
     }
     
 }
@@ -942,15 +941,12 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
 - (void)performPreRealityCheck {
     // Runtime selector doesn't spew unnecessary warnings
     if( [_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onPreRealityCheck")] ) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [_credentialCallbacks onPreRealityCheck];
-        });
+        [_credentialCallbacks onPreRealityCheck];
     }
 }
 
 
 - (void)fireRealityCheck {
-    
     if( _rcIsActive ) {
         return;
     }
@@ -1003,8 +999,6 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
     };
     UIAlertAction* walletAction = [UIAlertAction actionWithTitle:@"Check Balance" style:UIAlertActionStyleDefault handler:onRealityCheckWallet ];
     [alertController addAction:walletAction];
-    
-    [self performPreRealityCheck];
     
     [alertController show];
 }
