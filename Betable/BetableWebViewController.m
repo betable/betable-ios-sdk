@@ -125,14 +125,12 @@ BOOL isPad() {
         [webView setNavigationDelegate:self];
         [webView loadRequest:request];
         self.webView = webView;
-        NSLog( @"webView is WKWebView" );
     
     } else {
         UIWebView* webView = [[UIWebView alloc] initWithFrame:rect];
         webView.delegate = self;
         [webView loadRequest:request];
         self.webView = webView;
-        NSLog( @"webView is UIWebView" );
     }
     self.webView.clipsToBounds = YES;
     self.webView.hidden = YES;
@@ -328,13 +326,14 @@ BOOL isPad() {
     if ([error.domain isEqualToString:@"NSURLErrorDomain"] && error.userInfo[NSURLErrorFailingURLPeerTrustErrorKey]) {
         alert = [UIAlertController alertControllerWithTitle:@"Error connecting to Betable"
                                                     message:@"There was an issue connecting to Betable.  Please ensure that the time and date on this device are correct by going to Settings > General > Date & Time."
-                                            preferredStyle:UIAlertControllerStyleAlert];
+                                             preferredStyle:UIAlertControllerStyleAlert];
     } else {
         alert = [UIAlertController alertControllerWithTitle:@"Error connecting to Betable"
                                                     message:@"There was a problem connecting to betable.com at this time. Make sure you are connected to the internet and then try again shortly."
                                              preferredStyle:UIAlertControllerStyleAlert];
     }
-    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK"
+                                                            style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction * action) {
                                                               _errorShown = NO;
                                                               [self closeWindow];
@@ -421,7 +420,7 @@ BOOL isPad() {
     }
 }
 
-#pragma mark - commonalities for web delegate methods
+#pragma mark - shared behaviours for both web delegate interfaces
 
 - (void)delegateFinishedLoading {
     self.webView.hidden = NO;
