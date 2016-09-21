@@ -17,7 +17,7 @@ typedef void (^BetableLogoutHandler)();
 @protocol BetableCredentialCallbacks<NSObject>
 
 @required
-// Betable needs up-to-date insight to current view controller is--should game be backgrounded and foregrounded
+// Betable needs up-to-date insight to current view controller is should game be backgrounded and foregrounded
 - (UIViewController*) currentGameView;
 
 @optional

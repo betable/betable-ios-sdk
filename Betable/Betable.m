@@ -385,12 +385,15 @@ typedef enum heartbeatPeriods {
     self.onFailure = onFailure;
     
     currentWebView.portraitOnly = YES;
-    UINavigationController *nvc = [[UINavigationController alloc] initWithRootViewController:currentWebView];
-    nvc.navigationBarHidden = YES;
-    currentWebView.forcedOrientationWithNavController = YES;
-    currentWebView.modalPresentationStyle = UIModalPresentationFullScreen;
-    [viewController presentViewController:nvc animated:YES completion:nil];
-
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
+        UINavigationController *nvc = [[UINavigationController alloc] initWithRootViewController:currentWebView];
+        nvc.navigationBarHidden = YES;
+        currentWebView.forcedOrientationWithNavController = YES;
+        currentWebView.modalPresentationStyle = UIModalPresentationFullScreen;
+        [viewController presentViewController:nvc animated:YES completion:nil];
+    } else {
+        [viewController presentViewController:currentWebView animated:YES completion:nil];
+    }
     if (goToLogin) {
         currentWebView.onLoadState = @"ext.nux.play";
     }

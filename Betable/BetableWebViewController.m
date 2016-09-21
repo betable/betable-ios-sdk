@@ -62,7 +62,7 @@ BOOL isPad() {
 }
 
 
-@property (nonatomic, strong) WKWebView *webView;
+@property (nonatomic, strong) UIView *webView;
 @property (nonatomic, strong) UIView *betableLoader;
 @property (nonatomic, strong) UIActivityIndicatorView *spinner;
 
@@ -120,11 +120,18 @@ BOOL isPad() {
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
     
     CGRect rect = CGRectMake(0, -20, self.view.frame.size.width, self.view.frame.size.height+20);
-    WKWebView* webView = [[WKWebView alloc] initWithFrame:rect];
-    [webView setNavigationDelegate:self];
-    [webView loadRequest:request];
-    self.webView = webView;
+    if (NSClassFromString(@"WKWebView")) {
+        WKWebView* webView = [[WKWebView alloc] initWithFrame:rect];
+        [webView setNavigationDelegate:self];
+        [webView loadRequest:request];
+        self.webView = webView;
     
+    } else {
+        UIWebView* webView = [[UIWebView alloc] initWithFrame:rect];
+        webView.delegate = self;
+        [webView loadRequest:request];
+        self.webView = webView;
+    }
     self.webView.clipsToBounds = YES;
     self.webView.hidden = YES;
     
@@ -142,11 +149,25 @@ BOOL isPad() {
 }
 
 - (void)addCloseButtonConstraints {
-    [_closeButton setTranslatesAutoresizingMaskIntoConstraints: NO];
+    @try {
+        [_closeButton setTranslatesAutoresizingMaskIntoConstraints: NO];
+    }
+    @catch (NSException *exception) {
+        // iOS 5.0 doesn't support auto layout.
+        _closeButton.frame = CGRectMake(self.view.frame.size.width-35, 5, 30, 30);
+        _closeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin  |   UIViewAutoresizingFlexibleBottomMargin;
+        return;
+    }
     id topGuide;
     NSString *verticalFormat;
-    topGuide = self.topLayoutGuide;
-    verticalFormat = @"V:[topGuide]-5-[_closeButton(30)]";
+    @try {
+        topGuide = self.topLayoutGuide;
+        verticalFormat = @"V:[topGuide]-5-[_closeButton(30)]";
+    } @catch (NSException *exception) {
+        // iOS 6.0 doesn't support topLayoutGuide.
+        topGuide = [[UIView alloc] init];
+        verticalFormat = @"V:|-5-[_closeButton(30)]";
+    }
     NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings (_closeButton, topGuide);
     NSArray *consts = [NSLayoutConstraint constraintsWithVisualFormat: verticalFormat
                                                               options: 0
@@ -162,11 +183,25 @@ BOOL isPad() {
 }
 - (void)addWebViewConstraints {
     //Align webview to the top of the statusBar
-    [self.webView setTranslatesAutoresizingMaskIntoConstraints: NO];
+    @try {
+        [self.webView setTranslatesAutoresizingMaskIntoConstraints: NO];
+    }
+    @catch (NSException *exception) {
+        // iOS 5.0 doesn't support auto layout.
+        self.webView.frame = CGRectMake(0,0,self.view.frame.size.width,self.view.frame.size.height);
+        self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        return;
+    }
     id topGuide;
     NSString *verticalFormat;
-    topGuide = self.topLayoutGuide;
-    verticalFormat = @"V:[topGuide][webView]|";
+    @try {
+        topGuide = self.topLayoutGuide;
+        verticalFormat = @"V:[topGuide][webView]|";
+    } @catch (NSException *exception) {
+        // iOS 6.0 doesn't support topLayoutGuide.
+        topGuide = [[UIView alloc] init];
+        verticalFormat = @"V:|[webView]|";
+    }
     if (self.forcedOrientationWithNavController) {
         verticalFormat = @"V:|[webView]|";
     }
@@ -267,12 +302,22 @@ BOOL isPad() {
         [NSString stringWithFormat:@"window.loadCachedState(%@)", self.onLoadState];
     }
     
-    [((WKWebView*)self.webView) evaluateJavaScript:javacript completionHandler:^(id result, NSError *error) {
-        if (error != nil) {
-            [self showErrorAlert:error];
-            return;
-        }
-    }];
+    if ([self.webView isKindOfClass:[WKWebView class]]) {
+        [((WKWebView*)self.webView) evaluateJavaScript:javacript completionHandler:^(id result, NSError *error) {
+            if (error != nil) {
+                [self showErrorAlert:error];
+                return;
+            }
+        }];
+        
+    } else if ( [self.webView isKindOfClass:[UIWebView class]] ) {
+        [((UIWebView*)self.webView) stringByEvaluatingJavaScriptFromString:javacript];
+
+    } else {
+        NSLog( @"CRITICAL! BetableWebViewController cannot run javascript" );
+    }
+    
+    
 }
 
 - (void)showErrorAlert:(NSError*)error {
@@ -300,6 +345,21 @@ BOOL isPad() {
     self.webView = nil;
     self.finishedLoading = NO;
     _errorLoading = nil;
+}
+
+
+#pragma mark - UIWebViewDelegate
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    [self delegateFinishedLoading];
+}
+
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+    return [self shouldDelegateLoadRequest:request];
+}
+
+- (void)webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error {
+    [self delegateLoadingError:error];
 }
 
 #pragma mark - WKNavigationDelegate

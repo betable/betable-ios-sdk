@@ -12,7 +12,7 @@
 #import "BetableProfile.h"
 
 
-@interface BetableWebViewController : UIViewController <WKNavigationDelegate>
+@interface BetableWebViewController : UIViewController <UIWebViewDelegate, WKNavigationDelegate>
 
 @property (nonatomic, copy) BetableCancelHandler onCancel;
 @property (nonatomic, strong) NSString *url;
