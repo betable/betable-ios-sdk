@@ -10,6 +10,11 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 
 # Changelog
 
+## 1.1.7d [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.7d/BetableFramework-1.1.7d.zip)
+
+* revert webkit web container
+
+
 ## 1.1.7c [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.7c/BetableFramework-1.1.7c.zip)
 
 * make heartbeats fire earlier when at a sub-minute interval
