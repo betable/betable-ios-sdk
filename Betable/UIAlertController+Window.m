@@ -1,3 +1,4 @@
+// http://stackoverflow.com/questions/26554894/how-to-present-uialertcontroller-when-not-in-a-view-controller
 //
 //  UIAlertController+Window.m
 //  FFM

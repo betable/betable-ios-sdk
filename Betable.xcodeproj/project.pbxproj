@@ -37,8 +37,6 @@
 		A59ABF4A1949147C005466CC /* BetableTrackingUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = A59ABF441949147C005466CC /* BetableTrackingUtil.m */; };
 		A59ABF4B1949147C005466CC /* BetableTrackingHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = A59ABF451949147C005466CC /* BetableTrackingHistory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A59ABF4C1949147C005466CC /* BetableTrackingHistory.m in Sources */ = {isa = PBXBuildFile; fileRef = A59ABF461949147C005466CC /* BetableTrackingHistory.m */; };
-		A59ABF5519491484005466CC /* NSData+BetableTracking.h in Headers */ = {isa = PBXBuildFile; fileRef = A59ABF4D19491484005466CC /* NSData+BetableTracking.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A59ABF5619491484005466CC /* NSData+BetableTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = A59ABF4E19491484005466CC /* NSData+BetableTracking.m */; };
 		A59ABF5719491484005466CC /* NSString+BetableTracking.h in Headers */ = {isa = PBXBuildFile; fileRef = A59ABF4F19491484005466CC /* NSString+BetableTracking.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A59ABF5819491484005466CC /* NSString+BetableTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = A59ABF5019491484005466CC /* NSString+BetableTracking.m */; };
 		A59ABF5919491484005466CC /* UIDevice+BetableTracking.h in Headers */ = {isa = PBXBuildFile; fileRef = A59ABF5119491484005466CC /* UIDevice+BetableTracking.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -87,8 +85,6 @@
 		A59ABF441949147C005466CC /* BetableTrackingUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableTrackingUtil.m; sourceTree = "<group>"; };
 		A59ABF451949147C005466CC /* BetableTrackingHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableTrackingHistory.h; sourceTree = "<group>"; };
 		A59ABF461949147C005466CC /* BetableTrackingHistory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableTrackingHistory.m; sourceTree = "<group>"; };
-		A59ABF4D19491484005466CC /* NSData+BetableTracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+BetableTracking.h"; sourceTree = "<group>"; };
-		A59ABF4E19491484005466CC /* NSData+BetableTracking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+BetableTracking.m"; sourceTree = "<group>"; };
 		A59ABF4F19491484005466CC /* NSString+BetableTracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+BetableTracking.h"; sourceTree = "<group>"; };
 		A59ABF5019491484005466CC /* NSString+BetableTracking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+BetableTracking.m"; sourceTree = "<group>"; };
 		A59ABF5119491484005466CC /* UIDevice+BetableTracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+BetableTracking.h"; sourceTree = "<group>"; };
@@ -216,8 +212,6 @@
 			children = (
 				A59ABF5319491484005466CC /* NSDictionary+BetableTracking.h */,
 				A59ABF5419491484005466CC /* NSDictionary+BetableTracking.m */,
-				A59ABF4D19491484005466CC /* NSData+BetableTracking.h */,
-				A59ABF4E19491484005466CC /* NSData+BetableTracking.m */,
 				A59ABF4F19491484005466CC /* NSString+BetableTracking.h */,
 				A59ABF5019491484005466CC /* NSString+BetableTracking.m */,
 				A59ABF5119491484005466CC /* UIDevice+BetableTracking.h */,
@@ -248,7 +242,6 @@
 				A59ABF5719491484005466CC /* NSString+BetableTracking.h in Headers */,
 				62A8275A1D8A003A0030B0B4 /* UIAlertController+Window.h in Headers */,
 				A59ABF5B19491484005466CC /* NSDictionary+BetableTracking.h in Headers */,
-				A59ABF5519491484005466CC /* NSData+BetableTracking.h in Headers */,
 				627C7D2A1CA1EBC10041A9DF /* BetableCredentials.h in Headers */,
 				A59ABF491949147C005466CC /* BetableTrackingUtil.h in Headers */,
 				A59ABF5E1949148C005466CC /* LoadableCategory.h in Headers */,
@@ -343,7 +336,6 @@
 			files = (
 				A59ABF5C19491484005466CC /* NSDictionary+BetableTracking.m in Sources */,
 				A59ABF4C1949147C005466CC /* BetableTrackingHistory.m in Sources */,
-				A59ABF5619491484005466CC /* NSData+BetableTracking.m in Sources */,
 				A5839634194B767F00AF0E8E /* BetableBatchRequest.m in Sources */,
 				A5839633194B767F00AF0E8E /* BetableProfile.m in Sources */,
 				A5B2DCC11952193000276224 /* BetableUtils.m in Sources */,

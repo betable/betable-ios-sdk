@@ -9,7 +9,6 @@
 #import "BetableTracking.h"
 #import "BetableTrackingUtil.h"
 #import "BetableTrackingHistory.h"
-#import "NSData+BetableTracking.h"
 #import "NSString+BetableTracking.h"
 #import "UIDevice+BetableTracking.h"
 #import "NSDictionary+BetableTracking.h"
