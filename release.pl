@@ -114,7 +114,7 @@ symlink( $publish_name, $latest_directory );
 # Bundle the latest
 my $zip_file = $publish_directory . '.zip';
 my $zip      = Archive::Zip->new();
-$zip->addDirectory( $publish_directory, $publish_name );
+$zip->addTree( $publish_directory, $publish_name );
 unless ( $zip->writeToFileNamed($zip_file) == AZ_OK ) {
     die "error writing $zip_file";
 }
