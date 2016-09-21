@@ -7,11 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		623EA5AA1D904EBC00748EC8 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 623EA5A91D904EBC00748EC8 /* WebKit.framework */; };
 		627C7D2A1CA1EBC10041A9DF /* BetableCredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = 627C7D281CA1EBC10041A9DF /* BetableCredentials.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		627C7D2B1CA1EBC10041A9DF /* BetableCredentials.m in Sources */ = {isa = PBXBuildFile; fileRef = 627C7D291CA1EBC10041A9DF /* BetableCredentials.m */; };
-		62A8275A1D8A003A0030B0B4 /* UIAlertController+Window.h in Headers */ = {isa = PBXBuildFile; fileRef = 62A827581D8A003A0030B0B4 /* UIAlertController+Window.h */; };
-		62A8275D1D8A005C0030B0B4 /* UIAlertController+Window.m in Sources */ = {isa = PBXBuildFile; fileRef = 62A8275C1D8A005C0030B0B4 /* UIAlertController+Window.m */; };
 		A50FD7F5194A6F8F00B34A40 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A50FD7F4194A6F8F00B34A40 /* iAd.framework */; };
 		A50FD7F7194A6F9500B34A40 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A50FD7F6194A6F9500B34A40 /* AdSupport.framework */; };
 		A5839633194B767F00AF0E8E /* BetableProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = A5839626194B767F00AF0E8E /* BetableProfile.m */; };
@@ -53,12 +50,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		623EA5A91D904EBC00748EC8 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		627C7D281CA1EBC10041A9DF /* BetableCredentials.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableCredentials.h; sourceTree = "<group>"; };
 		627C7D291CA1EBC10041A9DF /* BetableCredentials.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableCredentials.m; sourceTree = "<group>"; };
-		62A827571D89BC870030B0B4 /* Environment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Environment.h; sourceTree = "<group>"; };
-		62A827581D8A003A0030B0B4 /* UIAlertController+Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertController+Window.h"; sourceTree = "<group>"; };
-		62A8275C1D8A005C0030B0B4 /* UIAlertController+Window.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertController+Window.m"; sourceTree = "<group>"; };
 		A50FD7F4194A6F8F00B34A40 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		A50FD7F6194A6F9500B34A40 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		A5839626194B767F00AF0E8E /* BetableProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableProfile.m; sourceTree = "<group>"; };
@@ -107,7 +100,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				623EA5AA1D904EBC00748EC8 /* WebKit.framework in Frameworks */,
 				A50FD7F7194A6F9500B34A40 /* AdSupport.framework in Frameworks */,
 				A50FD7F5194A6F8F00B34A40 /* iAd.framework in Frameworks */,
 				A59ABF19194913D3005466CC /* Foundation.framework in Frameworks */,
@@ -120,8 +112,6 @@
 		A5839640194B76D600AF0E8E /* Additions */ = {
 			isa = PBXGroup;
 			children = (
-				62A827581D8A003A0030B0B4 /* UIAlertController+Window.h */,
-				62A8275C1D8A005C0030B0B4 /* UIAlertController+Window.m */,
 				A5839641194B76E700AF0E8E /* NSDictionary+Betable.h */,
 				A5839642194B76E700AF0E8E /* NSDictionary+Betable.m */,
 				A583964F194BA6E300AF0E8E /* NSString+Betable.h */,
@@ -150,7 +140,6 @@
 		A59ABF17194913D3005466CC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				623EA5A91D904EBC00748EC8 /* WebKit.framework */,
 				A50FD7F6194A6F9500B34A40 /* AdSupport.framework */,
 				A50FD7F4194A6F8F00B34A40 /* iAd.framework */,
 				A59ABF18194913D3005466CC /* Foundation.framework */,
@@ -164,11 +153,10 @@
 				A5B102301954B23800D3F01F /* STKeychain.m */,
 				A5B102311954B23800D3F01F /* STKeychain.h */,
 				A5839640194B76D600AF0E8E /* Additions */,
+				A5839626194B767F00AF0E8E /* BetableProfile.m */,
 				627C7D281CA1EBC10041A9DF /* BetableCredentials.h */,
 				627C7D291CA1EBC10041A9DF /* BetableCredentials.m */,
-				62A827571D89BC870030B0B4 /* Environment.h */,
 				A5839628194B767F00AF0E8E /* BetableProfile.h */,
-				A5839626194B767F00AF0E8E /* BetableProfile.m */,
 				A5839627194B767F00AF0E8E /* BetableBatchRequest.m */,
 				A5839629194B767F00AF0E8E /* BetableBatchRequest.h */,
 				A583962A194B767F00AF0E8E /* BetableHandlers.h */,
@@ -246,7 +234,6 @@
 				A5B2DCC01952193000276224 /* BetableUtils.h in Headers */,
 				A5B102331954B23800D3F01F /* STKeychain.h in Headers */,
 				A59ABF5719491484005466CC /* NSString+BetableTracking.h in Headers */,
-				62A8275A1D8A003A0030B0B4 /* UIAlertController+Window.h in Headers */,
 				A59ABF5B19491484005466CC /* NSDictionary+BetableTracking.h in Headers */,
 				A59ABF5519491484005466CC /* NSData+BetableTracking.h in Headers */,
 				627C7D2A1CA1EBC10041A9DF /* BetableCredentials.h in Headers */,
@@ -347,7 +334,6 @@
 				A5839634194B767F00AF0E8E /* BetableBatchRequest.m in Sources */,
 				A5839633194B767F00AF0E8E /* BetableProfile.m in Sources */,
 				A5B2DCC11952193000276224 /* BetableUtils.m in Sources */,
-				62A8275D1D8A005C0030B0B4 /* UIAlertController+Window.m in Sources */,
 				A59ABF5819491484005466CC /* NSString+BetableTracking.m in Sources */,
 				A5839648194B777C00AF0E8E /* Betable.m in Sources */,
 				A5839644194B76E700AF0E8E /* NSDictionary+Betable.m in Sources */,
@@ -450,7 +436,6 @@
 		A59ABF27194913D3005466CC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -471,7 +456,6 @@
 		A59ABF28194913D3005466CC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;

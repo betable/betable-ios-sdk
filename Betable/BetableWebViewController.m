@@ -62,7 +62,7 @@ BOOL isPad() {
 }
 
 
-@property (nonatomic, strong) UIView *webView;
+@property (nonatomic, strong) UIWebView *webView;
 @property (nonatomic, strong) UIView *betableLoader;
 @property (nonatomic, strong) UIActivityIndicatorView *spinner;
 
@@ -118,22 +118,11 @@ BOOL isPad() {
         url = [NSURL URLWithString:adjustedURLString];
     }
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
-    
-    CGRect rect = CGRectMake(0, -20, self.view.frame.size.width, self.view.frame.size.height+20);
-    if (NSClassFromString(@"WKWebView")) {
-        WKWebView* webView = [[WKWebView alloc] initWithFrame:rect];
-        [webView setNavigationDelegate:self];
-        [webView loadRequest:request];
-        self.webView = webView;
-    
-    } else {
-        UIWebView* webView = [[UIWebView alloc] initWithFrame:rect];
-        webView.delegate = self;
-        [webView loadRequest:request];
-        self.webView = webView;
-    }
+    self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, -20, self.view.frame.size.width, self.view.frame.size.height+20)];
     self.webView.clipsToBounds = YES;
+    [self.webView loadRequest:request];
     self.webView.hidden = YES;
+    self.webView.delegate = self;
     
     [self.view insertSubview:self.webView atIndex:0];
     [self addWebViewConstraints];
@@ -347,38 +336,11 @@ BOOL isPad() {
     _errorLoading = nil;
 }
 
+#pragma mark - Alert View Delegate
 
-#pragma mark - UIWebViewDelegate
-
-- (void)webViewDidFinishLoad:(UIWebView *)webView {
-    [self delegateFinishedLoading];
-}
-
-- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-    return [self shouldDelegateLoadRequest:request];
-}
-
-- (void)webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error {
-    [self delegateLoadingError:error];
-}
-
-#pragma mark - WKNavigationDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
-    [self delegateFinishedLoading];
-}
-
-
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {
-    if ([self shouldDelegateLoadRequest:navigationAction.request ]) {
-        decisionHandler(WKNavigationActionPolicyAllow);
-    } else {
-        decisionHandler(WKNavigationActionPolicyCancel);
-    }
-}
-
-- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error {
-    [self delegateLoadingError:error];
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    _errorShown = NO;
+    [self closeWindow];
 }
 
 #pragma mark - Utilities
@@ -420,67 +382,9 @@ BOOL isPad() {
     }
 }
 
-#pragma mark - shared behaviours for both web delegate interfaces
+#pragma mark - commonalities for web delegate methods
 
-- (void)delegateFinishedLoading {
-    self.webView.hidden = NO;
-    [self.spinner stopAnimating];
-    self.finishedLoading = YES;
-    _closeButton.hidden = YES;
-    
-    if (self.loadCachedStateOnFinish) {
-        [self loadCachedState];
-    }
-    
-    if (!self.betableLoader.hidden) {
-        [UIView animateWithDuration:.2 animations:^{
-            CGRect frame = self.betableLoader.frame;
-            frame.origin.y = -10;
-            self.betableLoader.frame = frame;
-        } completion:^(BOOL finished) {
-            [UIView animateWithDuration:.2 animations:^{
-                CGRect frame = self.betableLoader.frame;
-                frame.origin.y = -frame.size.height;
-                self.betableLoader.frame = frame;
-            } completion:^(BOOL finished) {
-                self.betableLoader.hidden = YES;
-            }];
-        }];
-    }
+- (void)dealloc {
+    self.webView.delegate = nil;
 }
-
-- (BOOL)shouldDelegateLoadRequest:(NSURLRequest *) request {
-    NSURL *url = request.URL;
-    NSDictionary *params = [self paramsFromURL:url];
-    if (![[url scheme] isEqualToString:@"http"] && ![[url scheme] isEqualToString:@"https"]) {
-        BOOL userCloseError = params[@"error"] && [params[@"error_description"] isEqualToString:@"user_close"];
-        BOOL userCloseAction = [params[@"action"] isEqualToString:@"close"];
-        if (userCloseAction || userCloseError) {
-            [self closeWindow];
-        } else {
-            
-            [[UIApplication sharedApplication] openURL:url];
-        }
-        return NO;
-    } else if ([[url host] isEqualToString:@"prospecthallcasino.com"] && params[@"reason"] && params[@"gameId"] && params[@"sessId"]) {
-               
-        //This is enough to determine that the home button was hit with netent
-        [self closeWindow];
-    }
-    return YES;
-}
-
-- (void) delegateLoadingError:(NSError*) error {
-    if (_viewLoaded) {
-        NSLog(@"Showing Error on failure");
-        [self showErrorAlert:error];
-    } else if (!_errorShown) {
-        _errorLoading = error;
-    } else {
-        _errorLoading = nil;
-    }
-}
-
-
-
 @end
