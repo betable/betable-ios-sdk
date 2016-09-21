@@ -12,10 +12,10 @@
 BOOL isPad() {
     UIDevice* device = [UIDevice currentDevice];
     return
-        // App was built for iPad
-        [device userInterfaceIdiom] == UIUserInterfaceIdiomPad ||
-        // It's been reported the idiom result misses some iPads--so fall back to harware model
-        [device.model rangeOfString:@"iPad"].location != NSNotFound;
+    // App was built for iPad
+    [device userInterfaceIdiom] == UIUserInterfaceIdiomPad ||
+    // It's been reported the idiom result misses some iPads--so fall back to harware model
+    [device.model rangeOfString:@"iPad"].location != NSNotFound;
 }
 
 @interface UIImage (BetableBundle)
@@ -29,7 +29,7 @@ BOOL isPad() {
     
     NSString *fileName = nameParts[0];
     NSString *fileExtension = nameParts[1];
-
+    
     if ([[UIScreen mainScreen] respondsToSelector:@selector(displayLinkWithTarget:selector:)] &&
         ([UIScreen mainScreen].scale == 2.0)) {
         fileName = [fileName stringByAppendingString:@"@2x"];
@@ -210,13 +210,13 @@ BOOL isPad() {
 }
 
 + (void)attemptRotationToDeviceOrientation {
-
+    
 }
 
 - (void)viewDidLoad {
-
+    
     self.view.frame = [[UIScreen mainScreen] bounds];
-
+    
     [super viewDidLoad];
     
     if (self.forcedOrientationWithNavController) {
@@ -235,8 +235,8 @@ BOOL isPad() {
     betableLogo.center = CGPointMake(self.betableLoader.frame.size.width/2, self.betableLoader.frame.size.height/2+20);
     
     betableLogo.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |
-        UIViewAutoresizingFlexibleTopMargin |
-        UIViewAutoresizingFlexibleBottomMargin;
+    UIViewAutoresizingFlexibleTopMargin |
+    UIViewAutoresizingFlexibleBottomMargin;
     
     [self.betableLoader addSubview:betableLogo];
     
@@ -247,8 +247,8 @@ BOOL isPad() {
     [self.spinner startAnimating];
     [self.betableLoader addSubview:self.spinner];
     self.spinner.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |
-        UIViewAutoresizingFlexibleTopMargin |
-        UIViewAutoresizingFlexibleBottomMargin;
+    UIViewAutoresizingFlexibleTopMargin |
+    UIViewAutoresizingFlexibleBottomMargin;
     
     //If we have already loaded then don't show the betableLoader and show the webview
     if (self.finishedLoading) {
@@ -265,7 +265,7 @@ BOOL isPad() {
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-
+    
     if (!self.webView) {
         //If the webview was destroyed for memory usage or because of error
         [self preloadWebview];
@@ -291,23 +291,73 @@ BOOL isPad() {
         [NSString stringWithFormat:@"window.loadCachedState(%@)", self.onLoadState];
     }
     
-    if ([self.webView isKindOfClass:[WKWebView class]]) {
-        [((WKWebView*)self.webView) evaluateJavaScript:javacript completionHandler:^(id result, NSError *error) {
-            if (error != nil) {
-                [self showErrorAlert:error];
-                return;
-            }
-        }];
-        
-    } else if ( [self.webView isKindOfClass:[UIWebView class]] ) {
-        [((UIWebView*)self.webView) stringByEvaluatingJavaScriptFromString:javacript];
-
-    } else {
-        NSLog( @"CRITICAL! BetableWebViewController cannot run javascript" );
-    }
+    [((UIWebView*)self.webView) stringByEvaluatingJavaScriptFromString:javacript];
     
     
 }
+
+
+#pragma mark - Web View Delegate
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    self.webView.hidden = NO;
+    [self.spinner stopAnimating];
+    self.finishedLoading = YES;
+    _closeButton.hidden = YES;
+    
+    if (self.loadCachedStateOnFinish) {
+        [self loadCachedState];
+    }
+    
+    if (!self.betableLoader.hidden) {
+        [UIView animateWithDuration:.2 animations:^{
+            CGRect frame = self.betableLoader.frame;
+            frame.origin.y = -10;
+            self.betableLoader.frame = frame;
+        }
+                         completion:^(BOOL finished) {
+                             [UIView animateWithDuration:.2 animations:^{
+                                 CGRect frame = self.betableLoader.frame;
+                                 frame.origin.y = -frame.size.height;
+                                 self.betableLoader.frame = frame;
+                             }
+                                              completion:^(BOOL finished) {
+                                                  self.betableLoader.hidden = YES;
+                                              }];
+                         }];
+    }
+}
+
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+    NSURL *url = request.URL;
+    NSDictionary *params = [self paramsFromURL:url];
+    if (![[url scheme] isEqualToString:@"http"] && ![[url scheme] isEqualToString:@"https"]) {
+        BOOL userCloseError = params[@"error"] && [params[@"error_description"] isEqualToString:@"user_close"];
+        BOOL userCloseAction = [params[@"action"] isEqualToString:@"close"];
+        if (userCloseAction || userCloseError) {
+            [self closeWindow];
+        } else {
+            [[UIApplication sharedApplication] openURL:url];
+        }
+        return NO;
+    } else if ([[url host] isEqualToString:@"prospecthallcasino.com"] && params[@"reason"] && params[@"gameId"] && params[@"sessId"]) {
+        //This is enough to determine that the home button was hit with netent
+        [self closeWindow];
+    }
+    return YES;
+}
+
+- (void)webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error {
+    if (_viewLoaded) {
+        NSLog(@"Showing Error on failure");
+        [self showErrorAlert:error];
+    } else if (!_errorShown) {
+        _errorLoading = error;
+    } else {
+        _errorLoading = nil;
+    }
+}
+
 
 - (void)showErrorAlert:(NSError*)error {
     _errorShown = YES;
@@ -361,7 +411,7 @@ BOOL isPad() {
 //
 //- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
 //    return UIInterfaceOrientationPortrait;
-//    
+//
 //}
 //
 -(BOOL)shouldAutorotate
