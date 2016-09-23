@@ -10,6 +10,13 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 
 # Changelog
 
+## 1.1.7 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.7/BetableFramework-1.1.7.zip)
+
+* make heartbeats fire earlier when at a sub-minute interval for next reality check
+* `/token` call propegates `session_id`
+* `checkCredentials` takes a `loginOverRegister` boolean indicating if user input is required should betable offer a login window or a register window?
+
+
 ## 1.1.7d [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.7d/BetableFramework-1.1.7d.zip)
 
 * revert webkit web container
