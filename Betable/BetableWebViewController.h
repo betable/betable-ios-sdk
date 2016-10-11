@@ -10,6 +10,10 @@
 #import "BetableHandlers.h"
 #import "BetableProfile.h"
 
+// Acceptable values for onLoadState
+#define BETABLE_WALLET_STATE @"chrome.nux.wallet"
+#define BETABLE_REGISTER_STATE @"chrome.nux.register"
+#define BETABLE_LOGIN_STATE @"chrome.auth.login"
 
 @interface BetableWebViewController : UIViewController <UIWebViewDelegate, UIAlertViewDelegate>
 

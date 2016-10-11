@@ -279,16 +279,15 @@ BOOL isPad() {
         if (self.onCancel) {
             self.onCancel();
         }
-        self.onCancel = nil;
+//        self.onCancel = nil;
     }];
 }
 
 - (void)loadCachedState {
-    NSString* javacript = @"window.loadCachedState()";
+    NSString* javacript = @"window.loadCachedState();";
     if (self.onLoadState) {
-        [NSString stringWithFormat:@"window.loadCachedState(%@)", self.onLoadState];
+        javacript = [NSString stringWithFormat:@"window.loadCachedState('%@');", self.onLoadState];
     }
-    
     [((UIWebView*)self.webView) stringByEvaluatingJavaScriptFromString:javacript];
     
     
@@ -425,8 +424,6 @@ BOOL isPad() {
         return UIInterfaceOrientationMaskPortrait;
     }
 }
-
-#pragma mark - commonalities for web delegate methods
 
 - (void)dealloc {
     self.webView.delegate = nil;

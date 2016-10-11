@@ -114,6 +114,11 @@ typedef enum heartbeatPeriods {
         [_tracking trackSession];
         [self fireDeferredRequests];
         _preCacheAuthToken = [self getBetableAuthCookie].value;
+        
+        // prep currentWebView
+        NSString* url = [self getAuthorizeWebViewURL];
+        currentWebView = [[BetableWebViewController alloc]initWithURL:url onCancel:^{[self performCredentialFailure:nil withBody:nil orError:nil];} showInternalCloseButton:YES];
+
     }
     return self;
 }
@@ -130,40 +135,50 @@ typedef enum heartbeatPeriods {
 }
 
 
-- (void)checkCredentials:(id<BetableCredentialCallbacks> _Nonnull) callbacks loginOverRegister:(BOOL) login {
-    [self checkLaunchStatus];
-     _credentialCallbacks = callbacks;
-
+-(BetableCredentials*)loadStoredCredentials {
     // If a user deletes the app, their keychain item still exists.
     // If it hasn't been stored then delete it and don't retrieve it
     NSNumber* hasBeenStoredSinceInstall = (NSNumber*)[[NSUserDefaults standardUserDefaults] objectForKey:FIRSTSTORE_KEY];
     NSError* error;
     BetableCredentials* newCredentials;
-    if ([hasBeenStoredSinceInstall boolValue]) {
-        NSString* serialisedCredentials = [STKeychain getPasswordForUsername:USERNAME_KEY andServiceName:SERVICE_KEY error:&error];
-        if (error) {
-            NSLog(@"Error retrieving credentials <%@>: %@", serialisedCredentials, error);
-        } else if ( nil != serialisedCredentials) {
-            newCredentials = [[BetableCredentials alloc] initWithSerialised:serialisedCredentials];
-            if ( newCredentials ) {
-                [self beginSessionWithCredentials:newCredentials];
-                return;
-            } else {
-                NSLog(@"Error interpreting serialized credentials <%@>", serialisedCredentials);
-            }
-        }
-    } else {
+    if (![hasBeenStoredSinceInstall boolValue]) {
+        return nil;
+    }
+    NSString* serialisedCredentials = [STKeychain getPasswordForUsername:USERNAME_KEY andServiceName:SERVICE_KEY error:&error];
+    if (error) {
+        NSLog(@"Error retrieving credentials <%@>: %@", serialisedCredentials, error);
+        return nil;
+    } else if ( nil == serialisedCredentials) {
+        return nil;
+    }
+    return [[BetableCredentials alloc] initWithSerialised:serialisedCredentials];
+}
+
+- (void)checkCredentials:(id<BetableCredentialCallbacks> _Nonnull) callbacks loginOverRegister:(BOOL) login {
+    [self checkLaunchStatus];
+     _credentialCallbacks = callbacks;
+    
+    // If a user deletes the app, their keychain item still exists.
+    // If it hasn't been stored then delete it and don't retrieve it
+    NSNumber* hasBeenStoredSinceInstall = (NSNumber*)[[NSUserDefaults standardUserDefaults] objectForKey:FIRSTSTORE_KEY];
+    BetableCredentials* newCredentials;
+    if (![hasBeenStoredSinceInstall boolValue]) {
+        NSError* error;
+        // Don't bother checking error at this point--statisically it WILL be an error because this key shouldn't be here
         [STKeychain deleteItemForUsername:USERNAME_KEY andServiceName:SERVICE_KEY error:&error];
-        if (error) {
-            NSLog(@"Error removing credentials: %@", error);
-        }
+    }
+    
+    newCredentials = [self loadStoredCredentials];
+    if ( newCredentials ) {
+        [self beginSessionWithCredentials:newCredentials];
+        return;
     }
     
     [self authorizeInViewController:[_credentialCallbacks currentGameView]
                               login:login
             onAuthorizationComplete:^(NSString *accessToken) {}
                           onFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {}
-                           onCancel:^{ [self performCredentialFailure:nil withBody:nil orError:nil];}
+                           onCancel:^{}
      ];
 }
 
@@ -195,14 +210,21 @@ typedef enum heartbeatPeriods {
     CFRelease(UUIDRef);
     CFRelease(UUIDSRef);
     
-    NSDictionary* authorizeParams = @{
+    NSDictionary* precacheParams = @{
                                           @"redirect_uri":self.redirectURI,
                                           @"state":UUID,
-                                          @"load":@"ext.nux.deposit"
+                                          @"load": BETABLE_WALLET_STATE
                                           };
     
-    NSMutableDictionary* sessionParams = [self sessionParams];
-   [sessionParams addEntriesFromDictionary:authorizeParams];
+    // Extend session if there is one,then precache a "sane" register state
+    // (to be explicitly overriden by a login state later, as needed)
+    BetableCredentials* storedCredentials = [self loadStoredCredentials];
+    NSMutableDictionary* sessionParams = [NSMutableDictionary dictionaryWithDictionary:precacheParams];
+    if (credentials == nil || [credentials isUnbacked]) {
+        sessionParams[@"session_id"] = @"none";
+    } else {
+        sessionParams[@"session_id"] = storedCredentials.sessionID;
+    }
     
     return [_profile decorateURL:@"/ext/precache" forClient:self.clientID withParams:sessionParams ];
 }
@@ -375,16 +397,12 @@ typedef enum heartbeatPeriods {
 
 - (void)authorizeInViewController:(UIViewController*)viewController login:(BOOL)goToLogin onAuthorizationComplete:(BetableAccessTokenHandler)onAuthorize onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel {
     [self checkLaunchStatus];
-
-    NSString* url = [self getAuthorizeWebViewURL];
     
-    currentWebView = [[BetableWebViewController alloc]initWithURL:url onCancel:onCancel showInternalCloseButton:YES];
-   
     // Depricated fields and parameters can stay a while longer...
     self.onAuthorize = onAuthorize;
     self.onFailure = onFailure;
     
-    currentWebView.portraitOnly = YES;
+    // Attach currentWebView to passed viewController
     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
         UINavigationController *nvc = [[UINavigationController alloc] initWithRootViewController:currentWebView];
         nvc.navigationBarHidden = YES;
@@ -394,9 +412,11 @@ typedef enum heartbeatPeriods {
     } else {
         [viewController presentViewController:currentWebView animated:YES completion:nil];
     }
-    if (goToLogin) {
-        currentWebView.onLoadState = @"ext.nux.play";
-    }
+    
+    currentWebView.portraitOnly = YES;
+    currentWebView.onLoadState = goToLogin ? BETABLE_LOGIN_STATE : BETABLE_REGISTER_STATE;
+    
+    // and apply requested state in currentWebView
     if(currentWebView.finishedLoading) {
         // This is a method in the webview's JS
         [currentWebView loadCachedState];
@@ -823,7 +843,7 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
                        andOnFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {
                            // TODO explicit "session has expired" check instead of implicit assumption here
                            [self logout];
-                           // Its safe to assume that because this method gets called with assumed non-null credentais, registration is overkill
+                           // Assume login is correct here here becase at *some* point credentials was valid
                            BOOL loginOverRegister = YES;
                            [self checkCredentials:_credentialCallbacks loginOverRegister:loginOverRegister];
    }];
