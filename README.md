@@ -10,6 +10,11 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 
 # Changelog
 
+## 1.1.8 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.8/BetableFramework-1.1.8.zip)
+
+Address isues with login/register
+
+
 ## 1.1.7 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.7/BetableFramework-1.1.7.zip)
 
 * make heartbeats fire earlier when at a sub-minute interval for next reality check
