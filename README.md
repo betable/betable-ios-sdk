@@ -10,6 +10,11 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 
 # Changelog
 
+## 1.1.9 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.9/BetableFramework-1.1.9.zip)
+
+-Addresses issue with login requiring a deposit as well
+
+
 ## 1.1.8 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.8/BetableFramework-1.1.8.zip)
 
 Address isues with login/register
