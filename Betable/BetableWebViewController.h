@@ -12,8 +12,8 @@
 
 // Acceptable values for onLoadState
 #define BETABLE_WALLET_STATE @"chrome.nux.wallet"
-#define BETABLE_REGISTER_STATE @"chrome.nux.register"
-#define BETABLE_LOGIN_STATE @"chrome.auth.login"
+#define BETABLE_REGISTER_STATE @"chrome.nux.deposit"
+#define BETABLE_LOGIN_STATE @"chrome.auth.play"
 
 @interface BetableWebViewController : UIViewController <UIWebViewDelegate, UIAlertViewDelegate>
 

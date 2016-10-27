@@ -42,8 +42,8 @@
 
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
-NSString *BetablePasteBoardUserIDKey = @"com.Betable.BetableSDK.sharedData:UserID";
-NSString *BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
+NSString* BetablePasteBoardUserIDKey = @"com.Betable.BetableSDK.sharedData:UserID";
+NSString* BetablePasteBoardName = @"com.Betable.BetableSDK.sharedData";
 
 // Boolean to guard against multiple reality check windows opening
 BOOL _rcIsActive;
@@ -59,26 +59,26 @@ typedef enum heartbeatPeriods {
     UNHEALTHY_PERIOD = 5
 } HeartBeatPeriods;
 
-@interface Betable () {
-    NSMutableOrderedSet  *_deferredRequests;
-    BetableProfile *_profile;
+@interface Betable (){
+    NSMutableOrderedSet* _deferredRequests;
+    BetableProfile* _profile;
     // This holds the value of the betable auth cookie when we precache the page. If the
     // value of this cookie changes before then and the showing of the page, we need to
     // load the page again.
-    NSString *_preCacheAuthToken;
-    BetableTracking *_tracking;
+    NSString* _preCacheAuthToken;
+    BetableTracking* _tracking;
     BOOL _launched;
-    NSDictionary *_launchOptions;
+    NSDictionary* _launchOptions;
 
-    BetableWebViewController *currentWebView;
+    BetableWebViewController* currentWebView;
 }
 
-- (NSString *)urlEncode:(NSString*)string;
+- (NSString*)urlEncode:(NSString*)string;
 - (NSURL*)getAPIWithURL:(NSString*)urlString;
 + (NSString*)base64forData:(NSData*)theData;
 
--(void) performCredentialSuccess;
--(void) performCredentialFailure:(NSURLResponse*) response withBody:(NSString*) responseBody orError:(NSError*) error;
+- (void)performCredentialSuccess;
+- (void)performCredentialFailure:(NSURLResponse*)response withBody:(NSString*)responseBody orError:(NSError*)error;
 
 @end
 
@@ -100,10 +100,11 @@ typedef enum heartbeatPeriods {
         // requests or set the URL for the authorize web view.
         queue = [[NSOperationQueue alloc] init];
     }
-    NSLog( @"Betable %@ starting...", BETABLE_SDK_REVISION );
-    
+    NSLog(@"Betable %@ starting...", BETABLE_SDK_REVISION);
+
     return self;
 }
+
 - (Betable*)initWithClientID:(NSString*)aClientID clientSecret:(NSString*)aClientSecret redirectURI:(NSString*)aRedirectURI {
     self = [self init];
     if (self) {
@@ -114,15 +115,14 @@ typedef enum heartbeatPeriods {
         [_tracking trackSession];
         [self fireDeferredRequests];
         _preCacheAuthToken = [self getBetableAuthCookie].value;
-        
+
         // prep currentWebView
         NSString* url = [self getAuthorizeWebViewURL];
-        currentWebView = [[BetableWebViewController alloc]initWithURL:url onCancel:^{[self performCredentialFailure:nil withBody:nil orError:nil];} showInternalCloseButton:YES];
+        currentWebView = [[BetableWebViewController alloc] initWithURL:url onCancel:^{[self performCredentialFailure:nil withBody:nil orError:nil]; } showInternalCloseButton:YES];
 
     }
     return self;
 }
-
 
 - (void)launchWithOptions:(NSDictionary*)launchOptions {
     _launched = YES;
@@ -134,30 +134,29 @@ typedef enum heartbeatPeriods {
     return NO;
 }
 
-
--(BetableCredentials*)loadStoredCredentials {
+- (BetableCredentials*)loadStoredCredentials {
     // If a user deletes the app, their keychain item still exists.
     // If it hasn't been stored then delete it and don't retrieve it
     NSNumber* hasBeenStoredSinceInstall = (NSNumber*)[[NSUserDefaults standardUserDefaults] objectForKey:FIRSTSTORE_KEY];
-    NSError* error;
-    BetableCredentials* newCredentials;
     if (![hasBeenStoredSinceInstall boolValue]) {
         return nil;
     }
+
+    NSError* error;
     NSString* serialisedCredentials = [STKeychain getPasswordForUsername:USERNAME_KEY andServiceName:SERVICE_KEY error:&error];
     if (error) {
         NSLog(@"Error retrieving credentials <%@>: %@", serialisedCredentials, error);
         return nil;
-    } else if ( nil == serialisedCredentials) {
+    } else if (nil == serialisedCredentials) {
         return nil;
     }
     return [[BetableCredentials alloc] initWithSerialised:serialisedCredentials];
 }
 
-- (void)checkCredentials:(id<BetableCredentialCallbacks> _Nonnull) callbacks loginOverRegister:(BOOL) login {
+- (void)checkCredentials:(id<BetableCredentialCallbacks> _Nonnull)callbacks loginOverRegister:(BOOL)login {
     [self checkLaunchStatus];
-     _credentialCallbacks = callbacks;
-    
+    _credentialCallbacks = callbacks;
+
     // If a user deletes the app, their keychain item still exists.
     // If it hasn't been stored then delete it and don't retrieve it
     NSNumber* hasBeenStoredSinceInstall = (NSNumber*)[[NSUserDefaults standardUserDefaults] objectForKey:FIRSTSTORE_KEY];
@@ -167,19 +166,19 @@ typedef enum heartbeatPeriods {
         // Don't bother checking error at this point--statisically it WILL be an error because this key shouldn't be here
         [STKeychain deleteItemForUsername:USERNAME_KEY andServiceName:SERVICE_KEY error:&error];
     }
-    
+
     newCredentials = [self loadStoredCredentials];
-    if ( newCredentials ) {
+    if (newCredentials) {
         [self beginSessionWithCredentials:newCredentials];
         return;
     }
-    
+
     [self authorizeInViewController:[_credentialCallbacks currentGameView]
                               login:login
-            onAuthorizationComplete:^(NSString *accessToken) {}
-                          onFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {}
+            onAuthorizationComplete:^(NSString* accessToken) {}
+                          onFailure:^(NSURLResponse* response, NSString* responseBody, NSError* error) {}
                            onCancel:^{}
-     ];
+    ];
 }
 
 - (void)storeAccessToken {
@@ -189,12 +188,12 @@ typedef enum heartbeatPeriods {
 
 - (void)storeCredentials {
     [self checkAccessToken:@"storeCredentials"];
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:[NSNumber numberWithBool:YES] forKey:FIRSTSTORE_KEY];
     [defaults synchronize];
-    
-    NSError *error;
+
+    NSError* error;
     NSString* password = [credentials description];
     [STKeychain storeUsername:USERNAME_KEY andPassword:password forServiceName:SERVICE_KEY updateExisting:YES error:&error];
     if (error) {
@@ -202,20 +201,19 @@ typedef enum heartbeatPeriods {
     }
 }
 
-
-- (NSString*) getAuthorizeWebViewURL {
+- (NSString*)getAuthorizeWebViewURL {
     CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
     CFStringRef UUIDSRef = CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
     NSString* UUID = [NSString stringWithFormat:@"%@", UUIDSRef];
     CFRelease(UUIDRef);
     CFRelease(UUIDSRef);
-    
+
     NSDictionary* precacheParams = @{
-                                          @"redirect_uri":self.redirectURI,
-                                          @"state":UUID,
-                                          @"load": BETABLE_WALLET_STATE
-                                          };
-    
+        @"redirect_uri":self.redirectURI,
+        @"state":UUID,
+        @"load": BETABLE_WALLET_STATE
+    };
+
     // Extend session if there is one,then precache a "sane" register state
     // (to be explicitly overriden by a login state later, as needed)
     BetableCredentials* storedCredentials = [self loadStoredCredentials];
@@ -225,14 +223,14 @@ typedef enum heartbeatPeriods {
     } else {
         sessionParams[@"session_id"] = storedCredentials.sessionID;
     }
-    
+
     return [_profile decorateURL:@"/ext/precache" forClient:self.clientID withParams:sessionParams ];
 }
 
 - (NSHTTPCookie*)getBetableAuthCookie {
     //Get the cookie jar
-    NSHTTPCookie *cookie;
-    NSHTTPCookieStorage *cookieJar = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    NSHTTPCookie* cookie;
+    NSHTTPCookieStorage* cookieJar = [NSHTTPCookieStorage sharedHTTPCookieStorage];
     for (cookie in [cookieJar cookies]) {
         // TODO long term; betable wallet will be on betable.com and this will need to reflect that change
         BOOL isBetableCookie = [cookie.domain rangeOfString:@"prospecthallcasino.com"].location != NSNotFound;
@@ -249,42 +247,42 @@ typedef enum heartbeatPeriods {
     return nil;
 }
 
-- (void)token:(NSString*)code forSession:(NSString*)sessionID{
-    NSURL *apiURL = [NSURL URLWithString:[self getTokenURL]];
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:apiURL];
-    NSString *authStr = [NSString stringWithFormat:@"%@:%@", clientID, clientSecret];
-    NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
-    NSString *authValue = [NSString stringWithFormat:@"Basic %@", [Betable base64forData:authData]];
+- (void)token:(NSString*)code forSession:(NSString*)sessionID {
+    NSURL* apiURL = [NSURL URLWithString:[self getTokenURL]];
+    NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:apiURL];
+    NSString* authStr = [NSString stringWithFormat:@"%@:%@", clientID, clientSecret];
+    NSData* authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+    NSString* authValue = [NSString stringWithFormat:@"Basic %@", [Betable base64forData:authData]];
     [request setAllHTTPHeaderFields:[NSDictionary dictionaryWithObject:authValue forKey:@"Authorization"]];
     [request setHTTPMethod:METHOD_POST];
-    
+
     if (nil == sessionID) {
         sessionID = @"none";
     }
 
-    NSString *body = [NSString stringWithFormat:@"grant_type=authorization_code&redirect_uri=%@&code=%@&session_id=%@",
+    NSString* body = [NSString stringWithFormat:@"grant_type=authorization_code&redirect_uri=%@&code=%@&session_id=%@",
                       [self urlEncode:redirectURI],
                       code,
                       sessionID];
-    
-    void (^onComplete)(NSURLResponse*, NSData*, NSError*) = ^(NSURLResponse *response, NSData *data, NSError *error) {
-        NSString *responseBody = [[NSString alloc] initWithData:data
+
+    void (^ onComplete)(NSURLResponse*, NSData*, NSError*) = ^(NSURLResponse* response, NSData* data, NSError* error) {
+        NSString* responseBody = [[NSString alloc] initWithData:data
                                                        encoding:NSUTF8StringEncoding];
         if (error) {
             [self performCredentialFailure:response withBody:responseBody orError:error];
         } else {
-            NSDictionary *data = (NSDictionary*)[responseBody objectFromJSONString];
-            NSString *accessToken = [data objectForKey:@"access_token"];
-            NSString *sessionID = [data objectForKey:@"session_id"];
-            
+            NSDictionary* data = (NSDictionary*)[responseBody objectFromJSONString];
+            NSString* accessToken = [data objectForKey:@"access_token"];
+            NSString* sessionID = [data objectForKey:@"session_id"];
+
             BetableCredentials* newCredentials = [[BetableCredentials alloc] initWithAccessToken:accessToken andSessionID:sessionID];
             [self beginSessionWithCredentials:newCredentials];
 
-            [self userAccountOnComplete:^(NSDictionary *data) {
-                NSString *userID = data[@"id"];
+            [self userAccountOnComplete:^(NSDictionary* data) {
+                NSString* userID = data[@"id"];
                 [[self sharedData] setValue:userID forPasteboardType:BetablePasteBoardUserIDKey];
-            } onFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {
-                NSLog( @"Failed call to %@ with response:%@\nresponseBody:%@\nerror:%@", request, response, responseBody, error );
+            } onFailure:^(NSURLResponse* response, NSString* responseBody, NSError* error) {
+                NSLog(@"Failed call to %@ with response:%@\nresponseBody:%@\nerror:%@", request, response, responseBody, error);
             }];
         }
     };
@@ -292,97 +290,96 @@ typedef enum heartbeatPeriods {
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:self.queue
                            completionHandler:onComplete
-     ];
+    ];
 }
 
--(void) performCredentialSuccess {
-    
+- (void)performCredentialSuccess {
+
     dispatch_async(dispatch_get_main_queue(), ^{
         // Runtime selector doesn't spew unnecessary warnings
-        if( [_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onCredentialsSuccess:")] ) {
+        if ([_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onCredentialsSuccess:")]) {
             [_credentialCallbacks onCredentialsSuccess:credentials];
         }
-        
-        if( self.onAuthorize ) {
-            self.onAuthorize( credentials.accessToken );
+
+        if (self.onAuthorize) {
+            self.onAuthorize(credentials.accessToken);
         }
     });
 }
 
--(void) performCredentialFailure:(NSURLResponse*) response withBody:(NSString*) responseBody orError:(NSError*) error {
+- (void)performCredentialFailure:(NSURLResponse*)response withBody:(NSString*)responseBody orError:(NSError*)error {
     dispatch_async(dispatch_get_main_queue(), ^{
-        if( [_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onCredentialsFailure")] ) {
+        if ([_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onCredentialsFailure")]) {
             [_credentialCallbacks onCredentialsFailure];
         }
-        if( self.onFailure ) {
-            self.onFailure(response, responseBody, error );
+        if (self.onFailure) {
+            self.onFailure(response, responseBody, error);
         }
     });
 }
 
-
 - (void)unbackedToken:(NSString*)clientUserID onComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure {
-    NSURL *apiURL = [NSURL URLWithString:[self getTokenURL]];
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:apiURL];
-    NSString *authStr = [NSString stringWithFormat:@"%@:%@", clientID, clientSecret];
-    NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
-    NSString *authValue = [NSString stringWithFormat:@"Basic %@", [Betable base64forData:authData]];
+    NSURL* apiURL = [NSURL URLWithString:[self getTokenURL]];
+    NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:apiURL];
+    NSString* authStr = [NSString stringWithFormat:@"%@:%@", clientID, clientSecret];
+    NSData* authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+    NSString* authValue = [NSString stringWithFormat:@"Basic %@", [Betable base64forData:authData]];
     [request setAllHTTPHeaderFields:[NSDictionary dictionaryWithObject:authValue forKey:@"Authorization"]];
-    
+
     [request setHTTPMethod:METHOD_POST];
-    NSString *body = [NSString stringWithFormat:@"grant_type=client_credentials&redirect_uri=%@&client_user_id=%@",
+    NSString* body = [NSString stringWithFormat:@"grant_type=client_credentials&redirect_uri=%@&client_user_id=%@",
                       [self urlEncode:redirectURI],
                       clientUserID];
     if (credentials != nil) {
         body = [NSString stringWithFormat:@"%@&session_id=%@", body, credentials.sessionID];
     }
-    
+
     [request setHTTPBody:[body dataUsingEncoding:NSUTF8StringEncoding]];
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:self.queue
-                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-                               NSString *responseBody = [[NSString alloc] initWithData:data
-                                                                              encoding:NSUTF8StringEncoding];
-                               if (error) {
-                                   onFailure(response, responseBody, error);
-                               } else {
-                                   NSDictionary *data = (NSDictionary*)[responseBody objectFromJSONString];
-                                   NSString* accessToken = [data objectForKey:@"access_token"];
-                                   NSString* sessionID = [data objectForKey:@"session_id"];
-                                   BetableCredentials* newCredentials = [[BetableCredentials alloc] initWithAccessToken:accessToken andSessionID:sessionID];
-                                   [self beginSessionWithCredentials:newCredentials];
-                                   
-                                   onComplete(accessToken);
-                               }
-                           }
-     ];
+                           completionHandler:^(NSURLResponse* response, NSData* data, NSError* error) {
+        NSString* responseBody = [[NSString alloc] initWithData:data
+                                                       encoding:NSUTF8StringEncoding];
+        if (error) {
+            onFailure(response, responseBody, error);
+        } else {
+            NSDictionary* data = (NSDictionary*)[responseBody objectFromJSONString];
+            NSString* accessToken = [data objectForKey:@"access_token"];
+            NSString* sessionID = [data objectForKey:@"session_id"];
+            BetableCredentials* newCredentials = [[BetableCredentials alloc] initWithAccessToken:accessToken andSessionID:sessionID];
+            [self beginSessionWithCredentials:newCredentials];
+
+            onComplete(accessToken);
+        }
+    }
+    ];
 }
 
 #pragma mark - External Methods
 
 // Translates betable-id's 302 response (including the query param "code") from GET /authorize to running app
-- (void)handleAuthorizeURL:(NSURL*)url{
-    NSURL *redirect = [NSURL URLWithString:self.redirectURI];
-    
+- (void)handleAuthorizeURL:(NSURL*)url {
+    NSURL* redirect = [NSURL URLWithString:self.redirectURI];
+
     //First check that we should be handling this
     BOOL schemeSame = [[[redirect scheme] lowercaseString] isEqualToString:[[url scheme] lowercaseString]];
     BOOL hostSame = [[[redirect host] lowercaseString] isEqualToString:[[url host] lowercaseString]];
     BOOL fragmentSame = ((![redirect fragment] && ![url fragment]) || [[[redirect fragment] lowercaseString] isEqualToString:[[url fragment] lowercaseString]]);
     if (schemeSame && hostSame && fragmentSame) {
         //If the command is the same as the redirect, then do the authorize.
-        NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-        for (NSString *param in [[url query] componentsSeparatedByString:@"&"]) {
-            NSArray *elts = [param componentsSeparatedByString:@"="];
-            if([elts count] < 2) continue;
+        NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
+        for (NSString* param in [[url query] componentsSeparatedByString:@"&"]) {
+            NSArray* elts = [param componentsSeparatedByString:@"="];
+            if ([elts count] < 2) continue;
             [params setObject:[elts objectAtIndex:1] forKey:[elts objectAtIndex:0]];
         }
         if (params[@"code"]) {
             [self token:params[@"code"] forSession:params[@"session_id"]];
             [currentWebView.presentingViewController dismissViewControllerAnimated:YES completion:nil];
-            
+
         } else if (params[@"error"]) {
-            NSError *error = [[NSError alloc] initWithDomain:@"BetableAuthorization" code:-1 userInfo:params];
-            [self performCredentialFailure: nil withBody: nil orError:error];
+            NSError* error = [[NSError alloc] initWithDomain:@"BetableAuthorization" code:-1 userInfo:params];
+            [self performCredentialFailure:nil withBody:nil orError:error];
         }
     }
 }
@@ -397,14 +394,14 @@ typedef enum heartbeatPeriods {
 
 - (void)authorizeInViewController:(UIViewController*)viewController login:(BOOL)goToLogin onAuthorizationComplete:(BetableAccessTokenHandler)onAuthorize onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel {
     [self checkLaunchStatus];
-    
+
     // Depricated fields and parameters can stay a while longer...
     self.onAuthorize = onAuthorize;
     self.onFailure = onFailure;
-    
+
     // Attach currentWebView to passed viewController
     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
-        UINavigationController *nvc = [[UINavigationController alloc] initWithRootViewController:currentWebView];
+        UINavigationController* nvc = [[UINavigationController alloc] initWithRootViewController:currentWebView];
         nvc.navigationBarHidden = YES;
         currentWebView.forcedOrientationWithNavController = YES;
         currentWebView.modalPresentationStyle = UIModalPresentationFullScreen;
@@ -412,12 +409,12 @@ typedef enum heartbeatPeriods {
     } else {
         [viewController presentViewController:currentWebView animated:YES completion:nil];
     }
-    
+
     currentWebView.portraitOnly = YES;
     currentWebView.onLoadState = goToLogin ? BETABLE_LOGIN_STATE : BETABLE_REGISTER_STATE;
-    
+
     // and apply requested state in currentWebView
-    if(currentWebView.finishedLoading) {
+    if (currentWebView.finishedLoading) {
         // This is a method in the webview's JS
         [currentWebView loadCachedState];
     } else {
@@ -425,50 +422,49 @@ typedef enum heartbeatPeriods {
     }
 }
 
-- (void)openGame:(NSString*)gameSlug withEconomy:(NSString*)economy inViewController:(UIViewController*)viewController onHome:(BetableCancelHandler)onHome onFailure:(BetableFailureHandler)onFaiure{
+- (void)openGame:(NSString*)gameSlug withEconomy:(NSString*)economy inViewController:(UIViewController*)viewController onHome:(BetableCancelHandler)onHome onFailure:(BetableFailureHandler)onFaiure {
     //TODO Make request to get url
-    [self gameManifestForSlug:gameSlug economy:economy onComplete:^(NSDictionary *data) {
+    [self gameManifestForSlug:gameSlug economy:economy onComplete:^(NSDictionary* data) {
         NSMutableDictionary* params = [self sessionParams];
 
         //TODO don't hastily slap on this client_id
         params[@"client_id"] = self.clientID;
-        
+
         NSString* url = [_profile simpleURL:data[@"url"] withParams:params];
-        BetableWebViewController *webController = [[BetableWebViewController alloc]initWithURL:url onCancel:onHome showInternalCloseButton:NO];
+        BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onHome showInternalCloseButton:NO];
         [viewController presentViewController:webController animated:YES completion:nil];
     } onFailure:onFaiure];
 }
 
 - (void)depositInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
-    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"deposit" andParams:[self sessionParams]] onCancel:onClose];
+    BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"deposit" andParams:[self sessionParams]] onCancel:onClose];
     [viewController presentViewController:webController animated:YES completion:nil];
 }
 
-
 - (void)supportInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
-    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"support" andParams:[self sessionParams]] onCancel:onClose];
+    BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"support" andParams:[self sessionParams]] onCancel:onClose];
     [viewController presentViewController:webController animated:YES completion:nil];
 }
 
 - (void)withdrawInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
-    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"withdraw" andParams:[self sessionParams]] onCancel:onClose];
+    BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"withdraw" andParams:[self sessionParams]] onCancel:onClose];
     [viewController presentViewController:webController animated:YES completion:nil];
 }
 
 - (void)redeemPromotion:(NSString*)promotionURL inViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
-    NSMutableDictionary *params = [self sessionParams];
+    NSMutableDictionary* params = [self sessionParams];
     params[@"promotion"] = promotionURL;
-    NSString *url = [_profile decorateTrackURLForClient:self.clientID withAction:@"redeem" andParams:params];
-    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onClose];
+    NSString* url = [_profile decorateTrackURLForClient:self.clientID withAction:@"redeem" andParams:params];
+    BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onClose];
     [viewController presentViewController:webController animated:YES completion:nil];
 }
 
 - (void)walletInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
-    
-    NSMutableDictionary *params = [self sessionParams];
-    
-    NSString *url = [_profile decorateTrackURLForClient:self.clientID withAction:@"wallet" andParams:params];
-    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onClose];
+
+    NSMutableDictionary* params = [self sessionParams];
+
+    NSString* url = [_profile decorateTrackURLForClient:self.clientID withAction:@"wallet" andParams:params];
+    BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onClose];
     [viewController presentViewController:webController animated:YES completion:nil];
 }
 
@@ -477,10 +473,10 @@ typedef enum heartbeatPeriods {
     if (params != nil) {
         [sessionParams addEntriesFromDictionary:params];
     }
-    
-    NSString *url = [_profile decorateURL:path forClient:self.clientID withParams:sessionParams];
+
+    NSString* url = [_profile decorateURL:path forClient:self.clientID withParams:sessionParams];
     //    NSLog( url );
-    BetableWebViewController *webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onClose];
+    BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onClose];
     [viewController presentViewController:webController animated:YES completion:nil];
 }
 
@@ -509,7 +505,7 @@ typedef enum heartbeatPeriods {
                  onComplete:(BetableCompletionHandler)onComplete
                   onFailure:(BetableFailureHandler)onFailure {
     //TODO use right path
-    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+    NSMutableDictionary* data = [NSMutableDictionary dictionary];
     if (economy) {
         data[@"economy"] = economy;
         data[@"currency"] = @"GPB";
@@ -527,17 +523,17 @@ typedef enum heartbeatPeriods {
         onComplete:(BetableCompletionHandler)onComplete
          onFailure:(BetableFailureHandler)onFailure {
     [self checkAccessToken:@"Bet"];
-    
+
     BetableCompletionHandler onBetComplete = ^(NSDictionary* data){
-        if (! [credentials isUnbacked]) {
+        if (![credentials isUnbacked]) {
             [self resetSessionAndOnComplete:^(NSDictionary* data){}
-                               andOnFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {}
-             ];
+                               andOnFailure:^(NSURLResponse* response, NSString* responseBody, NSError* error) {}
+            ];
         }
         onComplete(data);
 
     };
-    
+
     [self fireGenericAsynchronousRequestWithPath:[Betable getBetPath:gameID] method:METHOD_POST data:data onSuccess:onBetComplete onFailure:onFailure];
 }
 
@@ -555,7 +551,7 @@ typedef enum heartbeatPeriods {
               onComplete:(BetableCompletionHandler)onComplete
                onFailure:(BetableFailureHandler)onFailure {
     [self checkAccessToken:@"Credit Bet"];
-    NSString *gameAndBonusID = [NSString stringWithFormat:@"%@/%@", gameID, creditGameID];
+    NSString* gameAndBonusID = [NSString stringWithFormat:@"%@/%@", gameID, creditGameID];
     [self betForGame:gameAndBonusID withData:data onComplete:onComplete onFailure:onFailure];
 }
 
@@ -565,12 +561,12 @@ typedef enum heartbeatPeriods {
                       onComplete:(BetableCompletionHandler)onComplete
                        onFailure:(BetableFailureHandler)onFailure {
     [self checkAccessToken:@"Unbacked Credit Bet"];
-    NSString *gameAndBonusID = [NSString stringWithFormat:@"%@/%@", gameID, creditGameID];
+    NSString* gameAndBonusID = [NSString stringWithFormat:@"%@/%@", gameID, creditGameID];
     [self unbackedBetForGame:gameAndBonusID withData:data onComplete:onComplete onFailure:onFailure];
 }
 
 - (void)userAccountOnComplete:(BetableCompletionHandler)onComplete
-                    onFailure:(BetableFailureHandler)onFailure{
+                    onFailure:(BetableFailureHandler)onFailure {
     [self checkAccessToken:@"Account"];
     [self fireGenericAsynchronousRequestWithPath:[Betable getAccountPath] method:METHOD_GET onSuccess:onComplete onFailure:onFailure];
 }
@@ -583,7 +579,7 @@ typedef enum heartbeatPeriods {
 
 - (void)logout {
 
-    NSHTTPCookieStorage *cookieJar = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    NSHTTPCookieStorage* cookieJar = [NSHTTPCookieStorage sharedHTTPCookieStorage];
     NSHTTPCookie* cookie = [self getBetableAuthCookie];
     // In reality there'll be only one auth cookie, but in paranoid coder space there can be more (or less)...
     // https://www.youtube.com/watch?v=8CP9dg38cAI
@@ -591,69 +587,68 @@ typedef enum heartbeatPeriods {
         [cookieJar deleteCookie:cookie];
         cookie = [self getBetableAuthCookie];
     }
-    
+
     //Remove any stored tokens
-    NSError *error;
+    NSError* error;
     [STKeychain deleteItemForUsername:USERNAME_KEY andServiceName:SERVICE_KEY error:&error];
     if (error) {
         NSLog(@"Error removing accessToken: %@", error);
     }
-    
+
     // clear user's live credentials
     credentials = nil;
-    
+
     // Stop heartbeats
     [self extendSessionIn:NOW withBehaviour:FORGET];
-    
+
     // Notify game
-    if( [_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onCredentialsRevoked" )] ) {
+    if ([_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onCredentialsRevoked")]) {
         [_credentialCallbacks onCredentialsRevoked];
     }
 }
 
 #pragma mark - Path getters
 
-+ (NSString*) getGameURLPath:(NSString*)gameSlug {
++ (NSString*)getGameURLPath:(NSString*)gameSlug {
     return [NSString stringWithFormat:@"/application_manifests/slug/%@/play", gameSlug];
 }
 
-+ (NSString*) getBetPath:(NSString*)gameID {
++ (NSString*)getBetPath:(NSString*)gameID {
     return [NSString stringWithFormat:@"/games/%@/bet", gameID];
 }
 
-+ (NSString*) getUnbackedBetPath:(NSString*)gameID {
++ (NSString*)getUnbackedBetPath:(NSString*)gameID {
     return [NSString stringWithFormat:@"/games/%@/unbacked-bet", gameID];
 }
 
-+ (NSString*) getWalletPath{
++ (NSString*)getWalletPath {
     return [NSString stringWithFormat:@"/account/wallet"];
 }
 
-+ (NSString*) getAccountPath{
++ (NSString*)getAccountPath {
     return [NSString stringWithFormat:@"/account"];
 }
 
-+ (NSString*) getHeartbeatPath {
++ (NSString*)getHeartbeatPath {
     return [NSString stringWithFormat:@"/sessions/alive"];
 }
 
-+ (NSString*) getResetSessionPath {
++ (NSString*)getResetSessionPath {
     return [NSString stringWithFormat:@"/sessions/keep-alive"];
 }
 
 #pragma mark - URL getters
 
-- (NSString*) getTokenURL {
+- (NSString*)getTokenURL {
     return [NSString stringWithFormat:@"%@/token", [_profile apiURL]];
 }
-
 
 - (NSURL*)getAPIWithURL:(NSString*)urlString {
     return [self getAPIWithURL:urlString withQuery:nil];
 }
 
 - (NSURL*)getAPIWithURL:(NSString*)urlString withQuery:(NSDictionary*)query {
-    NSMutableDictionary *mutQuery = [NSMutableDictionary dictionary];
+    NSMutableDictionary* mutQuery = [NSMutableDictionary dictionary];
     if (query) {
         mutQuery = [query mutableCopy];
     }
@@ -662,10 +657,9 @@ typedef enum heartbeatPeriods {
     return [NSURL URLWithString:urlString];
 }
 
-
 #pragma mark - Utilities
 - (NSString*)urlEncode:(NSString*)string {
-    NSString *encoded = (NSString*)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
+    NSString* encoded = (NSString*)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
                                                                                              (CFStringRef)string,
                                                                                              NULL,
                                                                                              (CFStringRef)@"!*'\"();:@&=+$,/?%#[]% ",
@@ -674,42 +668,42 @@ typedef enum heartbeatPeriods {
 }
 
 - (NSString*)urldecode:(NSString*)string {
-    NSString *encoded = (NSString*)CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapesUsingEncoding(
-                                                                                                             NULL,
-                                                                                                             (CFStringRef)string,
-                                                                                                             NULL,
-                                                                                                             CFStringConvertNSStringEncodingToEncoding(NSASCIIStringEncoding)));
+    NSString* encoded = (NSString*)CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapesUsingEncoding(
+                                                         NULL,
+                                                         (CFStringRef)string,
+                                                         NULL,
+                                                         CFStringConvertNSStringEncodingToEncoding(NSASCIIStringEncoding)));
     return encoded;
 }
 
 + (NSString*)base64forData:(NSData*)theData {
     const uint8_t* input = (const uint8_t*)[theData bytes];
     NSInteger length = [theData length];
-    
+
     static char table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-    
+
     NSMutableData* data = [NSMutableData dataWithLength:((length + 2) / 3) * 4];
     uint8_t* output = (uint8_t*)data.mutableBytes;
-    
+
     NSInteger i;
-    for (i=0; i < length; i += 3) {
+    for (i = 0; i < length; i += 3) {
         NSInteger value = 0;
         NSInteger j;
         for (j = i; j < (i + 3); j++) {
             value <<= 8;
-            
+
             if (j < length) {
                 value |= (0xFF & input[j]);
             }
         }
-        
+
         NSInteger theIndex = (i / 3) * 4;
-        output[theIndex + 0] =                    table[(value >> 18) & 0x3F];
-        output[theIndex + 1] =                    table[(value >> 12) & 0x3F];
+        output[theIndex + 0] = table[(value >> 18) & 0x3F];
+        output[theIndex + 1] = table[(value >> 12) & 0x3F];
         output[theIndex + 2] = (i + 1) < length ? table[(value >> 6)  & 0x3F] : '=';
         output[theIndex + 3] = (i + 2) < length ? table[(value >> 0)  & 0x3F] : '=';
     }
-    
+
     return [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
 }
 
@@ -732,13 +726,13 @@ typedef enum heartbeatPeriods {
 
 - (void)fireGenericAsynchronousRequestWithPath:(NSString*)path method:(NSString*)method data:(NSDictionary*)data onSuccess:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure {
     if (!_profile.hasProfile) {
-        NSString *urlString = [NSString stringWithFormat:@"%@%@", _profile.apiURL, path];
-        NSURL *url = [self getAPIWithURL:urlString];
+        NSString* urlString = [NSString stringWithFormat:@"%@%@", _profile.apiURL, path];
+        NSURL* url = [self getAPIWithURL:urlString];
         if (data && [method isEqualToString:METHOD_GET]) {
             url = [self getAPIWithURL:urlString withQuery:data];
         }
-        NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:url];
-        
+        NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:url];
+
         [request setHTTPMethod:method];
         if (data) {
             if ([method isEqualToString:METHOD_POST]) {
@@ -748,21 +742,21 @@ typedef enum heartbeatPeriods {
         }
         [self fireGenericAsynchronousRequest:request onSuccess:onSuccess onFailure:onFailure];
     } else {
-        NSDictionary *deferredRequest = @{
-                                          @"path": NULLIFY(path),
-                                          @"method": NULLIFY(method),
-                                          @"data": NULLIFY(data),
-                                          @"onSuccess": NULLIFY(onSuccess),
-                                          @"onFailure": NULLIFY(onFailure)
-                                          };
+        NSDictionary* deferredRequest = @{
+            @"path": NULLIFY(path),
+            @"method": NULLIFY(method),
+            @"data": NULLIFY(data),
+            @"onSuccess": NULLIFY(onSuccess),
+            @"onFailure": NULLIFY(onFailure)
+        };
         [_deferredRequests addObject:deferredRequest];
     }
 }
 
-- (void)fireGenericAsynchronousRequest:(NSMutableURLRequest*)request onSuccess:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure{
-    
-    void (^onComplete)(NSURLResponse*, NSData*, NSError*) = ^(NSURLResponse *response, NSData *data, NSError *error) {
-        NSString *responseBody = [[NSString alloc] initWithData:data
+- (void)fireGenericAsynchronousRequest:(NSMutableURLRequest*)request onSuccess:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure {
+
+    void (^ onComplete)(NSURLResponse*, NSData*, NSError*) = ^(NSURLResponse* response, NSData* data, NSError* error) {
+        NSString* responseBody = [[NSString alloc] initWithData:data
                                                        encoding:NSUTF8StringEncoding];
         if (error) {
             if (onFailure) {
@@ -778,30 +772,30 @@ typedef enum heartbeatPeriods {
             if (onSuccess) {
                 if (![NSThread isMainThread]) {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        NSDictionary *data = (NSDictionary*)[responseBody objectFromJSONString];
+                        NSDictionary* data = (NSDictionary*)[responseBody objectFromJSONString];
                         onSuccess(data);
                     });
                 } else {
-                    NSDictionary *data = (NSDictionary*)[responseBody objectFromJSONString];
+                    NSDictionary* data = (NSDictionary*)[responseBody objectFromJSONString];
                     onSuccess(data);
                 }
             }
         }
     };
-    
+
     [NSURLConnection sendAsynchronousRequest:request queue:self.queue completionHandler:onComplete];
 }
 
 #pragma mark - Shared Data
 
-- (UIPasteboard *)sharedData {
-    UIPasteboard *sharedData = [UIPasteboard pasteboardWithName:BetablePasteBoardName create:YES];
+- (UIPasteboard*)sharedData {
+    UIPasteboard* sharedData = [UIPasteboard pasteboardWithName:BetablePasteBoardName create:YES];
     sharedData.persistent = YES;
     return sharedData;
 }
 
 - (NSString*)stringFromSharedDataWithKey:(NSString*)key {
-    NSData *valueData = [[self sharedData] dataForPasteboardType:BetablePasteBoardUserIDKey];
+    NSData* valueData = [[self sharedData] dataForPasteboardType:BetablePasteBoardUserIDKey];
     return [[NSString alloc] initWithData:valueData encoding:NSUTF8StringEncoding];
 }
 
@@ -809,14 +803,13 @@ typedef enum heartbeatPeriods {
 
 // TODO this enum would be better served by a counter of outstanding heartbeats instead of asynchronous state
 // As session calls are made back to betable ID's differnt emergent behaviours should occur
-typedef enum heartbeatBehaviour
-{
+typedef enum heartbeatBehaviour {
     // simple "is alive" check
     HEARTBEAT,
 
     // extend the session next heartbeat
     EXTEND_SESSION,
-    
+
     // don't request another heartbeat
     FORGET,
 } HeartbeatBehaviour;
@@ -833,37 +826,37 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
     credentials = newCredentials;
     [self storeCredentials];
     [self performCredentialSuccess];
-    
-    if( [credentials isUnbacked] ) {
+
+    if ([credentials isUnbacked]) {
         // we're done for unbacked credentials--no session extensions or heartbeats
         return;
     }
 
     [self resetSessionAndOnComplete:^(NSDictionary* data) { [self extendSessionIn:HEALTHY_PERIOD withBehaviour:HEARTBEAT]; }
-                       andOnFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {
-                           // TODO explicit "session has expired" check instead of implicit assumption here
-                           [self logout];
-                           // Assume login is correct here here becase at *some* point credentials was valid
-                           BOOL loginOverRegister = YES;
-                           [self checkCredentials:_credentialCallbacks loginOverRegister:loginOverRegister];
-   }];
+                       andOnFailure:^(NSURLResponse* response, NSString* responseBody, NSError* error) {
+        // TODO explicit "session has expired" check instead of implicit assumption here
+        [self logout];
+        // Assume login is correct here here becase at *some* point credentials was valid
+        BOOL loginOverRegister = YES;
+        [self checkCredentials:_credentialCallbacks loginOverRegister:loginOverRegister];
+    }];
 }
 
-- (void)extendSessionIn:(NSTimeInterval)seconds withBehaviour:(HeartbeatBehaviour) behavior {
+- (void)extendSessionIn:(NSTimeInterval)seconds withBehaviour:(HeartbeatBehaviour)behavior {
     nextHeartbeatBehaviour = behavior;
 
     // Selectors in 0 seconds do nothing, so increment by nominal amount
     [self performSelector:@selector(onHeartbeat) withObject:self afterDelay:seconds + 0.1];
 }
 
-- (void)resetSessionAndOnComplete:(BetableCompletionHandler) onSuccess andOnFailure:(BetableFailureHandler) onFailure {
+- (void)resetSessionAndOnComplete:(BetableCompletionHandler)onSuccess andOnFailure:(BetableFailureHandler)onFailure {
     NSString* path = [Betable getResetSessionPath];
     NSString* method = METHOD_POST;
-    if ( nil == credentials ) {
-        NSLog( @"faulty credentials--this shouldn't happen" );
+    if (nil == credentials) {
+        NSLog(@"faulty credentials--this shouldn't happen");
         return;
-    } else if ( [credentials isUnbacked] ) {
-        NSLog( @"unbacked credentials--should not get reset" );
+    } else if ([credentials isUnbacked]) {
+        NSLog(@"unbacked credentials--should not get reset");
         // TODO consider this might be a failure and report, or a detectable success for the given credentials and report
         return;
     }
@@ -872,41 +865,41 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
 
 }
 
-- (void)onHeartbeat{
-    if ( FORGET == nextHeartbeatBehaviour ) {
+- (void)onHeartbeat {
+    if (FORGET == nextHeartbeatBehaviour) {
         // User was explicitly logged out and heartbeats shouldn't resume until logged in again
         nextHeartbeatBehaviour = HEARTBEAT;
         return;
     }
-    
-    if( nil == credentials ) {
+
+    if (nil == credentials) {
         [self extendSessionIn:UNHEALTHY_PERIOD withBehaviour:nextHeartbeatBehaviour];
         return;
     }
-    
-    if( [credentials isUnbacked] ) {
+
+    if ([credentials isUnbacked]) {
         // No heartbeats for unbacked access credentials
         return;
     }
-    
+
     NSString* path = [Betable getHeartbeatPath];
     NSString* method = METHOD_GET;
-    
+
     if (nextHeartbeatBehaviour == EXTEND_SESSION) {
         path = [Betable getResetSessionPath];
         method = METHOD_POST;
         nextHeartbeatBehaviour = HEARTBEAT;
     }
-   
+
     BetableCompletionHandler onSuccess = ^(NSDictionary* data) {
-        if( ! [data[@"alive"] boolValue] ) {
+        if (![data[@"alive"] boolValue]) {
             // Session is no longer alive
             [self logout];
             return;
         }
 
         NSDictionary* realityCheck = data[@"reality_check"];
-        
+
         if (![realityCheck[@"enabled"] boolValue]) {
             [self extendSessionIn:HEALTHY_PERIOD withBehaviour:nextHeartbeatBehaviour];
             return;
@@ -927,23 +920,23 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
             // Aim for the start of epsilon window, not the end b/c latency
             NSTimeInterval nextHeartbeatPeriod = MIN( (msRemainingTime - msRemainingEpsilon) / 1000.0, HEALTHY_PERIOD);
             [self extendSessionIn:nextHeartbeatPeriod withBehaviour:nextHeartbeatBehaviour];
-            
+
         }
     };
-    
-    BetableFailureHandler onFailure = ^(NSURLResponse *response, NSString *responseBody, NSError *error) {
-        NSLog( @"Logging out after error on heartbeat:\nresponse: %@\nresponseBody: %@\nerror: %@", response, responseBody, error );
+
+    BetableFailureHandler onFailure = ^(NSURLResponse* response, NSString* responseBody, NSError* error) {
+        NSLog(@"Logging out after error on heartbeat:\nresponse: %@\nresponseBody: %@\nerror: %@", response, responseBody, error);
         [self logout];
     };
 
     NSDictionary* data = [self sessionParams];
     [self fireGenericAsynchronousRequestWithPath:path method:method data:data onSuccess:onSuccess onFailure:onFailure ];
-    
+
 }
 
 // NSMutableDictionary is good for merging with another set of params
 - (NSMutableDictionary*)sessionParams {
-    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
     if (credentials == nil || [credentials isUnbacked]) {
         params[@"session_id"] = @"none";
     } else {
@@ -954,34 +947,33 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
 
 - (void)performPostRealityCheck {
     // Runtime selector doesn't spew unnecessary warnings
-    if( [_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onPostRealityCheck")] ) {
-         [_credentialCallbacks onPostRealityCheck];
+    if ([_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onPostRealityCheck")]) {
+        [_credentialCallbacks onPostRealityCheck];
     }
-    
+
 }
 
 - (void)performPreRealityCheck {
     // Runtime selector doesn't spew unnecessary warnings
-    if( [_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onPreRealityCheck")] ) {
+    if ([_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onPreRealityCheck")]) {
         [_credentialCallbacks onPreRealityCheck];
     }
 }
 
-
 - (void)fireRealityCheck {
-    if( _rcIsActive ) {
+    if (_rcIsActive) {
         return;
     }
     _rcIsActive = true;
-    
+
     [self performPreRealityCheck];
-    
+
     UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"Reality Check" message:@"You've been playing a while" preferredStyle:UIAlertControllerStyleAlert ];
-    
+
     // Propose player's decision to logout after reality check interval
-    void (^onRealityCheckLogout)(UIAlertAction*) = ^(UIAlertAction* action){
+    void (^ onRealityCheckLogout)(UIAlertAction*) = ^(UIAlertAction* action){
         [self logout];
-        if( onLogout ) {
+        if (onLogout) {
             onLogout();
         }
         [self performPostRealityCheck];
@@ -989,25 +981,25 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
     };
     UIAlertAction* logoutAction = [UIAlertAction actionWithTitle:@"Logout" style:UIAlertActionStyleDefault handler:onRealityCheckLogout ];
     [alertController addAction:logoutAction];
-    
+
     // Propose player's decision to continue playing after reality check interval
-    void (^onRealityCheckContinue)(UIAlertAction*) = ^(UIAlertAction* action){
+    void (^ onRealityCheckContinue)(UIAlertAction*) = ^(UIAlertAction* action){
         // reset reality checks on next heartbeat
         [self resetSessionAndOnComplete:^(NSDictionary* data){
             [self performPostRealityCheck];
             _rcIsActive = false;
         }
-                           andOnFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {
-                               _rcIsActive = false;
-                           }
-         ];
-        
+                           andOnFailure:^(NSURLResponse* response, NSString* responseBody, NSError* error) {
+            _rcIsActive = false;
+        }
+        ];
+
     };
     UIAlertAction* continueAction = [UIAlertAction actionWithTitle:@"Continue Playing" style:UIAlertActionStyleDefault handler:onRealityCheckContinue ];
     [alertController addAction:continueAction];
-    
+
     // Propose player's decision to check their wallet balance after reality check interval
-    void (^onRealityCheckWallet)(UIAlertAction*) = ^(UIAlertAction* action){
+    void (^ onRealityCheckWallet)(UIAlertAction*) = ^(UIAlertAction* action){
         // reset reality checks on next heartbeat, once session is extended, open the player's wallet
         [self resetSessionAndOnComplete:^(NSDictionary* data){
             [self walletInViewController:[_credentialCallbacks currentGameView] onClose:^{
@@ -1016,16 +1008,15 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
                 [self fireRealityCheck];
             }];
         }
-                           andOnFailure:^(NSURLResponse *response, NSString *responseBody, NSError *error) {
-                               _rcIsActive = false;
-                           }
-         ];
+                           andOnFailure:^(NSURLResponse* response, NSString* responseBody, NSError* error) {
+            _rcIsActive = false;
+        }
+        ];
     };
     UIAlertAction* walletAction = [UIAlertAction actionWithTitle:@"Check Balance" style:UIAlertActionStyleDefault handler:onRealityCheckWallet ];
     [alertController addAction:walletAction];
-    
+
     [alertController show];
 }
-
 
 @end
