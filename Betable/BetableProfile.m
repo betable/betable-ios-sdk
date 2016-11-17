@@ -152,7 +152,11 @@ NSString const *BetableURL = @"https://prospecthallcasino.com";
             [parts addObject: part];
         }
     }
-    urlString = [NSString stringWithFormat:@"%@?%@", urlString, [parts componentsJoinedByString: @"&"]];
+    
+    // Our url/query divider may not be '?' if the url already contains a divider (and other query parameters)
+    unichar divider = [urlString rangeOfString:@"?"].location == NSNotFound ? '?' : '&';
+    
+    urlString = [NSString stringWithFormat:@"%@%C%@", urlString, divider, [parts componentsJoinedByString: @"&"]];
     return [NSURL URLWithString:urlString];
 }
 

@@ -116,9 +116,8 @@ typedef enum heartbeatPeriods {
         [self fireDeferredRequests];
         _preCacheAuthToken = [self getBetableAuthCookie].value;
 
-        // prep currentWebView
-        NSString* url = [self getAuthorizeWebViewURL];
-        currentWebView = [[BetableWebViewController alloc] initWithURL:url onCancel:^{[self performCredentialFailure:nil withBody:nil orError:nil]; } showInternalCloseButton:YES];
+        // Load precache endpoint
+        [self prepAuthorizeWebView];
 
     }
     return self;
@@ -201,7 +200,7 @@ typedef enum heartbeatPeriods {
     }
 }
 
-- (NSString*)getAuthorizeWebViewURL {
+- (void) prepAuthorizeWebView {
     CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
     CFStringRef UUIDSRef = CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
     NSString* UUID = [NSString stringWithFormat:@"%@", UUIDSRef];
@@ -224,7 +223,8 @@ typedef enum heartbeatPeriods {
         sessionParams[@"session_id"] = storedCredentials.sessionID;
     }
 
-    return [_profile decorateURL:@"/ext/precache" forClient:self.clientID withParams:sessionParams ];
+    NSString* url = [_profile decorateURL:@"/ext/precache" forClient:self.clientID withParams:sessionParams ];
+    currentWebView = [[BetableWebViewController alloc] initWithURL:url onCancel:^{[self performCredentialFailure:nil withBody:nil orError:nil]; } showInternalCloseButton:YES];
 }
 
 - (NSHTTPCookie*)getBetableAuthCookie {
@@ -601,6 +601,9 @@ typedef enum heartbeatPeriods {
     // Stop heartbeats
     [self extendSessionIn:NOW withBehaviour:FORGET];
 
+    // Reset the auth view which will have existing credentials kicking around
+    [self prepAuthorizeWebView];
+    
     // Notify game
     if ([_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onCredentialsRevoked")]) {
         [_credentialCallbacks onCredentialsRevoked];
