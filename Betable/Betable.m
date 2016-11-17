@@ -423,14 +423,8 @@ typedef enum heartbeatPeriods {
 }
 
 - (void)openGame:(NSString*)gameSlug withEconomy:(NSString*)economy inViewController:(UIViewController*)viewController onHome:(BetableCancelHandler)onHome onFailure:(BetableFailureHandler)onFaiure {
-    //TODO Make request to get url
     [self gameManifestForSlug:gameSlug economy:economy onComplete:^(NSDictionary* data) {
-        NSMutableDictionary* params = [self sessionParams];
-
-        //TODO don't hastily slap on this client_id
-        params[@"client_id"] = self.clientID;
-
-        NSString* url = [_profile simpleURL:data[@"url"] withParams:params];
+        NSString* url = [_profile simpleURL:data[@"url"] withParams: [self sessionParams]];
         BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onHome showInternalCloseButton:NO];
         [viewController presentViewController:webController animated:YES completion:nil];
     } onFailure:onFaiure];
