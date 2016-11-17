@@ -10,6 +10,11 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 
 # Changelog
 
+## 1.1.12 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.12/BetableFramework-1.1.12.zip)
+
+-   Remove client id from openGame call so multiples aren't sent.
+
+
 ## 1.1.11 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.11/BetableFramework-1.1.11.zip)
 
 -   fix issue where path to open games may already include a delimited GET query and breaks when second query delimiter is added
