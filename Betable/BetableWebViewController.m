@@ -336,7 +336,7 @@ BOOL isPad() {
             [[UIApplication sharedApplication] openURL:url];
         }
         return NO;
-    } else if ([[url host] isEqualToString:@"prospecthallcasino.com"] && params[@"reason"] && params[@"gameId"] && params[@"sessId"]) {
+    } else if ( [[url host] rangeOfString:@"prospecthallcasino.com"].location != NSNotFound && params[@"reason"] && params[@"gameId"] && params[@"sessId"]) {
         //This is enough to determine that the home button was hit with netent
         [self closeWindow];
     }
