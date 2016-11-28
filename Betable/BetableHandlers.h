@@ -16,10 +16,6 @@ typedef void (^BetableLogoutHandler)();
 // Game pust provide an implementation of this to betable to facilitate proper game event interactions
 @protocol BetableCredentialCallbacks<NSObject>
 
-@required
-// Betable needs up-to-date insight to current view controller is should game be backgrounded and foregrounded
-- (UIViewController*) currentGameView;
-
 @optional
 // Game is notified player has API credentials, and SDK calls can be made to Betable
 -(void) onCredentialsSuccess:(BetableCredentials*) credentials;

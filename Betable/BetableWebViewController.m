@@ -62,7 +62,6 @@ BOOL isPad() {
     UIButton* _closeButton;
 }
 
-
 @property (nonatomic, strong) UIWebView* webView;
 @property (nonatomic, strong) UIView* betableLoader;
 @property (nonatomic, strong) UIActivityIndicatorView* spinner;
@@ -266,20 +265,24 @@ BOOL isPad() {
         //If the webview was destroyed for memory usage or because of error
         [self preloadWebview];
     }
+    [super viewWillAppear:animated];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     if (_errorLoading) {
         [self showErrorAlert:_errorLoading];
     }
+    [super viewDidAppear:animated];
 }
 
-- (void)closeWindow {
+- (void)closeWindowAndRunCallbacks:(BOOL)runCallbacks  {
     [self.presentingViewController dismissViewControllerAnimated:YES completion:^{
-        if (self.onCancel) {
+        if (runCallbacks && self.onCancel) {
             self.onCancel();
         }
 //        self.onCancel = nil;
+        self.webView.delegate = nil;
+
     }];
 }
 
@@ -331,14 +334,14 @@ BOOL isPad() {
         BOOL userCloseError = params[@"error"] && [params[@"error_description"] isEqualToString:@"user_close"];
         BOOL userCloseAction = [params[@"action"] isEqualToString:@"close"];
         if (userCloseAction || userCloseError) {
-            [self closeWindow];
+            [self closeWindowAndRunCallbacks:YES];
         } else {
             [[UIApplication sharedApplication] openURL:url];
         }
         return NO;
     } else if ( [[url host] rangeOfString:@"prospecthallcasino.com"].location != NSNotFound && params[@"reason"] && params[@"gameId"] && params[@"sessId"]) {
         //This is enough to determine that the home button was hit with netent
-        [self closeWindow];
+        [self closeWindowAndRunCallbacks:YES];
     }
     return YES;
 }
@@ -370,7 +373,7 @@ BOOL isPad() {
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction* action) {
                                                               _errorShown = NO;
-                                                              [self closeWindow];
+                                                              [self closeWindowAndRunCallbacks:YES];
                                                           }];
     [alert addAction:defaultAction];
     [alert show];
@@ -385,7 +388,7 @@ BOOL isPad() {
 
 - (void)alertView:(UIAlertView*)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     _errorShown = NO;
-    [self closeWindow];
+    [self closeWindowAndRunCallbacks:YES];
 }
 
 #pragma mark - Utilities
@@ -425,8 +428,13 @@ BOOL isPad() {
     }
 }
 
-- (void)dealloc {
-    self.webView.delegate = nil;
+# pragma mark - Standalone View Controller Stuff
+
+
+- (void)show {
+    
+    UIWindow* webViewWindow = [UIApplication sharedApplication].keyWindow;
+    [webViewWindow.rootViewController presentViewController:self animated:YES completion:nil];
 }
 
 @end

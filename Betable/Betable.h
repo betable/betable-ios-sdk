@@ -34,8 +34,6 @@
 #import <Betable/BetableTrackingHistory.h>
 #import <Betable/BetableTrackingUtil.h>
 
-#define REALITY_CHECK_DEPRICATION "May work as intended, but credential managment is now reccomended via checkCredentials and gameCallbacks"
-
 static NSString * const BetableEnvironmentSandbox    = @"sandbox";
 static NSString * const BetableEnvironmentProduction = @"production";
 
@@ -57,22 +55,6 @@ static NSString* const METHOD_POST = @"POST";
 //          delegate method applicationDidLaunchWithOptions: is called.
 - (void)launchWithOptions:(NSDictionary*)launchOptions;
 
-
-//This method is used to retrieve a stored access token for a player who
-//   has authorized with betable.
-//
-//    Throws exception if you have not launched betable yet
-//
-- (BOOL)loadStoredAccessToken DEPRECATED_MSG_ATTRIBUTE(REALITY_CHECK_DEPRICATION) ;
-
-//This method is used to store the access token for a player who has
-//authorized with betable.
-//
-//    Throws exception if the player has not authorized already
-//
-- (void)storeAccessToken DEPRECATED_MSG_ATTRIBUTE(REALITY_CHECK_DEPRICATION);
-
-
 // This method is called when no access token exists for the current user. It
 // will initiate the OAuth flow. It will bounce the user to the Safari app that
 // is native on the device. After the person accept betable will redirect them
@@ -87,41 +69,35 @@ static NSString* const METHOD_POST = @"POST";
 // 
 // It is suggested that your redirect protocol be "betable+<GAME_ID>"
 //
-// From your UIApplicationDelegate method application:handleOpenURL: you can
-// handle the response.
-- (void)authorizeInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel DEPRECATED_MSG_ATTRIBUTE(REALITY_CHECK_DEPRICATION);
-
-// Same as authorizeInViewController excepts takes them to login instead of
-// register
-- (void)authorizeLoginInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onComplete onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel DEPRECATED_MSG_ATTRIBUTE(REALITY_CHECK_DEPRICATION);
 
 // Game should call this before betting--doing so will initialize a system of time-based reality checks and proper session managment.
 // Not doing so may result in undefined behaviour on other betable calls
 // Setting loginOverRegister to YES should drop the player on a login page, to NO should take the user to registration
 - (void)checkCredentials:(id<BetableCredentialCallbacks>) callbacks loginOverRegister:(BOOL) login;
 
-// This method is will open a game referenced by the passed in game slug to open a webview for that game in the viewcontroller that is passed in.
+// This method is will open a WebView containing game referenced by the passed in game slug.
+// The webview will be attachd to the rootViewController of the keyWindow of the sharedApplication
 
 //      |gameSlug| - this is the slug for the game you are trying to load
 - (void)openGame:(NSString*)gameSlug
      withEconomy:(NSString*)economy
-inViewController:(UIViewController*)viewController
           onHome:(BetableCancelHandler)onHome
        onFailure:(BetableFailureHandler)onFaiure;
 
-// This method is called when the user chooses to deposit money. It will display the external/cobranded version of the deposit flow
-
+// This method will open a WebView that will take the user to the external/cobranded version of the deposit flow
+// The webview will be attachd to the rootViewController of the keyWindow of the sharedApplication
 //      |onClose| - this block will be called when the webview is closed,
 //          it will not send any information about the nature of the deposit.
-- (void)depositInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose;
+- (void)openDepositThenOnClose:(BetableCancelHandler)onClose;
 
-// This method is called when the user chooses to withdraw money. It will display the external/cobranded version of the withdraw flow.
-
+// This method will open a WebView that will take the user to the external/cobranded version of the withdraw flow.
+// The webview will be attachd to the rootViewController of the keyWindow of the sharedApplication
 //      |onClose| - this block will be called when the webview is closed,
 //          it will not send any information about the nature of the withdraw.
-- (void)withdrawInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose;
+- (void)openWithdrawThenOnClose:(BetableCancelHandler)onClose;
 
-// This method is called when the user chooses to withdraw money. It will display the external/cobranded version of the withdraw flow.
+// This method will open a WebView that will take the user to the external/cobranded version of the promotion redemption flow.
+// The webview will be attachd to the rootViewController of the keyWindow of the sharedApplication
 
 //      |promotionURL| - This is the url that you generated on your server
 //          using your client secret for your promotion, for more details:
@@ -134,23 +110,26 @@ inViewController:(UIViewController*)viewController
 //
 //       NOTE: Your redirect URI will also be called.
 //
-- (void)redeemPromotion:(NSString*)promotionURL inViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose;
+- (void)openRedeemPromotion:(NSString*)promotionURL ThenOnClose:(BetableCancelHandler)onClose;
 
-// This method is called when the user chooses to see their wallet or account. It will display the external/cobranded version of their wallet.
+// This method will open a WebView that will take the user to the external/cobranded version of the user's wallet.
+// The webview will be attachd to the rootViewController of the keyWindow of the sharedApplication
 //
 //      |onClose| - this block will be called when the webview is closed,
 //
-- (void)walletInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose;
+- (void)openWalletThenOnClose:(BetableCancelHandler)onClose;
 
-// This method is called when the user chooses to see their wallet or account. It will display the external/cobranded version of their wallet.
+// This method will open a WebView that will take the user to the external/cobranded version of the support page.
+// The webview will be attachd to the rootViewController of the keyWindow of the sharedApplication
 //
 //      |onClose| - this block will be called when the webview is closed,
 //          it will not send any information about the nature of the
 //          support ticket lodged.
 //
-- (void)supportInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose;
+- (void)openSupportThenOnClose:(BetableCancelHandler)onClose;
 
-// This method allows developers to open a web view to any betable page, it takes care for any
+// This method will open a WebView that will take the user to a specified path on the betable site.
+// The webview will be attachd to the rootViewController of the keyWindow of the sharedApplication
 //
 //      |path| - the path on betable.com you would like to go to
 //
@@ -160,7 +139,7 @@ inViewController:(UIViewController*)viewController
 //          it will not send any information about the nature of the
 //          promotion.
 //
-- (void)loadBetablePath:(NSString*)path inViewController:(UIViewController*)viewController withParams:(NSDictionary*)params onClose:(BetableCancelHandler)onClose;
+- (void)openBetablePath:(NSString*)path withParams:(NSDictionary*)params onClose:(BetableCancelHandler)onClose;
 
 // Once you have your access code from the application:handleOpenURL: of your
 // UIApplicationDelegate after betable redirects to your app uri you can pass
@@ -183,7 +162,7 @@ inViewController:(UIViewController*)viewController
 
 // This method is used to return the game manifest for a particular game in the
 // betable canvas ecosystem. Using this you can load game that you have access
-// for inside of your game. You will need to email tony [at] betable [dot] com
+// to via a call to openGame. You will need to email tony [at] betable [dot] com
 // if you want access to this method.
 //
 //      |gameSlug|: This is the slug for the game in the betable canvas ecosytem
@@ -349,8 +328,6 @@ inViewController:(UIViewController*)viewController
 @property (strong, nonatomic) NSString *clientID;
 @property (strong, nonatomic) NSString *redirectURI;
 @property (strong, nonatomic) NSOperationQueue *queue;
-@property (strong, nonatomic) BetableAccessTokenHandler onAuthorize DEPRECATED_MSG_ATTRIBUTE(REALITY_CHECK_DEPRICATION);
-@property (strong, nonatomic) BetableFailureHandler onFailure DEPRECATED_MSG_ATTRIBUTE(REALITY_CHECK_DEPRICATION);
 // Public callback for when player has explicitly logged out of game--doesn't report session timeouts or other invalidation
 @property (strong, nonatomic) BetableLogoutHandler onLogout;
 

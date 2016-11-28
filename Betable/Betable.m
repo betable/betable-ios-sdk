@@ -172,12 +172,7 @@ typedef enum heartbeatPeriods {
         return;
     }
 
-    [self authorizeInViewController:[_credentialCallbacks currentGameView]
-                              login:login
-            onAuthorizationComplete:^(NSString* accessToken) {}
-                          onFailure:^(NSURLResponse* response, NSString* responseBody, NSError* error) {}
-                           onCancel:^{}
-    ];
+    [self openAuthorizeByLogin:login];
 }
 
 - (void)storeAccessToken {
@@ -222,8 +217,18 @@ typedef enum heartbeatPeriods {
     } else {
         sessionParams[@"session_id"] = storedCredentials.sessionID;
     }
-
+    // Report back to server what sdk this is
+    sessionParams[@"sdk_build"] = BETABLE_SDK_REVISION;
+    
     NSString* url = [_profile decorateURL:@"/ext/precache" forClient:self.clientID withParams:sessionParams ];
+    
+    
+    if (currentWebView) {
+        // affects outgoing reference count, leads to dealloc
+        [currentWebView closeWindowAndRunCallbacks:YES];
+        currentWebView = nil;
+    }
+    
     currentWebView = [[BetableWebViewController alloc] initWithURL:url onCancel:^{[self performCredentialFailure:nil withBody:nil orError:nil]; } showInternalCloseButton:YES];
 }
 
@@ -300,10 +305,6 @@ typedef enum heartbeatPeriods {
         if ([_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onCredentialsSuccess:")]) {
             [_credentialCallbacks onCredentialsSuccess:credentials];
         }
-
-        if (self.onAuthorize) {
-            self.onAuthorize(credentials.accessToken);
-        }
     });
 }
 
@@ -311,9 +312,6 @@ typedef enum heartbeatPeriods {
     dispatch_async(dispatch_get_main_queue(), ^{
         if ([_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onCredentialsFailure")]) {
             [_credentialCallbacks onCredentialsFailure];
-        }
-        if (self.onFailure) {
-            self.onFailure(response, responseBody, error);
         }
     });
 }
@@ -375,40 +373,23 @@ typedef enum heartbeatPeriods {
         }
         if (params[@"code"]) {
             [self token:params[@"code"] forSession:params[@"session_id"]];
-            [currentWebView.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+             // affects outgoing reference count, leads to dealloc.  The callback here will report user is unauthorised, which is untrue
+            [currentWebView closeWindowAndRunCallbacks:NO];
+            currentWebView = nil;
 
         } else if (params[@"error"]) {
             NSError* error = [[NSError alloc] initWithDomain:@"BetableAuthorization" code:-1 userInfo:params];
             [self performCredentialFailure:nil withBody:nil orError:error];
+        } else {
+            NSLog(@"handleAuthorizeURL() unable to process : %@", url);
         }
     }
 }
 
-- (void)authorizeInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onAuthorize onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel {
-    [self authorizeInViewController:viewController login:NO onAuthorizationComplete:onAuthorize onFailure:onFailure onCancel:onCancel];
-}
-
-- (void)authorizeLoginInViewController:(UIViewController*)viewController onAuthorizationComplete:(BetableAccessTokenHandler)onAuthorize onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel {
-    [self authorizeInViewController:viewController login:YES onAuthorizationComplete:onAuthorize onFailure:onFailure onCancel:onCancel];
-}
-
-- (void)authorizeInViewController:(UIViewController*)viewController login:(BOOL)goToLogin onAuthorizationComplete:(BetableAccessTokenHandler)onAuthorize onFailure:(BetableFailureHandler)onFailure onCancel:(BetableCancelHandler)onCancel {
+- (void)openAuthorizeByLogin:(BOOL)goToLogin {
     [self checkLaunchStatus];
 
-    // Depricated fields and parameters can stay a while longer...
-    self.onAuthorize = onAuthorize;
-    self.onFailure = onFailure;
-
-    // Attach currentWebView to passed viewController
-    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
-        UINavigationController* nvc = [[UINavigationController alloc] initWithRootViewController:currentWebView];
-        nvc.navigationBarHidden = YES;
-        currentWebView.forcedOrientationWithNavController = YES;
-        currentWebView.modalPresentationStyle = UIModalPresentationFullScreen;
-        [viewController presentViewController:nvc animated:YES completion:nil];
-    } else {
-        [viewController presentViewController:currentWebView animated:YES completion:nil];
-    }
+    [currentWebView show];
 
     currentWebView.portraitOnly = YES;
     currentWebView.onLoadState = goToLogin ? BETABLE_LOGIN_STATE : BETABLE_REGISTER_STATE;
@@ -422,56 +403,56 @@ typedef enum heartbeatPeriods {
     }
 }
 
-- (void)openGame:(NSString*)gameSlug withEconomy:(NSString*)economy inViewController:(UIViewController*)viewController onHome:(BetableCancelHandler)onHome onFailure:(BetableFailureHandler)onFaiure {
+- (void)openGame:(NSString*)gameSlug withEconomy:(NSString*)economy onHome:(BetableCancelHandler)onHome onFailure:(BetableFailureHandler)onFaiure {
     [self gameManifestForSlug:gameSlug economy:economy onComplete:^(NSDictionary* data) {
-        NSString* url = [_profile simpleURL:data[@"url"] withParams: [self sessionParams]];
+        
+        NSString* url = [_profile simpleURL:data[@"url"] withParams: @{}];
         BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onHome showInternalCloseButton:NO];
-        [viewController presentViewController:webController animated:YES completion:nil];
+        [webController show];
     } onFailure:onFaiure];
 }
 
-- (void)depositInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
+- (void)openDepositThenOnClose:(BetableCancelHandler)onClose {
     BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"deposit" andParams:[self sessionParams]] onCancel:onClose];
-    [viewController presentViewController:webController animated:YES completion:nil];
+    [webController show];
 }
 
-- (void)supportInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
+- (void)openSuupportThenOnClose:(BetableCancelHandler)onClose {
     BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"support" andParams:[self sessionParams]] onCancel:onClose];
-    [viewController presentViewController:webController animated:YES completion:nil];
+    [webController show];
 }
 
-- (void)withdrawInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
+- (void)openWithdrawThenOnClose:(BetableCancelHandler)onClose {
     BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"withdraw" andParams:[self sessionParams]] onCancel:onClose];
-    [viewController presentViewController:webController animated:YES completion:nil];
+    [webController show];
 }
 
-- (void)redeemPromotion:(NSString*)promotionURL inViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
+- (void)openRedeemPromotion:(NSString*)promotionURL ThenOnClose:(BetableCancelHandler)onClose {
     NSMutableDictionary* params = [self sessionParams];
     params[@"promotion"] = promotionURL;
     NSString* url = [_profile decorateTrackURLForClient:self.clientID withAction:@"redeem" andParams:params];
     BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onClose];
-    [viewController presentViewController:webController animated:YES completion:nil];
+    [webController show];
 }
 
-- (void)walletInViewController:(UIViewController*)viewController onClose:(BetableCancelHandler)onClose {
+- (void)openWalletThenOnClose:(BetableCancelHandler)onClose {
 
     NSMutableDictionary* params = [self sessionParams];
 
     NSString* url = [_profile decorateTrackURLForClient:self.clientID withAction:@"wallet" andParams:params];
     BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onClose];
-    [viewController presentViewController:webController animated:YES completion:nil];
+    [webController show];
 }
 
-- (void)loadBetablePath:(NSString*)path inViewController:(UIViewController*)viewController withParams:(NSDictionary*)params onClose:(BetableCancelHandler)onClose {
+- (void)openBetablePath:(NSString*)path withParams:(NSDictionary*)params onClose:(BetableCancelHandler)onClose {
     NSMutableDictionary* sessionParams = [self sessionParams];
     if (params != nil) {
         [sessionParams addEntriesFromDictionary:params];
     }
 
     NSString* url = [_profile decorateURL:path forClient:self.clientID withParams:sessionParams];
-    //    NSLog( url );
     BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onClose];
-    [viewController presentViewController:webController animated:YES completion:nil];
+    [webController show];
 }
 
 - (void)checkAccessToken:(NSString*)method {
@@ -999,7 +980,7 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
     void (^ onRealityCheckWallet)(UIAlertAction*) = ^(UIAlertAction* action){
         // reset reality checks on next heartbeat, once session is extended, open the player's wallet
         [self resetSessionAndOnComplete:^(NSDictionary* data){
-            [self walletInViewController:[_credentialCallbacks currentGameView] onClose:^{
+            [self openWalletThenOnClose:^{
                 // User must decide whether to logout or continue; regardless of wallet experience
                 _rcIsActive = false;
                 [self fireRealityCheck];

@@ -29,7 +29,10 @@
 - (BetableWebViewController*)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onClose;
 - (id)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onCancel showInternalCloseButton:(BOOL)showInternalCloseButton;
 
-- (void)closeWindow;
+- (void)closeWindowAndRunCallbacks:(BOOL)runCallbacks;
 - (void)resetView;
 - (void)loadCachedState;
+
+- (void)show;
+
 @end
