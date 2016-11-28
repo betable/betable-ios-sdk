@@ -144,26 +144,44 @@ NSString const *BetableURL = @"https://prospecthallcasino.com";
 }
 
 - (NSURL*)urlForDomain:(NSString*)urlString andQuery:(NSDictionary*)queryDict {
+    
+    NSInteger paramDelimiterIndex = [urlString rangeOfString:@"?"].location;
+    
     NSMutableArray *parts = [NSMutableArray array];
     for (NSString *key in queryDict) {
         NSString *value = [queryDict objectForKey:key];
         NSString *part = [NSString stringWithFormat: @"%@=%@", [self urlEncode:key], [self urlEncode:value]];
+        
+        NSInteger partIndex = [urlString rangeOfString:part].location;
+        if (paramDelimiterIndex != NSNotFound && partIndex != NSNotFound && paramDelimiterIndex < partIndex ) {
+            // skip this part--its duplicate and some parameters need to really not be an array of duplicates
+            // ...looking at you client_id and session_id
+            continue;
+        }
+        
         if (NILIFY(value)) {
             [parts addObject: part];
         }
     }
-    urlString = [NSString stringWithFormat:@"%@?%@", urlString, [parts componentsJoinedByString: @"&"]];
+    
+    // Don't bother modifying urlString if there are no parts to append
+    if([parts count] > 0) {
+        // Our url/query divider may not be '?' if the url already contains a divider (and other query parameters)
+        unichar divider = paramDelimiterIndex == NSNotFound ? '?' : '&';
+        
+        urlString = [NSString stringWithFormat:@"%@%C%@", urlString, divider, [parts componentsJoinedByString: @"&"]];
+        
+    }
     return [NSURL URLWithString:urlString];
 }
 
 - (NSString*)simpleURL:(NSString*)path withParams:(NSDictionary* _Nonnull)params {
-    NSString *url = [NSString stringWithFormat:@"%@%@", BetableURL, path];
+   NSString *url = [NSString stringWithFormat:@"%@%@", BetableURL, path];
     NSString *fullURL = [[self urlForDomain:url andQuery:params] absoluteString];
     return fullURL;
 }
 
 - (NSString*)decorateURL:(NSString*)path forClient:(NSString*)clientID withParams:(NSDictionary*)aParams {
-    
     NSMutableDictionary *params = [aParams mutableCopy];
     if (params == nil) {
         params = [NSMutableDictionary dictionary];

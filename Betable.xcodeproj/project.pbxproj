@@ -7,8 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		621891D81D933058006D9039 /* UIAlertController+Window.h in Headers */ = {isa = PBXBuildFile; fileRef = 621891D61D933058006D9039 /* UIAlertController+Window.h */; };
+		621891D91D933058006D9039 /* UIAlertController+Window.m in Sources */ = {isa = PBXBuildFile; fileRef = 621891D71D933058006D9039 /* UIAlertController+Window.m */; };
 		627C7D2A1CA1EBC10041A9DF /* BetableCredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = 627C7D281CA1EBC10041A9DF /* BetableCredentials.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		627C7D2B1CA1EBC10041A9DF /* BetableCredentials.m in Sources */ = {isa = PBXBuildFile; fileRef = 627C7D291CA1EBC10041A9DF /* BetableCredentials.m */; };
+		62DB84D01D95ADBD00AE6BD3 /* Environment.h in Headers */ = {isa = PBXBuildFile; fileRef = 62DB84CF1D95ADBD00AE6BD3 /* Environment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A50FD7F5194A6F8F00B34A40 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A50FD7F4194A6F8F00B34A40 /* iAd.framework */; };
 		A50FD7F7194A6F9500B34A40 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A50FD7F6194A6F9500B34A40 /* AdSupport.framework */; };
 		A5839633194B767F00AF0E8E /* BetableProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = A5839626194B767F00AF0E8E /* BetableProfile.m */; };
@@ -50,8 +53,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		621891D61D933058006D9039 /* UIAlertController+Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertController+Window.h"; sourceTree = "<group>"; };
+		621891D71D933058006D9039 /* UIAlertController+Window.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertController+Window.m"; sourceTree = "<group>"; };
 		627C7D281CA1EBC10041A9DF /* BetableCredentials.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableCredentials.h; sourceTree = "<group>"; };
 		627C7D291CA1EBC10041A9DF /* BetableCredentials.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableCredentials.m; sourceTree = "<group>"; };
+		62DB84CF1D95ADBD00AE6BD3 /* Environment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Environment.h; path = Betable/Environment.h; sourceTree = "<group>"; };
 		A50FD7F4194A6F8F00B34A40 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		A50FD7F6194A6F9500B34A40 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		A5839626194B767F00AF0E8E /* BetableProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableProfile.m; sourceTree = "<group>"; };
@@ -112,6 +118,8 @@
 		A5839640194B76D600AF0E8E /* Additions */ = {
 			isa = PBXGroup;
 			children = (
+				621891D61D933058006D9039 /* UIAlertController+Window.h */,
+				621891D71D933058006D9039 /* UIAlertController+Window.m */,
 				A5839641194B76E700AF0E8E /* NSDictionary+Betable.h */,
 				A5839642194B76E700AF0E8E /* NSDictionary+Betable.m */,
 				A583964F194BA6E300AF0E8E /* NSString+Betable.h */,
@@ -123,6 +131,7 @@
 		A59ABF0A194913D3005466CC = {
 			isa = PBXGroup;
 			children = (
+				62DB84CF1D95ADBD00AE6BD3 /* Environment.h */,
 				A59ABF1A194913D3005466CC /* Betable */,
 				A59ABF17194913D3005466CC /* Frameworks */,
 				A59ABF16194913D3005466CC /* Products */,
@@ -237,6 +246,8 @@
 				A59ABF5B19491484005466CC /* NSDictionary+BetableTracking.h in Headers */,
 				A59ABF5519491484005466CC /* NSData+BetableTracking.h in Headers */,
 				627C7D2A1CA1EBC10041A9DF /* BetableCredentials.h in Headers */,
+				621891D81D933058006D9039 /* UIAlertController+Window.h in Headers */,
+				62DB84D01D95ADBD00AE6BD3 /* Environment.h in Headers */,
 				A59ABF491949147C005466CC /* BetableTrackingUtil.h in Headers */,
 				A59ABF5E1949148C005466CC /* LoadableCategory.h in Headers */,
 			);
@@ -334,6 +345,7 @@
 				A5839634194B767F00AF0E8E /* BetableBatchRequest.m in Sources */,
 				A5839633194B767F00AF0E8E /* BetableProfile.m in Sources */,
 				A5B2DCC11952193000276224 /* BetableUtils.m in Sources */,
+				621891D91D933058006D9039 /* UIAlertController+Window.m in Sources */,
 				A59ABF5819491484005466CC /* NSString+BetableTracking.m in Sources */,
 				A5839648194B777C00AF0E8E /* Betable.m in Sources */,
 				A5839644194B76E700AF0E8E /* NSDictionary+Betable.m in Sources */,

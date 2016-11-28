@@ -10,6 +10,78 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 
 # Changelog
 
+## 1.1.13 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.13/BetableFramework-1.1.13.zip)
+
+- Fixed issue with duplicate session and client parameters
+- fixed memory leak when closing webviews
+
+
+## 1.1.12 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.12/BetableFramework-1.1.12.zip)
+
+-   Remove client id from openGame call so multiples aren't sent.
+
+
+## 1.1.11 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.11/BetableFramework-1.1.11.zip)
+
+-   fix issue where path to open games may already include a delimited GET query and breaks when second query delimiter is added
+
+
+## 1.1.10 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.10/BetableFramework-1.1.10.zip)
+
+- Make sure the login form has no session presisting after logout
+
+
+## 1.1.9 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.9/BetableFramework-1.1.9.zip)
+
+-Addresses issue with login requiring a deposit as well
+
+
+## 1.1.8 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.8/BetableFramework-1.1.8.zip)
+
+Address isues with login/register
+
+
+## 1.1.7 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.7/BetableFramework-1.1.7.zip)
+
+* make heartbeats fire earlier when at a sub-minute interval for next reality check
+* `/token` call propegates `session_id`
+* `checkCredentials` takes a `loginOverRegister` boolean indicating if user input is required should betable offer a login window or a register window?
+
+
+## 1.1.7d [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.7d/BetableFramework-1.1.7d.zip)
+
+* revert webkit web container
+
+
+## 1.1.7c [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.7c/BetableFramework-1.1.7c.zip)
+
+* make heartbeats fire earlier when at a sub-minute interval
+* Switch to webkit view when openeing webviews
+
+**NOTE: WebKit needs to be added to the project for linking**
+
+
+## 1.1.7b [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.7b/BetableFramework-1.1.7b.zip)
+
+*   New UI widget for presenting reality checks
+*  `/token` call propagates session_id
+* `checkCredentials` takes a `loginOverRegister` boolean indicating if user input is required should betable offer a login window or a register window?
+
+
+
+## 1.1.7beta [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.7beta/BetableFramework-1.1.7beta.zip)
+
+*   New UI widget for presenting reality checks
+*  `/token` call propagates session_id
+* `checkCredentials` takes a `loginOverRegister` boolean indicating if user input is required should betable offer a login window or a register window?
+
+
+## 1.1.7alpha [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.7alpha/BetableFramework-1.1.7alpha.zip)
+
+*   New UI widget for presenting reality checks
+*  /token call propagets session_id
+
+
 ## 1.1.6a [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.6a/BetableFramework-1.1.6a.zip)
 
 Ensure localhost is off in both source and binary
