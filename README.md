@@ -10,6 +10,12 @@ If the SDK you downloaded does not have a versioning number, assume it is pre 0.
 
 # Changelog
 
+## 1.1.13 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.13/BetableFramework-1.1.13.zip)
+
+- Fixed issue with duplicate session and client parameters
+- fixed memory leak when closing webviews
+
+
 ## 1.1.12 [Download](https://github.com/betable/betable-ios-sdk/releases/download/v1.1.12/BetableFramework-1.1.12.zip)
 
 -   Remove client id from openGame call so multiples aren't sent.
