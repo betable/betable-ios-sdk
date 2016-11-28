@@ -224,6 +224,11 @@ typedef enum heartbeatPeriods {
     }
 
     NSString* url = [_profile decorateURL:@"/ext/precache" forClient:self.clientID withParams:sessionParams ];
+    
+    if (currentWebView) {
+        [currentWebView closeWindow];
+    }
+    
     currentWebView = [[BetableWebViewController alloc] initWithURL:url onCancel:^{[self performCredentialFailure:nil withBody:nil orError:nil]; } showInternalCloseButton:YES];
 }
 
@@ -375,7 +380,9 @@ typedef enum heartbeatPeriods {
         }
         if (params[@"code"]) {
             [self token:params[@"code"] forSession:params[@"session_id"]];
-            [currentWebView.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+            currentWebView.onCancel = nil;
+            [currentWebView closeWindow];
+            currentWebView = nil;
 
         } else if (params[@"error"]) {
             NSError* error = [[NSError alloc] initWithDomain:@"BetableAuthorization" code:-1 userInfo:params];

@@ -280,6 +280,7 @@ BOOL isPad() {
             self.onCancel();
         }
 //        self.onCancel = nil;
+        self.webView.delegate = nil;
     }];
 }
 
@@ -423,10 +424,6 @@ BOOL isPad() {
     } else {
         return UIInterfaceOrientationMaskPortrait;
     }
-}
-
-- (void)dealloc {
-    self.webView.delegate = nil;
 }
 
 @end
