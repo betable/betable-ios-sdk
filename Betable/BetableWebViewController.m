@@ -83,16 +83,7 @@ BOOL isPad() {
     return self;
 }
 
-- (id)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onCancel {
-    self = [self init];
-    if (self) {
-        self.url = url;
-        self.onCancel = onCancel;
-    }
-    return self;
-}
-
-- (id)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onCancel showInternalCloseButton:(BOOL)showInternalCloseButton {
+- (id)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onCancel showInternalCloseButton:(BOOL)showInternalCloseButton renderUsingWebkit:(BOOL)useWK {
     self = [self init];
     if (self) {
         self.showInternalCloseButton = showInternalCloseButton;
@@ -275,9 +266,13 @@ BOOL isPad() {
     [super viewDidAppear:animated];
 }
 
-- (void)closeWindowAndRunCallbacks:(BOOL)runCallbacks  {
+- (void)closeWindow {
+    [self closeWindowAndRunCallback:YES];
+}
+
+- (void)closeWindowAndRunCallback:(BOOL)runCallback  {
     [self.presentingViewController dismissViewControllerAnimated:YES completion:^{
-        if (runCallbacks && self.onCancel) {
+        if (runCallback && self.onCancel) {
             self.onCancel();
         }
 //        self.onCancel = nil;
@@ -334,14 +329,14 @@ BOOL isPad() {
         BOOL userCloseError = params[@"error"] && [params[@"error_description"] isEqualToString:@"user_close"];
         BOOL userCloseAction = [params[@"action"] isEqualToString:@"close"];
         if (userCloseAction || userCloseError) {
-            [self closeWindowAndRunCallbacks:YES];
+            [self closeWindow];
         } else {
             [[UIApplication sharedApplication] openURL:url];
         }
         return NO;
     } else if ( [[url host] rangeOfString:@"prospecthallcasino.com"].location != NSNotFound && params[@"reason"] && params[@"gameId"] && params[@"sessId"]) {
         //This is enough to determine that the home button was hit with netent
-        [self closeWindowAndRunCallbacks:YES];
+        [self closeWindow];
     }
     return YES;
 }
@@ -373,7 +368,7 @@ BOOL isPad() {
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction* action) {
                                                               _errorShown = NO;
-                                                              [self closeWindowAndRunCallbacks:YES];
+                                                              [self closeWindow];
                                                           }];
     [alert addAction:defaultAction];
     [alert show];
@@ -388,7 +383,7 @@ BOOL isPad() {
 
 - (void)alertView:(UIAlertView*)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     _errorShown = NO;
-    [self closeWindowAndRunCallbacks:YES];
+    [self closeWindow];
 }
 
 #pragma mark - Utilities
