@@ -225,11 +225,11 @@ typedef enum heartbeatPeriods {
     
     if (currentWebView) {
         // affects outgoing reference count, leads to dealloc
-        [currentWebView closeWindowAndRunCallbacks:YES];
+        [currentWebView closeWindowAndRunCallback:YES];
         currentWebView = nil;
     }
     
-    currentWebView = [[BetableWebViewController alloc] initWithURL:url onCancel:^{[self performCredentialFailure:nil withBody:nil orError:nil]; } showInternalCloseButton:YES];
+    currentWebView = [[BetableWebViewController alloc] initWithURL:url onCancel:^{[self performCredentialFailure:nil withBody:nil orError:nil]; } showInternalCloseButton:YES renderUsingWebkit:YES];
 }
 
 - (NSHTTPCookie*)getBetableAuthCookie {
@@ -374,7 +374,7 @@ typedef enum heartbeatPeriods {
         if (params[@"code"]) {
             [self token:params[@"code"] forSession:params[@"session_id"]];
              // affects outgoing reference count, leads to dealloc.  The callback here will report user is unauthorised, which is untrue
-            [currentWebView closeWindowAndRunCallbacks:NO];
+            [currentWebView closeWindowAndRunCallback:NO];
             currentWebView = nil;
 
         } else if (params[@"error"]) {
@@ -403,27 +403,27 @@ typedef enum heartbeatPeriods {
     }
 }
 
-- (void)openGame:(NSString*)gameSlug withEconomy:(NSString*)economy onHome:(BetableCancelHandler)onHome onFailure:(BetableFailureHandler)onFaiure {
+- (void)openGame:(NSString*)gameSlug withEconomy:(NSString*)economy onHome:(BetableCancelHandler)onHome onFailure:(BetableFailureHandler)onFaiure renderUsingWebkit:(BOOL) useWebKit {
     [self gameManifestForSlug:gameSlug economy:economy onComplete:^(NSDictionary* data) {
         
         NSString* url = [_profile simpleURL:data[@"url"] withParams: @{}];
-        BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onHome showInternalCloseButton:NO];
+        BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onHome showInternalCloseButton:NO renderUsingWebkit:useWebKit];
         [webController show];
     } onFailure:onFaiure];
 }
 
 - (void)openDepositThenOnClose:(BetableCancelHandler)onClose {
-    BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"deposit" andParams:[self sessionParams]] onCancel:onClose];
+    BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"deposit" andParams:[self sessionParams]] onCancel:onClose showInternalCloseButton:YES renderUsingWebkit:YES];
     [webController show];
 }
 
-- (void)openSuupportThenOnClose:(BetableCancelHandler)onClose {
-    BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"support" andParams:[self sessionParams]] onCancel:onClose];
+- (void)openSupportThenOnClose:(BetableCancelHandler)onClose {
+    BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"support" andParams:[self sessionParams]] onCancel:onClose showInternalCloseButton:YES renderUsingWebkit:YES];
     [webController show];
 }
 
 - (void)openWithdrawThenOnClose:(BetableCancelHandler)onClose {
-    BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"withdraw" andParams:[self sessionParams]] onCancel:onClose];
+    BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:[_profile decorateTrackURLForClient:self.clientID withAction:@"withdraw" andParams:[self sessionParams]] onCancel:onClose showInternalCloseButton:YES renderUsingWebkit:YES];
     [webController show];
 }
 
@@ -431,7 +431,7 @@ typedef enum heartbeatPeriods {
     NSMutableDictionary* params = [self sessionParams];
     params[@"promotion"] = promotionURL;
     NSString* url = [_profile decorateTrackURLForClient:self.clientID withAction:@"redeem" andParams:params];
-    BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onClose];
+    BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onClose showInternalCloseButton:YES renderUsingWebkit:YES];
     [webController show];
 }
 
@@ -440,7 +440,7 @@ typedef enum heartbeatPeriods {
     NSMutableDictionary* params = [self sessionParams];
 
     NSString* url = [_profile decorateTrackURLForClient:self.clientID withAction:@"wallet" andParams:params];
-    BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onClose];
+    BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onClose showInternalCloseButton:YES renderUsingWebkit:YES];
     [webController show];
 }
 
@@ -451,7 +451,7 @@ typedef enum heartbeatPeriods {
     }
 
     NSString* url = [_profile decorateURL:path forClient:self.clientID withParams:sessionParams];
-    BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onClose];
+    BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onClose showInternalCloseButton:YES renderUsingWebkit:YES];
     [webController show];
 }
 

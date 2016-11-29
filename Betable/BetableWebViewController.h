@@ -26,10 +26,9 @@
 @property BOOL loadCachedStateOnFinish;
 @property BOOL forcedOrientationWithNavController;
 
-- (BetableWebViewController*)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onClose;
-- (id)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onCancel showInternalCloseButton:(BOOL)showInternalCloseButton;
+- (id)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onCancel showInternalCloseButton:(BOOL)showInternalCloseButton renderUsingWebkit:(BOOL)useWK;
 
-- (void)closeWindowAndRunCallbacks:(BOOL)runCallbacks;
+- (void)closeWindowAndRunCallback:(BOOL)runCallback;
 - (void)resetView;
 - (void)loadCachedState;
 

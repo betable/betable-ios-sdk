@@ -82,7 +82,8 @@ static NSString* const METHOD_POST = @"POST";
 - (void)openGame:(NSString*)gameSlug
      withEconomy:(NSString*)economy
           onHome:(BetableCancelHandler)onHome
-       onFailure:(BetableFailureHandler)onFaiure;
+       onFailure:(BetableFailureHandler)onFaiure
+renderUsingWebkit:(BOOL)useWebKit;
 
 // This method will open a WebView that will take the user to the external/cobranded version of the deposit flow
 // The webview will be attachd to the rootViewController of the keyWindow of the sharedApplication
