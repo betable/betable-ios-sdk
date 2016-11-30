@@ -18,7 +18,7 @@
 
 @interface BetableWebViewController : UIViewController <UIWebViewDelegate, UIAlertViewDelegate, WKNavigationDelegate>
 
-@property (nonatomic, copy) BetableCancelHandler onCancel;
+@property (nonatomic, copy) BetableCloseHandler onClose;
 @property (nonatomic, strong) NSString* url;
 @property (nonatomic, strong) NSString* onLoadState;
 @property BOOL showInternalCloseButton;
@@ -27,7 +27,7 @@
 @property BOOL loadCachedStateOnFinish;
 @property BOOL forcedOrientationWithNavController;
 
-- (id)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onCancel showInternalCloseButton:(BOOL)showInternalCloseButton renderUsingWebkit:(BOOL)useWK;
+- (id)initWithURL:(NSString*)url onClose:(BetableCloseHandler)onClose showInternalCloseButton:(BOOL)showInternalCloseButton renderUsingWebkit:(BOOL)useWK;
 
 - (void)closeWindowAndRunCallback:(BOOL)runCallback;
 - (void)resetView;

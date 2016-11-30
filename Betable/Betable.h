@@ -81,7 +81,7 @@ static NSString* const METHOD_POST = @"POST";
 //      |gameSlug| - this is the slug for the game you are trying to load
 - (void)     openGame:(NSString*)gameSlug
           withEconomy:(NSString*)economy
-               onHome:(BetableCancelHandler)onHome
+              onClose:(BetableCloseHandler)onClose
             onFailure:(BetableFailureHandler)onFaiure
     renderUsingWebkit:(BOOL)useWebKit;
 
@@ -89,13 +89,13 @@ static NSString* const METHOD_POST = @"POST";
 // The webview will be attachd to the rootViewController of the keyWindow of the sharedApplication
 //      |onClose| - this block will be called when the webview is closed,
 //          it will not send any information about the nature of the deposit.
-- (void)openDepositThenOnClose:(BetableCancelHandler)onClose;
+- (void)openDepositThenOnClose:(BetableCloseHandler)onClose;
 
 // This method will open a WebView that will take the user to the external/cobranded version of the withdraw flow.
 // The webview will be attachd to the rootViewController of the keyWindow of the sharedApplication
 //      |onClose| - this block will be called when the webview is closed,
 //          it will not send any information about the nature of the withdraw.
-- (void)openWithdrawThenOnClose:(BetableCancelHandler)onClose;
+- (void)openWithdrawThenOnClose:(BetableCloseHandler)onClose;
 
 // This method will open a WebView that will take the user to the external/cobranded version of the promotion redemption flow.
 // The webview will be attachd to the rootViewController of the keyWindow of the sharedApplication
@@ -111,14 +111,14 @@ static NSString* const METHOD_POST = @"POST";
 //
 //       NOTE: Your redirect URI will also be called.
 //
-- (void)openRedeemPromotion:(NSString*)promotionURL thenOnClose:(BetableCancelHandler)onClose;
+- (void)openRedeemPromotion:(NSString*)promotionURL thenOnClose:(BetableCloseHandler)onClose;
 
 // This method will open a WebView that will take the user to the external/cobranded version of the user's wallet.
 // The webview will be attachd to the rootViewController of the keyWindow of the sharedApplication
 //
 //      |onClose| - this block will be called when the webview is closed,
 //
-- (void)openWalletThenOnClose:(BetableCancelHandler)onClose;
+- (void)openWalletThenOnClose:(BetableCloseHandler)onClose;
 
 // This method will open a WebView that will take the user to the external/cobranded version of the support page.
 // The webview will be attachd to the rootViewController of the keyWindow of the sharedApplication
@@ -127,7 +127,7 @@ static NSString* const METHOD_POST = @"POST";
 //          it will not send any information about the nature of the
 //          support ticket lodged.
 //
-- (void)openSupportThenOnClose:(BetableCancelHandler)onClose;
+- (void)openSupportThenOnClose:(BetableCloseHandler)onClose;
 
 // This method will open a WebView that will take the user to a specified path on the betable site.
 // The webview will be attachd to the rootViewController of the keyWindow of the sharedApplication
@@ -140,7 +140,7 @@ static NSString* const METHOD_POST = @"POST";
 //          it will not send any information about the nature of the
 //          promotion.
 //
-- (void)openBetablePath:(NSString*)path withParams:(NSDictionary*)params onClose:(BetableCancelHandler)onClose;
+- (void)openBetablePath:(NSString*)path withParams:(NSDictionary*)params onClose:(BetableCloseHandler)onClose;
 
 // Once you have your access code from the application:handleOpenURL: of your
 // UIApplicationDelegate after betable redirects to your app uri you can pass

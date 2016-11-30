@@ -85,12 +85,12 @@ BOOL isPad() {
     return self;
 }
 
-- (id)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onCancel showInternalCloseButton:(BOOL)showInternalCloseButton renderUsingWebkit:(BOOL)useWK {
+- (id)initWithURL:(NSString*)url onClose:(BetableCloseHandler)onClose showInternalCloseButton:(BOOL)showInternalCloseButton renderUsingWebkit:(BOOL)useWK {
     self = [self init];
     if (self) {
         self.showInternalCloseButton = showInternalCloseButton;
         [self setUrl:url renderUsingWebkit:useWK];
-        self.onCancel = onCancel;
+        self.onClose = onClose;
     }
     return self;
 }
@@ -258,8 +258,8 @@ BOOL isPad() {
 
 - (void)closeWindowAndRunCallback:(BOOL)runCallback  {
     [self.presentingViewController dismissViewControllerAnimated:YES completion:^{
-        if (runCallback && self.onCancel) {
-            self.onCancel();
+        if (runCallback && self.onClose) {
+            self.onClose();
         }
 
         if (_useWK) {
