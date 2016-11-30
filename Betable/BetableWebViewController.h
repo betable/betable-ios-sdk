@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <WebKit/WebKit.h>
 #import "BetableHandlers.h"
 #import "BetableProfile.h"
 
@@ -15,11 +16,11 @@
 #define BETABLE_REGISTER_STATE @"chrome.nux.deposit"
 #define BETABLE_LOGIN_STATE @"chrome.auth.play"
 
-@interface BetableWebViewController : UIViewController <UIWebViewDelegate, UIAlertViewDelegate>
+@interface BetableWebViewController : UIViewController <UIWebViewDelegate, UIAlertViewDelegate, WKNavigationDelegate>
 
 @property (nonatomic, copy) BetableCancelHandler onCancel;
-@property (nonatomic, strong) NSString *url;
-@property (nonatomic, strong) NSString *onLoadState;
+@property (nonatomic, strong) NSString* url;
+@property (nonatomic, strong) NSString* onLoadState;
 @property BOOL showInternalCloseButton;
 @property BOOL finishedLoading;
 @property BOOL portraitOnly;

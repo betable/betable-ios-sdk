@@ -195,7 +195,7 @@ typedef enum heartbeatPeriods {
     }
 }
 
-- (void) prepAuthorizeWebView {
+- (void)prepAuthorizeWebView {
     CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
     CFStringRef UUIDSRef = CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
     NSString* UUID = [NSString stringWithFormat:@"%@", UUIDSRef];
@@ -219,16 +219,16 @@ typedef enum heartbeatPeriods {
     }
     // Report back to server what sdk this is
     sessionParams[@"sdk_build"] = BETABLE_SDK_REVISION;
-    
+
     NSString* url = [_profile decorateURL:@"/ext/precache" forClient:self.clientID withParams:sessionParams ];
-    
-    
+
+
     if (currentWebView) {
         // affects outgoing reference count, leads to dealloc
         [currentWebView closeWindowAndRunCallback:YES];
         currentWebView = nil;
     }
-    
+
     currentWebView = [[BetableWebViewController alloc] initWithURL:url onCancel:^{[self performCredentialFailure:nil withBody:nil orError:nil]; } showInternalCloseButton:YES renderUsingWebkit:YES];
 }
 
@@ -373,7 +373,7 @@ typedef enum heartbeatPeriods {
         }
         if (params[@"code"]) {
             [self token:params[@"code"] forSession:params[@"session_id"]];
-             // affects outgoing reference count, leads to dealloc.  The callback here will report user is unauthorised, which is untrue
+            // affects outgoing reference count, leads to dealloc.  The callback here will report user is unauthorised, which is untrue
             [currentWebView closeWindowAndRunCallback:NO];
             currentWebView = nil;
 
@@ -403,10 +403,10 @@ typedef enum heartbeatPeriods {
     }
 }
 
-- (void)openGame:(NSString*)gameSlug withEconomy:(NSString*)economy onHome:(BetableCancelHandler)onHome onFailure:(BetableFailureHandler)onFaiure renderUsingWebkit:(BOOL) useWebKit {
+- (void)openGame:(NSString*)gameSlug withEconomy:(NSString*)economy onHome:(BetableCancelHandler)onHome onFailure:(BetableFailureHandler)onFaiure renderUsingWebkit:(BOOL)useWebKit {
     [self gameManifestForSlug:gameSlug economy:economy onComplete:^(NSDictionary* data) {
-        
-        NSString* url = [_profile simpleURL:data[@"url"] withParams: @{}];
+
+        NSString* url = [_profile simpleURL:data[@"url"] withParams:@{}];
         BetableWebViewController* webController = [[BetableWebViewController alloc] initWithURL:url onCancel:onHome showInternalCloseButton:NO renderUsingWebkit:useWebKit];
         [webController show];
     } onFailure:onFaiure];
@@ -427,7 +427,7 @@ typedef enum heartbeatPeriods {
     [webController show];
 }
 
-- (void)openRedeemPromotion:(NSString*)promotionURL ThenOnClose:(BetableCancelHandler)onClose {
+- (void)openRedeemPromotion:(NSString*)promotionURL thenOnClose:(BetableCancelHandler)onClose {
     NSMutableDictionary* params = [self sessionParams];
     params[@"promotion"] = promotionURL;
     NSString* url = [_profile decorateTrackURLForClient:self.clientID withAction:@"redeem" andParams:params];
@@ -578,7 +578,7 @@ typedef enum heartbeatPeriods {
 
     // Reset the auth view which will have existing credentials kicking around
     [self prepAuthorizeWebView];
-    
+
     // Notify game
     if ([_credentialCallbacks respondsToSelector:NSSelectorFromString(@"onCredentialsRevoked")]) {
         [_credentialCallbacks onCredentialsRevoked];

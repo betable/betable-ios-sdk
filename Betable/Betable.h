@@ -34,8 +34,8 @@
 #import <Betable/BetableTrackingHistory.h>
 #import <Betable/BetableTrackingUtil.h>
 
-static NSString * const BetableEnvironmentSandbox    = @"sandbox";
-static NSString * const BetableEnvironmentProduction = @"production";
+static NSString* const BetableEnvironmentSandbox = @"sandbox";
+static NSString* const BetableEnvironmentProduction = @"production";
 
 static NSString* const METHOD_GET = @"GET";
 static NSString* const METHOD_POST = @"POST";
@@ -45,7 +45,7 @@ static NSString* const METHOD_POST = @"POST";
 
 @interface Betable : NSObject
 
-@property (nonatomic, strong) BetableProfile *profile;
+@property (nonatomic, strong) BetableProfile* profile;
 
 - (Betable*)initWithClientID:(NSString*)aClientID clientSecret:(NSString*)aClientSecret redirectURI:(NSString*)aRedirectURI;
 
@@ -61,29 +61,29 @@ static NSString* const METHOD_POST = @"POST";
 // to your redirect URI which can be registered here:
 //
 //     http://developers.betable.com
-// 
+//
 // NOTE: The redirect id should have a protocol that opens your app. See this
 // Reference for more info:
-// 
+//
 //     http://developer.apple.com/library/ios/#documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/AdvancedAppTricks/AdvancedAppTricks.html#//apple_ref/doc/uid/TP40007072-CH7-SW50
-// 
+//
 // It is suggested that your redirect protocol be "betable+<GAME_ID>"
 //
 
 // Game should call this before betting--doing so will initialize a system of time-based reality checks and proper session managment.
 // Not doing so may result in undefined behaviour on other betable calls
 // Setting loginOverRegister to YES should drop the player on a login page, to NO should take the user to registration
-- (void)checkCredentials:(id<BetableCredentialCallbacks>) callbacks loginOverRegister:(BOOL) login;
+- (void)checkCredentials:(id<BetableCredentialCallbacks>)callbacks loginOverRegister:(BOOL)login;
 
 // This method is will open a WebView containing game referenced by the passed in game slug.
 // The webview will be attachd to the rootViewController of the keyWindow of the sharedApplication
 
 //      |gameSlug| - this is the slug for the game you are trying to load
-- (void)openGame:(NSString*)gameSlug
-     withEconomy:(NSString*)economy
-          onHome:(BetableCancelHandler)onHome
-       onFailure:(BetableFailureHandler)onFaiure
-renderUsingWebkit:(BOOL)useWebKit;
+- (void)     openGame:(NSString*)gameSlug
+          withEconomy:(NSString*)economy
+               onHome:(BetableCancelHandler)onHome
+            onFailure:(BetableFailureHandler)onFaiure
+    renderUsingWebkit:(BOOL)useWebKit;
 
 // This method will open a WebView that will take the user to the external/cobranded version of the deposit flow
 // The webview will be attachd to the rootViewController of the keyWindow of the sharedApplication
@@ -111,7 +111,7 @@ renderUsingWebkit:(BOOL)useWebKit;
 //
 //       NOTE: Your redirect URI will also be called.
 //
-- (void)openRedeemPromotion:(NSString*)promotionURL ThenOnClose:(BetableCancelHandler)onClose;
+- (void)openRedeemPromotion:(NSString*)promotionURL thenOnClose:(BetableCancelHandler)onClose;
 
 // This method will open a WebView that will take the user to the external/cobranded version of the user's wallet.
 // The webview will be attachd to the rootViewController of the keyWindow of the sharedApplication
@@ -158,7 +158,7 @@ renderUsingWebkit:(BOOL)useWebKit;
 // application:handleOpenURL: you will receive an unbacked-bet access token in
 // the onComplete callback.
 - (void)unbackedToken:(NSString*)clientUserID
-            onComplete:(BetableAccessTokenHandler)onComplete
+           onComplete:(BetableAccessTokenHandler)onComplete
             onFailure:(BetableFailureHandler)onFailure;
 
 // This method is used to return the game manifest for a particular game in the
@@ -183,7 +183,7 @@ renderUsingWebkit:(BOOL)useWebKit;
 // This method is used to place a bet for the user associated with this Betable
 // object.
 //
-//      |gameID|: This is your gameID which is registered and can be checked at 
+//      |gameID|: This is your gameID which is registered and can be checked at
 //          http://developers.betable.com
 //      |data|: This is a dictionary that will converted to JSON and added
 //          request as the body. It contains all the important information about
@@ -310,25 +310,25 @@ renderUsingWebkit:(BOOL)useWebKit;
 - (void)checkAccessToken:(NSString*)method;
 
 // This method is used to clear a user out as the authroized user on a Betable Object. It
-// also manages the state of the betable object and it's web views.     
+// also manages the state of the betable object and it's web views.
 - (void)logout;
 
 // All of the betable server endpoint urls.
-- (NSString*) getTokenURL;
-+ (NSString*) getGameURLPath:(NSString*)gameSlug;
-+ (NSString*) getBetPath:(NSString*)gameID;
-+ (NSString*) getUnbackedBetPath:(NSString*)gameID;
-+ (NSString*) getWalletPath;
-+ (NSString*) getAccountPath;
+- (NSString*)getTokenURL;
++ (NSString*)getGameURLPath:(NSString*)gameSlug;
++ (NSString*)getBetPath:(NSString*)gameID;
++ (NSString*)getUnbackedBetPath:(NSString*)gameID;
++ (NSString*)getWalletPath;
++ (NSString*)getAccountPath;
 
 // For the most part, following a call to checkCredentials, Betable will callback to game about credentais,
 // If this is present there is a high liklihood (but no guarantee) that the credentails are valid
 @property (strong, nonatomic, readonly) BetableCredentials* credentials;
 
-@property (strong, nonatomic) NSString *clientSecret;
-@property (strong, nonatomic) NSString *clientID;
-@property (strong, nonatomic) NSString *redirectURI;
-@property (strong, nonatomic) NSOperationQueue *queue;
+@property (strong, nonatomic) NSString* clientSecret;
+@property (strong, nonatomic) NSString* clientID;
+@property (strong, nonatomic) NSString* redirectURI;
+@property (strong, nonatomic) NSOperationQueue* queue;
 // Public callback for when player has explicitly logged out of game--doesn't report session timeouts or other invalidation
 @property (strong, nonatomic) BetableLogoutHandler onLogout;
 
