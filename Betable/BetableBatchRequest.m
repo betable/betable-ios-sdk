@@ -27,7 +27,7 @@
                           withData:(NSDictionary*)data
                           withName:(NSString*)name {
     NSString* path = [Betable getBetPath:gameID];
-    NSMutableDictionary* request = [self createRequestWithPath:path method:@"POST" name:name dependencies:nil data:data];
+    NSMutableDictionary* request = [self createRequestWithPath:path method:METHOD_POST name:name dependencies:nil data:data];
     [self addRequest:request];
     return request;
 }
@@ -36,7 +36,7 @@
                                   withData:(NSDictionary*)data
                                   withName:(NSString*)name {
     NSString* path = [Betable getUnbackedBetPath:gameID];
-    NSMutableDictionary* request = [self createRequestWithPath:path method:@"POST" name:name dependencies:nil data:data];
+    NSMutableDictionary* request = [self createRequestWithPath:path method:METHOD_POST name:name dependencies:nil data:data];
     [self addRequest:request];
     return request;
 }
@@ -59,14 +59,14 @@
 
 - (NSMutableDictionary*)getUserWalletWithName:(NSString*)name {
     NSString* path = [Betable getWalletPath];
-    NSMutableDictionary* request = [self createRequestWithPath:path method:@"GET" name:name dependencies:nil data:nil];
+    NSMutableDictionary* request = [self createRequestWithPath:path method:METHOD_GET name:name dependencies:nil data:nil];
     [self addRequest:request];
     return request;
 }
 
 - (NSMutableDictionary*)getUserAccountWithName:(NSString*)name {
     NSString* path = [Betable getAccountPath];
-    NSMutableDictionary* request = [self createRequestWithPath:path method:@"GET" name:name dependencies:nil data:nil];
+    NSMutableDictionary* request = [self createRequestWithPath:path method:METHOD_GET name:name dependencies:nil data:nil];
     [self addRequest:request];
     return request;
 }
