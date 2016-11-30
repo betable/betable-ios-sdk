@@ -11,7 +11,7 @@
 @interface NSString (Betable)
 
 - (NSObject*)objectFromJSONString;
-- (NSString*)stringByDecodingURLFormat;
-- (NSString*)stringByEncodingURLFormat;
-- (NSMutableDictionary*)dictionaryFromQueryComponents;
+- (NSString *)stringByDecodingURLFormat;
+- (NSString *)stringByEncodingURLFormat;
+- (NSMutableDictionary *)dictionaryFromQueryComponents;
 @end

@@ -11,7 +11,7 @@
 @interface BetableTrackingHistory : NSObject
 
 // persistent data
-@property (nonatomic, copy) NSString* uuid;
+@property (nonatomic, copy) NSString *uuid;
 @property (nonatomic) BOOL enabled;
 
 // global counters
@@ -26,7 +26,7 @@
 @property (nonatomic) double createdAt;
 
 // last ten transaction identifiers
-@property (nonatomic, strong) NSMutableArray* transactionIds;
+@property (nonatomic, strong) NSMutableArray *transactionIds;
 
 // not persisted, only injected
 @property (nonatomic) double lastInterval;

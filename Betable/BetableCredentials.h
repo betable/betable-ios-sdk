@@ -14,10 +14,10 @@
 @property (nonatomic, strong, readonly) NSString* sessionID;
 
 
-- (id)initWithAccessToken:(NSString*)accessToken andSessionID:(NSString*)sessionID;
+-(id) initWithAccessToken:(NSString*)accessToken andSessionID:(NSString*) sessionID;
 
-- (id)initWithSerialised:(NSString*)serialisedMarkers;
+-(id) initWithSerialised:(NSString*)serialisedMarkers;
 
-- (BOOL)isUnbacked;
+-(BOOL) isUnbacked;
 
 @end

@@ -10,9 +10,9 @@
 
 @interface NSMutableDictionary (BetableTracking)
 
-- (void)parameterizeString:(NSString*)value forKey:(NSString*)key;
-- (void)parameterizeInt:(int)value forKey:(NSString*)key;
-- (void)parameterizeDate:(double)value forKey:(NSString*)key;
-- (void)parameterizeDuration:(double)value forKey:(NSString*)key;
-- (void)parameterizeBool:(BOOL)value forKey:(NSString*)key;
+- (void)parameterizeString:(NSString *)value forKey:(NSString *)key;
+- (void)parameterizeInt:(int)value forKey:(NSString *)key;
+- (void)parameterizeDate:(double)value forKey:(NSString *)key;
+- (void)parameterizeDuration:(double)value forKey:(NSString *)key;
+- (void)parameterizeBool:(BOOL)value forKey:(NSString *)key;
 @end

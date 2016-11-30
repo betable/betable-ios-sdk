@@ -22,57 +22,52 @@
     }
     return self;
 }
-
-- (NSMutableDictionary*)betForGame:(NSString*)gameID
-                          withData:(NSDictionary*)data
-                          withName:(NSString*)name {
-    NSString* path = [Betable getBetPath:gameID];
-    NSMutableDictionary* request = [self createRequestWithPath:path method:@"POST" name:name dependencies:nil data:data];
+- (NSMutableDictionary* )betForGame:(NSString*)gameID
+          withData:(NSDictionary*)data
+          withName: (NSString*)name {
+    NSString *path = [Betable getBetPath:gameID];
+    NSMutableDictionary *request = [self createRequestWithPath:path method:@"POST" name:name dependencies:nil data:data];
     [self addRequest:request];
     return request;
 }
-
-- (NSMutableDictionary*)unbackedBetForGame:(NSString*)gameID
-                                  withData:(NSDictionary*)data
-                                  withName:(NSString*)name {
-    NSString* path = [Betable getUnbackedBetPath:gameID];
-    NSMutableDictionary* request = [self createRequestWithPath:path method:@"POST" name:name dependencies:nil data:data];
+- (NSMutableDictionary* )unbackedBetForGame:(NSString*)gameID
+                  withData:(NSDictionary*)data
+                  withName: (NSString*)name {
+    NSString *path = [Betable getUnbackedBetPath:gameID];
+    NSMutableDictionary *request = [self createRequestWithPath:path method:@"POST" name:name dependencies:nil data:data];
     [self addRequest:request];
     return request;
 }
-
-- (NSMutableDictionary*)creditBetForGame:(NSString*)gameID
-                              creditGame:(NSString*)creditGameID
-                                withData:(NSDictionary*)data
-                                withName:(NSString*)name {
-    NSString* gameAndBonusID = [NSString stringWithFormat:@"%@/%@", gameID, creditGameID];
+- (NSMutableDictionary* )creditBetForGame:(NSString*)gameID
+                                creditGame:(NSString*)creditGameID
+                                 withData:(NSDictionary*)data
+                                 withName: (NSString*)name {
+    NSString *gameAndBonusID = [NSString stringWithFormat:@"%@/%@", gameID, creditGameID];
     return [self betForGame:gameAndBonusID withData:data withName:name];
 }
-
-- (NSMutableDictionary*)unbackedCreditBetForGame:(NSString*)gameID
-                                      creditGame:(NSString*)creditGameID
-                                        withData:(NSDictionary*)data
-                                        withName:(NSString*)name {
-    NSString* gameAndBonusID = [NSString stringWithFormat:@"%@/%@", gameID, creditGameID];
+- (NSMutableDictionary* )unbackedCreditBetForGame:(NSString*)gameID
+                                        creditGame:(NSString*)creditGameID
+                                         withData:(NSDictionary*)data
+                                         withName: (NSString*)name {
+    NSString *gameAndBonusID = [NSString stringWithFormat:@"%@/%@", gameID, creditGameID];
     return [self unbackedBetForGame:gameAndBonusID withData:data withName:name];
 }
-
-- (NSMutableDictionary*)getUserWalletWithName:(NSString*)name {
-    NSString* path = [Betable getWalletPath];
-    NSMutableDictionary* request = [self createRequestWithPath:path method:@"GET" name:name dependencies:nil data:nil];
+- (NSMutableDictionary* )getUserWalletWithName:(NSString*)name {
+    NSString *path = [Betable getWalletPath];
+    NSMutableDictionary *request = [self createRequestWithPath:path method:@"GET" name:name dependencies:nil data:nil];
     [self addRequest:request];
     return request;
 }
 
-- (NSMutableDictionary*)getUserAccountWithName:(NSString*)name {
-    NSString* path = [Betable getAccountPath];
-    NSMutableDictionary* request = [self createRequestWithPath:path method:@"GET" name:name dependencies:nil data:nil];
+- (NSMutableDictionary* )getUserAccountWithName:(NSString*)name {
+    NSString *path = [Betable getAccountPath];
+    NSMutableDictionary *request = [self createRequestWithPath:path method:@"GET" name:name dependencies:nil data:nil];
     [self addRequest:request];
     return request;
 }
 
-- (NSMutableDictionary*)createRequestWithPath:(NSString*)path method:(NSString*)method name:(NSString*)name dependencies:(NSArray*)dependnecies data:(NSDictionary*)data {
-    NSMutableDictionary* request = [NSMutableDictionary dictionaryWithCapacity:5];
+- (NSMutableDictionary* )createRequestWithPath:(NSString*)path method:(NSString*)method name:(NSString*)name dependencies:(NSArray*)dependnecies data:(NSDictionary*)data {
+    NSMutableDictionary *request = [NSMutableDictionary dictionaryWithCapacity:5];
     request[@"url"] = path;
     request[@"method"] = method;
     if (name) {
@@ -91,16 +86,16 @@
     [self.requests addObject:request];
 }
 
-- (void)runBatchOnComplete:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure {
+- (void)runBatchOnComplete:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure{
     // Note the reference to credentials.accessToken wil expolde if betable has no credentials--this is deliberate
-    NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:[self betableBatchURL:self.betable.credentials.accessToken]];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[self betableBatchURL:self.betable.credentials.accessToken]];
     [request setHTTPMethod:METHOD_POST];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     [request setHTTPBody:[@{@"requests": self.requests} JSONData]];
-    void (^ onComplete)(NSURLResponse*, NSData*, NSError*) = ^(NSURLResponse* response, NSData* data, NSError* error) {
-        NSString* responseBody = [[NSString alloc] initWithData:data
+    void (^onComplete)(NSURLResponse*, NSData*, NSError*) = ^(NSURLResponse *response, NSData *data, NSError *error) {
+        NSString *responseBody = [[NSString alloc] initWithData:data
                                                        encoding:NSUTF8StringEncoding];
-
+        
         if (error) {
             if (onFailure) {
                 if (![NSThread isMainThread]) {
@@ -115,15 +110,15 @@
             if (onSuccess) {
                 if (![NSThread isMainThread]) {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        NSDictionary* data = (NSDictionary*)[responseBody objectFromJSONString];
-                        for (NSMutableDictionary* response in data[@"responses"]) {
+                        NSDictionary *data = (NSDictionary*)[responseBody objectFromJSONString];
+                        for (NSMutableDictionary *response in data[@"responses"]) {
                             response[@"body"] = [response[@"body"] objectFromJSONString];
                         }
                         onSuccess(data);
                     });
                 } else {
-                    NSDictionary* data = (NSDictionary*)[responseBody objectFromJSONString];
-                    for (NSMutableDictionary* response in data[@"responses"]) {
+                    NSDictionary *data = (NSDictionary*)[responseBody objectFromJSONString];
+                    for (NSMutableDictionary *response in data[@"responses"]) {
                         response[@"body"] = [response[@"body"] objectFromJSONString];
                     }
                     onSuccess(data);
@@ -131,13 +126,12 @@
             }
         }
     };
-
+    
     [NSURLConnection sendAsynchronousRequest:request queue:self.betable.queue completionHandler:onComplete];
 }
 
 - (NSURL*)betableBatchURL:(NSString*)accessToken {
-    NSString* stringURL = [NSString stringWithFormat:@"%@/batch?access_token=%@", [self.betable.profile apiURL], accessToken];
+    NSString *stringURL = [NSString stringWithFormat:@"%@/batch?access_token=%@", [self.betable.profile apiURL], accessToken];
     return [NSURL URLWithString:stringURL];
 }
-
 @end
