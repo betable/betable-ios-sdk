@@ -7,15 +7,15 @@
 //
 #import <Foundation/Foundation.h>
 
-@interface NSString(BetableTracking)
+@interface NSString (BetableTracking)
 
-- (NSString *)aiTrim;
-- (NSString *)aiQuote;
-- (NSString *)aiMd5;
-- (NSString *)aiSha1;
-- (NSString *)aiUrlEncode;
-- (NSString *)aiRemoveColons;
+- (NSString*)aiTrim;
+- (NSString*)aiQuote;
+- (NSString*)aiMd5;
+- (NSString*)aiSha1;
+- (NSString*)aiUrlEncode;
+- (NSString*)aiRemoveColons;
 
-+ (NSString *)aiJoin:(NSString *)strings, ...;
++ (NSString*)aiJoin:(NSString*)strings, ...;
 
 @end

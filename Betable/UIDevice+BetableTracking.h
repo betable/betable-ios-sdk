@@ -8,15 +8,15 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-@interface UIDevice(BetableTracking)
+@interface UIDevice (BetableTracking)
 
 - (BOOL)aiTrackingEnabled;
-- (NSString *)aiIdForAdvertisers;
-- (NSString *)aiFbAttributionId;
-- (NSString *)aiMacAddress;
-- (NSString *)aiDeviceType;
-- (NSString *)aiDeviceName;
-- (NSString *)aiCreateUuid;
-- (NSString *)aiVendorId;
+- (NSString*)aiIdForAdvertisers;
+- (NSString*)aiFbAttributionId;
+- (NSString*)aiMacAddress;
+- (NSString*)aiDeviceType;
+- (NSString*)aiDeviceName;
+- (NSString*)aiCreateUuid;
+- (NSString*)aiVendorId;
 
 @end

@@ -13,13 +13,13 @@
 
 MAKE_CATEGORIES_LOADABLE(NSString_BetableTracking);
 
-@implementation NSString(BetableTracking)
+@implementation NSString (BetableTracking)
 
-- (NSString *)aiTrim {
+- (NSString*)aiTrim {
     return [self stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 }
 
-- (NSString *)aiQuote {
+- (NSString*)aiQuote {
     if (self == nil) {
         return nil;
     }
@@ -30,51 +30,51 @@ MAKE_CATEGORIES_LOADABLE(NSString_BetableTracking);
     return [NSString stringWithFormat:@"'%@'", self];
 }
 
-- (NSString *)aiMd5 {
-    const char *cStr = [self UTF8String];
+- (NSString*)aiMd5 {
+    const char* cStr = [self UTF8String];
     unsigned char digest[16];
     CC_MD5(cStr, (CC_LONG)strlen(cStr), digest);
 
-    NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
-    for(int i = 0; i < CC_MD5_DIGEST_LENGTH; i++) {
-        [output appendFormat:@"%02x", digest[i]];
-    }
-    return  output;
-}
-
-- (NSString *)aiSha1 {
-    const char *cstr = [self cStringUsingEncoding:NSUTF8StringEncoding];
-    NSData *data = [NSData dataWithBytes:cstr length:self.length];
-    uint8_t digest[CC_SHA1_DIGEST_LENGTH];
-    CC_SHA1(data.bytes, (CC_LONG)data.length, digest);
-
-    NSMutableString* output = [NSMutableString stringWithCapacity:CC_SHA1_DIGEST_LENGTH * 2];
-    for(int i = 0; i < CC_SHA1_DIGEST_LENGTH; i++) {
+    NSMutableString* output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
+    for (int i = 0; i < CC_MD5_DIGEST_LENGTH; i++) {
         [output appendFormat:@"%02x", digest[i]];
     }
     return output;
 }
 
--(NSString *)aiUrlEncode {
-    return (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(
-                NULL,
-                (CFStringRef)self,
-                NULL,
-                (CFStringRef)@"!*'\"();:@&=+$,/?%#[]% ",
-                CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)));
+- (NSString*)aiSha1 {
+    const char* cstr = [self cStringUsingEncoding:NSUTF8StringEncoding];
+    NSData* data = [NSData dataWithBytes:cstr length:self.length];
+    uint8_t digest[CC_SHA1_DIGEST_LENGTH];
+    CC_SHA1(data.bytes, (CC_LONG)data.length, digest);
+
+    NSMutableString* output = [NSMutableString stringWithCapacity:CC_SHA1_DIGEST_LENGTH * 2];
+    for (int i = 0; i < CC_SHA1_DIGEST_LENGTH; i++) {
+        [output appendFormat:@"%02x", digest[i]];
+    }
+    return output;
 }
 
-- (NSString *)aiRemoveColons {
+- (NSString*)aiUrlEncode {
+    return (NSString*)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(
+                                            NULL,
+                                            (CFStringRef)self,
+                                            NULL,
+                                            (CFStringRef)@"!*'\"();:@&=+$,/?%#[]% ",
+                                            CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)));
+}
+
+- (NSString*)aiRemoveColons {
     return [self stringByReplacingOccurrencesOfString:@":" withString:@""];
 }
 
-+ (NSString *)aiJoin:(NSString *)first, ... {
-    NSString *iter, *result = first;
++ (NSString*)aiJoin:(NSString*)first, ...{
+    NSString* iter, * result = first;
     va_list strings;
     va_start(strings, first);
 
     while ((iter = va_arg(strings, NSString*))) {
-        NSString *capitalized = iter.capitalizedString;
+        NSString* capitalized = iter.capitalizedString;
         result = [result stringByAppendingString:capitalized];
     }
 

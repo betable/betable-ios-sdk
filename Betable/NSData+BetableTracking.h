@@ -7,8 +7,8 @@
 //
 #import <Foundation/Foundation.h>
 
-@interface NSData(BetableTracking)
+@interface NSData (BetableTracking)
 
-- (NSString *)aiEncodeBase64;
+- (NSString*)aiEncodeBase64;
 
 @end

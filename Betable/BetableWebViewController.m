@@ -150,17 +150,17 @@ BOOL isPad() {
     id topGuide = self.topLayoutGuide;
     NSString* verticalFormat = @"V:[topGuide]-5-[_closeButton(30)]";
     NSDictionary* viewsDictionary = NSDictionaryOfVariableBindings(_closeButton, topGuide);
-    NSArray* consts = [NSLayoutConstraint constraintsWithVisualFormat:verticalFormat
-                                                              options:0
-                                                              metrics:nil
-                                                                views:viewsDictionary];
-    [self.view addConstraints:consts];
+    NSArray* constraints = [NSLayoutConstraint constraintsWithVisualFormat:verticalFormat
+                                                                   options:0
+                                                                   metrics:nil
+                                                                     views:viewsDictionary];
+    [self.view addConstraints:constraints];
 
-    consts = [NSLayoutConstraint constraintsWithVisualFormat:@"H:[_closeButton(30)]-5-|"
-                                                     options:0
-                                                     metrics:nil
-                                                       views:viewsDictionary];
-    [self.view addConstraints:consts];
+    constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:[_closeButton(30)]-5-|"
+                                                          options:0
+                                                          metrics:nil
+                                                            views:viewsDictionary];
+    [self.view addConstraints:constraints];
 }
 
 - (void)addWebViewConstraints {
@@ -336,7 +336,7 @@ BOOL isPad() {
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:title
                                                                    message:message
                                                             preferredStyle:UIAlertControllerStyleAlert];
-    
+
     UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK"
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction* action) {
