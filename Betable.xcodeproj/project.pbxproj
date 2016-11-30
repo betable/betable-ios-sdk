@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		620F95B51DEE3089008DD731 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 620F95B41DEE3089008DD731 /* WebKit.framework */; };
 		621891D81D933058006D9039 /* UIAlertController+Window.h in Headers */ = {isa = PBXBuildFile; fileRef = 621891D61D933058006D9039 /* UIAlertController+Window.h */; };
 		621891D91D933058006D9039 /* UIAlertController+Window.m in Sources */ = {isa = PBXBuildFile; fileRef = 621891D71D933058006D9039 /* UIAlertController+Window.m */; };
 		627C7D2A1CA1EBC10041A9DF /* BetableCredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = 627C7D281CA1EBC10041A9DF /* BetableCredentials.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -53,11 +54,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		620F95B41DEE3089008DD731 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		621891D61D933058006D9039 /* UIAlertController+Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertController+Window.h"; sourceTree = "<group>"; };
 		621891D71D933058006D9039 /* UIAlertController+Window.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertController+Window.m"; sourceTree = "<group>"; };
 		627C7D281CA1EBC10041A9DF /* BetableCredentials.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BetableCredentials.h; sourceTree = "<group>"; };
 		627C7D291CA1EBC10041A9DF /* BetableCredentials.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableCredentials.m; sourceTree = "<group>"; };
-		62DB84CF1D95ADBD00AE6BD3 /* Environment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Environment.h; path = Betable/Environment.h; sourceTree = "<group>"; };
+		62DB84CF1D95ADBD00AE6BD3 /* Environment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Environment.h; sourceTree = "<group>"; };
 		A50FD7F4194A6F8F00B34A40 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		A50FD7F6194A6F9500B34A40 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		A5839626194B767F00AF0E8E /* BetableProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BetableProfile.m; sourceTree = "<group>"; };
@@ -106,6 +108,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				620F95B51DEE3089008DD731 /* WebKit.framework in Frameworks */,
 				A50FD7F7194A6F9500B34A40 /* AdSupport.framework in Frameworks */,
 				A50FD7F5194A6F8F00B34A40 /* iAd.framework in Frameworks */,
 				A59ABF19194913D3005466CC /* Foundation.framework in Frameworks */,
@@ -131,7 +134,6 @@
 		A59ABF0A194913D3005466CC = {
 			isa = PBXGroup;
 			children = (
-				62DB84CF1D95ADBD00AE6BD3 /* Environment.h */,
 				A59ABF1A194913D3005466CC /* Betable */,
 				A59ABF17194913D3005466CC /* Frameworks */,
 				A59ABF16194913D3005466CC /* Products */,
@@ -149,6 +151,7 @@
 		A59ABF17194913D3005466CC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				620F95B41DEE3089008DD731 /* WebKit.framework */,
 				A50FD7F6194A6F9500B34A40 /* AdSupport.framework */,
 				A50FD7F4194A6F8F00B34A40 /* iAd.framework */,
 				A59ABF18194913D3005466CC /* Foundation.framework */,
@@ -159,13 +162,14 @@
 		A59ABF1A194913D3005466CC /* Betable */ = {
 			isa = PBXGroup;
 			children = (
+				62DB84CF1D95ADBD00AE6BD3 /* Environment.h */,
 				A5B102301954B23800D3F01F /* STKeychain.m */,
 				A5B102311954B23800D3F01F /* STKeychain.h */,
 				A5839640194B76D600AF0E8E /* Additions */,
-				A5839626194B767F00AF0E8E /* BetableProfile.m */,
 				627C7D281CA1EBC10041A9DF /* BetableCredentials.h */,
 				627C7D291CA1EBC10041A9DF /* BetableCredentials.m */,
 				A5839628194B767F00AF0E8E /* BetableProfile.h */,
+				A5839626194B767F00AF0E8E /* BetableProfile.m */,
 				A5839627194B767F00AF0E8E /* BetableBatchRequest.m */,
 				A5839629194B767F00AF0E8E /* BetableBatchRequest.h */,
 				A583962A194B767F00AF0E8E /* BetableHandlers.h */,
@@ -284,7 +288,7 @@
 				KnownAssetTags = (
 					New,
 				);
-				LastUpgradeCheck = 0640;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = betable;
 			};
 			buildConfigurationList = A59ABF0E194913D3005466CC /* Build configuration list for PBXProject "Betable" */;
@@ -387,12 +391,18 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -405,7 +415,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
@@ -426,19 +436,24 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
@@ -455,7 +470,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Betable/Betable.Framework-Prefix.pch";
 				INFOPLIST_FILE = "Betable/Betable.Framework-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -475,7 +490,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Betable/Betable.Framework-Prefix.pch";
 				INFOPLIST_FILE = "Betable/Betable.Framework-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

@@ -15,8 +15,8 @@ MAKE_CATEGORIES_LOADABLE(NSDictionary_Betable);
 @implementation NSDictionary (Betable)
 
 - (NSData*)JSONData {
-    NSError *error;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:self
+    NSError* error;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:self
                                                        options:0
                                                          error:&error];
     if (!jsonData) {
@@ -29,15 +29,14 @@ MAKE_CATEGORIES_LOADABLE(NSDictionary_Betable);
     return nil;
 }
 
--(NSString*) urlEncodedString {
-    NSMutableArray *parts = [NSMutableArray array];
+- (NSString*)urlEncodedString {
+    NSMutableArray* parts = [NSMutableArray array];
     for (id key in self) {
-        id value = [self objectForKey: key];
-        NSString *part = [NSString stringWithFormat: @"%@=%@", urlEncode(key), urlEncode(value)];
-        [parts addObject: part];
+        id value = [self objectForKey:key];
+        NSString* part = [NSString stringWithFormat:@"%@=%@", urlEncode(key), urlEncode(value)];
+        [parts addObject:part];
     }
-    return [parts componentsJoinedByString: @"&"];
+    return [parts componentsJoinedByString:@"&"];
 }
-
 
 @end

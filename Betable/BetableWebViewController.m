@@ -150,7 +150,7 @@ BOOL isPad() {
 
 - (void)addCloseButtonConstraints {
     [_closeButton setTranslatesAutoresizingMaskIntoConstraints:NO];
-    
+
     id topGuide = self.topLayoutGuide;
     NSString* verticalFormat = @"V:[topGuide]-5-[_closeButton(30)]";
     NSDictionary* viewsDictionary = NSDictionaryOfVariableBindings(_closeButton, topGuide);
@@ -170,16 +170,16 @@ BOOL isPad() {
 - (void)addWebViewConstraints {
     //Align webview to the top of the statusBar
     [self.webView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    
+
     NSString* verticalFormat = @"V:[topGuide][webView]|";
     if (self.forcedOrientationWithNavController) {
         verticalFormat = @"V:|[webView]|";
     }
-    
+
     // Dictionary keys by name...
     id topGuide = self.topLayoutGuide;
     id webView = self.webView;
-    
+
     NSDictionary* viewsDictionary = NSDictionaryOfVariableBindings(webView, topGuide);
     NSArray* consts = [NSLayoutConstraint constraintsWithVisualFormat:verticalFormat
                                                               options:0
@@ -245,13 +245,12 @@ BOOL isPad() {
     self.betableLoader.frame = frame;
 }
 
-
 - (void)viewDidAppear:(BOOL)animated {
     if (_errorLoading) {
         [self showErrorAlert:_errorLoading];
     } else if (!self.webView) {
         // This is pretty late, but by this point we know whether to use WK...
-        NSLog( @"Preloading missing webview..." );
+        NSLog(@"Preloading missing webview...");
         [self preloadWebviewUsingWebkit:_useWK];
     }
     [super viewDidAppear:animated];

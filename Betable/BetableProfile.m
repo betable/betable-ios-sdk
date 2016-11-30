@@ -11,41 +11,41 @@
 #import "BetableProfile.h"
 #import "BetableHandlers.h"
 #import "Betable.h"
-#import "NSString+Betable.h"        
+#import "NSString+Betable.h"
 #import "BetableUtils.h"
 #import "Environment.h"
 
-NSString *BetablePasteBoardAPIHostName = @"com.Betable.BetableSDK.sharedData.profile:APIHost";
-NSString *BetablePasteBoardAuthHostName = @"com.Betable.BetableSDK.sharedData.profile:AuthHost";
-NSString *BetablePasteBoardClientIDName = @"com.Betable.BetableSDK.sharedData.profile:ClientID";
-NSString *BetablePasteBoardSignatureName = @"com.Betable.BetableSDK.sharedData.profile:Signature";
-NSString *BetablePasteBoardExpiryName = @"com.Betable.BetableSDK.sharedData.profile:Expiry";
+NSString* BetablePasteBoardAPIHostName = @"com.Betable.BetableSDK.sharedData.profile:APIHost";
+NSString* BetablePasteBoardAuthHostName = @"com.Betable.BetableSDK.sharedData.profile:AuthHost";
+NSString* BetablePasteBoardClientIDName = @"com.Betable.BetableSDK.sharedData.profile:ClientID";
+NSString* BetablePasteBoardSignatureName = @"com.Betable.BetableSDK.sharedData.profile:Signature";
+NSString* BetablePasteBoardExpiryName = @"com.Betable.BetableSDK.sharedData.profile:Expiry";
 
 // If this exists it should be in Environment.h
 #ifdef USE_LOCALHOST
 // betable-id services
-NSString const *BetableAPIURL = @"http://localhost:8020";
+NSString const* BetableAPIURL = @"http://localhost:8020";
 // betable-players services --name matches cookie and should still resolve to localhost
-NSString const *BetableURL = @"http://players.dev.prospecthallcasino.com:8080";
+NSString const* BetableURL = @"http://players.dev.prospecthallcasino.com:8080";
 
 #else
-NSString const *BetableAPIURL = @"https://api.betable.com/1.0";
-NSString const *BetableURL = @"https://prospecthallcasino.com";
+NSString const* BetableAPIURL = @"https://mhilliard:ChittyShitty!!@next.api.betable.com/1.0";
+NSString const* BetableURL = @"https://mhilliard:ChittyShitty!!@next.prospecthallcasino.com";
 
 #endif
 
 #define SDK_VERSION @"1.0"
 
-@interface BetableProfile() {
-    NSString *_apiHost;
-    NSString *_authHost;
-    NSString *_signature;
-    NSString *_expiry;
-    NSString *_clientID;
+@interface BetableProfile (){
+    NSString* _apiHost;
+    NSString* _authHost;
+    NSString* _signature;
+    NSString* _expiry;
+    NSString* _clientID;
 }
 
 @end
-    
+
 @implementation BetableProfile
 
 - (id)init {
@@ -87,8 +87,8 @@ NSString const *BetableURL = @"https://prospecthallcasino.com";
     return [[self sharedDataWithKey:name] string];
 }
 
-- (UIPasteboard *)sharedDataWithKey:(NSString*)name {
-    UIPasteboard *sharedData = [UIPasteboard pasteboardWithName:name create:YES];
+- (UIPasteboard*)sharedDataWithKey:(NSString*)name {
+    UIPasteboard* sharedData = [UIPasteboard pasteboardWithName:name create:YES];
     sharedData.persistent = YES;
     return sharedData;
 }
@@ -99,12 +99,12 @@ NSString const *BetableURL = @"https://prospecthallcasino.com";
 
 #pragma mark - Web Stuff
 
-- (void)fireGenericAsynchronousRequest:(NSURLRequest*)request onSuccess:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure{
-    
-    void (^onComplete)(NSURLResponse*, NSData*, NSError*) = ^(NSURLResponse *response, NSData *data, NSError *error) {
-        NSString *responseBody = [[NSString alloc] initWithData:data
+- (void)fireGenericAsynchronousRequest:(NSURLRequest*)request onSuccess:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure {
+
+    void (^ onComplete)(NSURLResponse*, NSData*, NSError*) = ^(NSURLResponse* response, NSData* data, NSError* error) {
+        NSString* responseBody = [[NSString alloc] initWithData:data
                                                        encoding:NSUTF8StringEncoding];
-        
+
         if (error) {
             if (onFailure) {
                 if (![NSThread isMainThread]) {
@@ -119,23 +119,23 @@ NSString const *BetableURL = @"https://prospecthallcasino.com";
             if (onSuccess) {
                 if (![NSThread isMainThread]) {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        NSDictionary *data = (NSDictionary*)[responseBody objectFromJSONString];
+                        NSDictionary* data = (NSDictionary*)[responseBody objectFromJSONString];
                         onSuccess(data);
                     });
                 } else {
-                    NSDictionary *data = (NSDictionary*)[responseBody objectFromJSONString];
+                    NSDictionary* data = (NSDictionary*)[responseBody objectFromJSONString];
                     onSuccess(data);
                 }
             }
         }
     };
-    
+
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:onComplete];
 }
 
 #pragma mark - Utilities
 - (NSString*)urlEncode:(NSString*)string {
-    NSString *encoded = (NSString*)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
+    NSString* encoded = (NSString*)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
                                                                                              (CFStringRef)string,
                                                                                              NULL,
                                                                                              (CFStringRef)@"!*'\"();:@&=+$,/?%#[]% ",
@@ -144,52 +144,52 @@ NSString const *BetableURL = @"https://prospecthallcasino.com";
 }
 
 - (NSURL*)urlForDomain:(NSString*)urlString andQuery:(NSDictionary*)queryDict {
-    
+
     NSInteger paramDelimiterIndex = [urlString rangeOfString:@"?"].location;
-    
-    NSMutableArray *parts = [NSMutableArray array];
-    for (NSString *key in queryDict) {
-        NSString *value = [queryDict objectForKey:key];
-        NSString *part = [NSString stringWithFormat: @"%@=%@", [self urlEncode:key], [self urlEncode:value]];
-        
+
+    NSMutableArray* parts = [NSMutableArray array];
+    for (NSString* key in queryDict) {
+        NSString* value = [queryDict objectForKey:key];
+        NSString* part = [NSString stringWithFormat:@"%@=%@", [self urlEncode:key], [self urlEncode:value]];
+
         NSInteger partIndex = [urlString rangeOfString:part].location;
-        if (paramDelimiterIndex != NSNotFound && partIndex != NSNotFound && paramDelimiterIndex < partIndex ) {
+        if (paramDelimiterIndex != NSNotFound && partIndex != NSNotFound && paramDelimiterIndex < partIndex) {
             // skip this part--its duplicate and some parameters need to really not be an array of duplicates
             // ...looking at you client_id and session_id
             continue;
         }
-        
+
         if (NILIFY(value)) {
-            [parts addObject: part];
+            [parts addObject:part];
         }
     }
-    
+
     // Don't bother modifying urlString if there are no parts to append
-    if([parts count] > 0) {
+    if ([parts count] > 0) {
         // Our url/query divider may not be '?' if the url already contains a divider (and other query parameters)
         unichar divider = paramDelimiterIndex == NSNotFound ? '?' : '&';
-        
-        urlString = [NSString stringWithFormat:@"%@%C%@", urlString, divider, [parts componentsJoinedByString: @"&"]];
-        
+
+        urlString = [NSString stringWithFormat:@"%@%C%@", urlString, divider, [parts componentsJoinedByString:@"&"]];
+
     }
     return [NSURL URLWithString:urlString];
 }
 
 - (NSString*)simpleURL:(NSString*)path withParams:(NSDictionary* _Nonnull)params {
-   NSString *url = [NSString stringWithFormat:@"%@%@", BetableURL, path];
-    NSString *fullURL = [[self urlForDomain:url andQuery:params] absoluteString];
+    NSString* url = [NSString stringWithFormat:@"%@%@", BetableURL, path];
+    NSString* fullURL = [[self urlForDomain:url andQuery:params] absoluteString];
     return fullURL;
 }
 
 - (NSString*)decorateURL:(NSString*)path forClient:(NSString*)clientID withParams:(NSDictionary*)aParams {
-    NSMutableDictionary *params = [aParams mutableCopy];
+    NSMutableDictionary* params = [aParams mutableCopy];
     if (params == nil) {
         params = [NSMutableDictionary dictionary];
     }
-    
+
     params[@"client_id"] = clientID;
 
-    NSString *IDFA = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+    NSString* IDFA = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
     if (IDFA) {
         params[@"device_identifier"] = IDFA;
     }
@@ -200,22 +200,24 @@ NSString const *BetableURL = @"https://prospecthallcasino.com";
 }
 
 - (NSString*)decorateTrackURLForClient:(NSString*)clientID withAction:(NSString*)action andParams:(NSDictionary*)aParams {
-    NSMutableDictionary *params = [aParams mutableCopy];
+    NSMutableDictionary* params = [aParams mutableCopy];
     if (params == nil) {
         params = [NSMutableDictionary dictionary];
     }
     [params setObject:action forKey:@"action"];
     return [self decorateURL:@"/track" forClient:clientID withParams:params];
 }
+
 - (NSString*)decorateTrackURLForClient:(NSString*)clientID withAction:(NSString*)action {
     return [self decorateTrackURLForClient:clientID withAction:action andParams:nil];
 }
 
 # pragma mark - UIAlertView delegate
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+- (void)alertView:(UIAlertView*)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex != 0) {
         [self removeProfile];
     }
 }
+
 @end
