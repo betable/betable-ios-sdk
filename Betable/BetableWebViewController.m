@@ -114,22 +114,18 @@ BOOL isPad() {
     }
     NSURLRequest* request = [[NSURLRequest alloc] initWithURL:url];
 
-
-
     CGRect rect = CGRectMake(0, -20, self.view.frame.size.width, self.view.frame.size.height+20);
     if (_useWK) {
         WKWebView* webView = [[WKWebView alloc] initWithFrame:rect];
         [webView setNavigationDelegate:self];
         [webView loadRequest:request];
         self.webView = webView;
-        NSLog(@"webView is WKWebView");
 
     } else {
         UIWebView* webView = [[UIWebView alloc] initWithFrame:rect];
         webView.delegate = self;
         [webView loadRequest:request];
         self.webView = webView;
-        NSLog(@"webView is UIWebView");
     }
 
     self.webView.clipsToBounds = YES;
@@ -150,7 +146,7 @@ BOOL isPad() {
 
 - (void)addCloseButtonConstraints {
     [_closeButton setTranslatesAutoresizingMaskIntoConstraints:NO];
-    
+
     id topGuide = self.topLayoutGuide;
     NSString* verticalFormat = @"V:[topGuide]-5-[_closeButton(30)]";
     NSDictionary* viewsDictionary = NSDictionaryOfVariableBindings(_closeButton, topGuide);
@@ -170,16 +166,16 @@ BOOL isPad() {
 - (void)addWebViewConstraints {
     //Align webview to the top of the statusBar
     [self.webView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    
+
     NSString* verticalFormat = @"V:[topGuide][webView]|";
     if (self.forcedOrientationWithNavController) {
         verticalFormat = @"V:|[webView]|";
     }
-    
+
     // Dictionary keys by name...
     id topGuide = self.topLayoutGuide;
     id webView = self.webView;
-    
+
     NSDictionary* viewsDictionary = NSDictionaryOfVariableBindings(webView, topGuide);
     NSArray* consts = [NSLayoutConstraint constraintsWithVisualFormat:verticalFormat
                                                               options:0
@@ -245,13 +241,12 @@ BOOL isPad() {
     self.betableLoader.frame = frame;
 }
 
-
 - (void)viewDidAppear:(BOOL)animated {
     if (_errorLoading) {
         [self showErrorAlert:_errorLoading];
     } else if (!self.webView) {
-        // This is pretty late, but by this point we know whether to use WK...
-        NSLog( @"Preloading missing webview..." );
+        // This is pretty late, but by this point _useWK should be properly set...
+        NSLog(@"Preloading missing webview...");
         [self preloadWebviewUsingWebkit:_useWK];
     }
     [super viewDidAppear:animated];
@@ -341,6 +336,7 @@ BOOL isPad() {
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:title
                                                                    message:message
                                                             preferredStyle:UIAlertControllerStyleAlert];
+    
     UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK"
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction* action) {
@@ -350,8 +346,6 @@ BOOL isPad() {
     [alert addAction:defaultAction];
     [alert show];
 
-    [self.webView removeFromSuperview];
-    self.webView = nil;
     self.finishedLoading = NO;
     _errorLoading = nil;
 }
