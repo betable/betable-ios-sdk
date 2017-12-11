@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <WebKit/WebKit.h>
 #import "BetableHandlers.h"
 #import "BetableProfile.h"
 
@@ -15,21 +16,23 @@
 #define BETABLE_REGISTER_STATE @"chrome.nux.deposit"
 #define BETABLE_LOGIN_STATE @"chrome.auth.play"
 
-@interface BetableWebViewController : UIViewController <UIWebViewDelegate, UIAlertViewDelegate>
+@interface BetableWebViewController : UIViewController <UIWebViewDelegate, UIAlertViewDelegate, WKNavigationDelegate>
 
-@property (nonatomic, copy) BetableCancelHandler onCancel;
-@property (nonatomic, strong) NSString *url;
-@property (nonatomic, strong) NSString *onLoadState;
+@property (nonatomic, copy) BetableCloseHandler onClose;
+@property (nonatomic, strong) NSString* url;
+@property (nonatomic, strong) NSString* onLoadState;
 @property BOOL showInternalCloseButton;
 @property BOOL finishedLoading;
 @property BOOL portraitOnly;
 @property BOOL loadCachedStateOnFinish;
 @property BOOL forcedOrientationWithNavController;
 
-- (BetableWebViewController*)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onClose;
-- (id)initWithURL:(NSString*)url onCancel:(BetableCancelHandler)onCancel showInternalCloseButton:(BOOL)showInternalCloseButton;
+- (id)initWithURL:(NSString*)url onClose:(BetableCloseHandler)onClose showInternalCloseButton:(BOOL)showInternalCloseButton renderUsingWebkit:(BOOL)useWK;
 
-- (void)closeWindow;
+- (void)closeWindowAndRunCallback:(BOOL)runCallback;
 - (void)resetView;
 - (void)loadCachedState;
+
+- (void)show;
+
 @end

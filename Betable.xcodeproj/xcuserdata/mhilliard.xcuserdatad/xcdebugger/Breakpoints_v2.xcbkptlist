@@ -15,8 +15,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "147"
             endingLineNumber = "147"
-            landmarkName = "-checkCredentials:"
-            landmarkType = "5">
+            landmarkName = "-loadStoredCredentials"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -31,7 +31,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "766"
             endingLineNumber = "766"
-            landmarkName = "@implementation Betable"
+            landmarkName = "Betable"
             landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>

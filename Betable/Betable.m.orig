@@ -221,6 +221,14 @@ typedef enum heartbeatPeriods {
     sessionParams[@"sdk_build"] = BETABLE_SDK_REVISION;
 
     NSString* url = [_profile decorateURL:@"/ext/precache" forClient:self.clientID withParams:sessionParams ];
+<<<<<<< HEAD
+    
+    if (currentWebView) {
+        [currentWebView closeWindow];
+    }
+    
+    currentWebView = [[BetableWebViewController alloc] initWithURL:url onCancel:^{[self performCredentialFailure:nil withBody:nil orError:nil]; } showInternalCloseButton:YES];
+=======
 
 
     if (currentWebView) {
@@ -230,6 +238,7 @@ typedef enum heartbeatPeriods {
     }
 
     currentWebView = [[BetableWebViewController alloc] initWithURL:url onClose:^{[self performCredentialFailure:nil withBody:nil orError:nil]; } showInternalCloseButton:YES renderUsingWebkit:YES];
+>>>>>>> mhilliard/1_2_changes
 }
 
 - (NSHTTPCookie*)getBetableAuthCookie {
@@ -373,7 +382,14 @@ typedef enum heartbeatPeriods {
         }
         if (params[@"code"]) {
             [self token:params[@"code"] forSession:params[@"session_id"]];
-            [currentWebView.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+<<<<<<< HEAD
+            currentWebView.onCancel = nil;
+            [currentWebView closeWindow];
+=======
+            // affects outgoing reference count, leads to dealloc.  The callback here will report user is unauthorised, which is untrue
+            [currentWebView closeWindowAndRunCallback:NO];
+>>>>>>> mhilliard/1_2_changes
+            currentWebView = nil;
 
         } else if (params[@"error"]) {
             NSError* error = [[NSError alloc] initWithDomain:@"BetableAuthorization" code:-1 userInfo:params];
@@ -989,8 +1005,13 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
     // Propose player's decision to check their wallet balance after reality check interval
     void (^ onRealityCheckWallet)(UIAlertAction*) = ^(UIAlertAction* action){
         // reset reality checks on next heartbeat, once session is extended, open the player's wallet
+<<<<<<< HEAD
         [self resetSession:NO andOnComplete:^(NSDictionary* data){
+            [self walletInViewController:[_credentialCallbacks currentGameView] onClose:^{
+=======
+        [self resetSessionAndOnComplete:^(NSDictionary* data){
             [self openWalletThenOnClose:^{
+>>>>>>> mhilliard/1_2_changes
                 // User must decide whether to logout or continue; regardless of wallet experience
                 _rcIsActive = false;
                 [self fireRealityCheck];
@@ -998,7 +1019,8 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
         }
                            andOnFailure:^(NSURLResponse* response, NSString* responseBody, NSError* error) {
             _rcIsActive = false;
-                           }];
+        }
+        ];
     };
     UIAlertAction* walletAction = [UIAlertAction actionWithTitle:@"Check Balance" style:UIAlertActionStyleDefault handler:onRealityCheckWallet ];
     [alertController addAction:walletAction];

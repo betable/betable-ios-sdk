@@ -99,10 +99,17 @@ static NSString* const BetableURL = @"https://prospecthallcasino.com";
 
 #pragma mark - Web Stuff
 
+<<<<<<< HEAD
 - (void)fireGenericAsynchronousRequest:(NSURLRequest*)request onSuccess:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure{
     
     void (^ _Nonnull onComplete)( NSData* _Nonnull, NSURLResponse* _Nonnull, NSError* _Nonnull) = ^(NSData* _Nonnull data, NSURLResponse* _Nonnull response, NSError* _Nonnull error) {
         NSString *responseBody = [[NSString alloc] initWithData:data
+=======
+- (void)fireGenericAsynchronousRequest:(NSURLRequest*)request onSuccess:(BetableCompletionHandler)onSuccess onFailure:(BetableFailureHandler)onFailure {
+
+    void (^ onComplete)(NSURLResponse*, NSData*, NSError*) = ^(NSURLResponse* response, NSData* data, NSError* error) {
+        NSString* responseBody = [[NSString alloc] initWithData:data
+>>>>>>> mhilliard/1_2_changes
                                                        encoding:NSUTF8StringEncoding];
 
         if (error) {
@@ -129,9 +136,14 @@ static NSString* const BetableURL = @"https://prospecthallcasino.com";
             }
         }
     };
+<<<<<<< HEAD
     NSURLSession* urlSession = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.defaultSessionConfiguration];
     [urlSession dataTaskWithRequest:request completionHandler:onComplete];
 //    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:onComplete];
+=======
+
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:onComplete];
+>>>>>>> mhilliard/1_2_changes
 }
 
 #pragma mark - Utilities

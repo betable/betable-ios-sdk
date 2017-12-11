@@ -11,7 +11,7 @@
 
 @interface UIAlertController (Private)
 
-@property (nonatomic, strong) UIWindow *alertWindow;
+@property (nonatomic, strong) UIWindow* alertWindow;
 
 @end
 
@@ -19,11 +19,11 @@
 
 @dynamic alertWindow;
 
-- (void)setAlertWindow:(UIWindow *)alertWindow {
+- (void)setAlertWindow:(UIWindow*)alertWindow {
     objc_setAssociatedObject(self, @selector(alertWindow), alertWindow, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (UIWindow *)alertWindow {
+- (UIWindow*)alertWindow {
     return objc_getAssociatedObject(self, @selector(alertWindow));
 }
 
@@ -45,7 +45,7 @@
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
-    
+
     // precaution to insure window gets destroyed
     self.alertWindow.hidden = YES;
     self.alertWindow = nil;

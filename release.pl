@@ -134,4 +134,4 @@ open_browser('https://github.com/betable/betable-ios-sdk/releases/new');
 # open zip file in finder for gihub release
 system( 'open', '-R', $zip_file );
 
-print "$tag_version ready for release\n";
+print "$tag_version ready for release\nMAKE SURE YOU git push\n";

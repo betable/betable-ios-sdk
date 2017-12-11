@@ -81,19 +81,32 @@ static NSDateFormatter* dateFormat;
     NSURL* url = [NSURL fileURLWithPath:path];
     const char* filePath = [[url path] fileSystemRepresentation];
     const char* attrName = "com.apple.MobileBackup";
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> mhilliard/1_2_changes
     // First try and remove the extended attribute if it is present
     ssize_t result = getxattr(filePath, attrName, NULL, sizeof(u_int8_t), 0, 0);
     if (result != -1) {
         // The attribute exists, we need to remove it
         removexattr(filePath, attrName, 0);
     }
+<<<<<<< HEAD
     
     // Set the new key
     NSError *error = nil;
     [url setResourceValue:[NSNumber numberWithBool:YES]
                                   forKey:NSURLIsExcludedFromBackupKey
                                    error:&error];
+=======
+
+    // Set the new key
+    NSError* error = nil;
+    [url setResourceValue:[NSNumber numberWithBool:YES]
+                   forKey:NSURLIsExcludedFromBackupKey
+                    error:&error];
+>>>>>>> mhilliard/1_2_changes
 }
 
 + (NSString*)dateFormat:(double)value {

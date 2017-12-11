@@ -11,22 +11,22 @@
 
 MAKE_CATEGORIES_LOADABLE(NSData_BetableTracking);
 
-@implementation NSData(BetableTracking)
+@implementation NSData (BetableTracking)
 
 static const char _base64EncodingTable[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 // http://stackoverflow.com/a/4727124
-- (NSString *)aiEncodeBase64 {
-    const unsigned char * objRawData = self.bytes;
-    char * objPointer;
-    char * strResult;
+- (NSString*)aiEncodeBase64 {
+    const unsigned char* objRawData = self.bytes;
+    char* objPointer;
+    char* strResult;
 
     // Get the Raw Data length and ensure we actually have data
     NSUInteger intLength = self.length;
     if (intLength == 0) return nil;
 
     // Setup the String-based Result placeholder and pointer within that placeholder
-    strResult = (char *)calloc((((intLength + 2) / 3) * 4) + 1, sizeof(char));
+    strResult = (char*)calloc((((intLength + 2) / 3) * 4) + 1, sizeof(char));
     objPointer = strResult;
 
     // Iterate through everything
@@ -59,7 +59,7 @@ static const char _base64EncodingTable[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh
     *objPointer = '\0';
 
     // Return the results as an NSString object
-    NSString *encodedString = [NSString stringWithCString:strResult encoding:NSASCIIStringEncoding];
+    NSString* encodedString = [NSString stringWithCString:strResult encoding:NSASCIIStringEncoding];
     free(strResult);
     return encodedString;
 }

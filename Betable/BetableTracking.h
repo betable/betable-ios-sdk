@@ -10,9 +10,9 @@
 
 @interface BetableTracking : NSObject
 
-@property (nonatomic, copy) NSString *environment;
+@property (nonatomic, copy) NSString* environment;
 
-- (id)initWithClientID:(NSString *)clientID andEnvironment:(NSString*)environment;
+- (id)initWithClientID:(NSString*)clientID andEnvironment:(NSString*)environment;
 - (void)trackSession;
 
 @end

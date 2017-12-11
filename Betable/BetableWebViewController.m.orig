@@ -252,8 +252,8 @@ BOOL isPad() {
     [super viewDidAppear:animated];
 }
 
-- (void)closeWindow {
-    [self closeWindowAndRunCallback:YES];
+- (void)viewDidDisappear:(BOOL)animated {
+    
 }
 
 - (void)closeWindowAndRunCallback:(BOOL)runCallback  {

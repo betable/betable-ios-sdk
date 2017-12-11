@@ -11,11 +11,11 @@
 
 @interface BetableTrackingUtil : NSObject
 
-+ (NSString *)baseUrl;
-+ (NSString *)clientSdk;
-+ (NSString *)userAgent;
++ (NSString*)baseUrl;
++ (NSString*)clientSdk;
++ (NSString*)userAgent;
 
-+ (void)excludeFromBackup:(NSString *)filename;
-+ (NSString *)dateFormat:(double)value;
++ (void)excludeFromBackup:(NSString*)filename;
++ (NSString*)dateFormat:(double)value;
 
 @end
