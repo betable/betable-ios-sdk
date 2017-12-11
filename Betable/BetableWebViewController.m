@@ -139,24 +139,11 @@ BOOL isPad() {
 }
 
 - (void)addCloseButtonConstraints {
-    @try {
-        [_closeButton setTranslatesAutoresizingMaskIntoConstraints:NO];
-    }@catch (NSException* exception) {
-        // iOS 5.0 doesn't support auto layout.
-        _closeButton.frame = CGRectMake(self.view.frame.size.width-35, 5, 30, 30);
-        _closeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin  |   UIViewAutoresizingFlexibleBottomMargin;
-        return;
-    }
+    [_closeButton setTranslatesAutoresizingMaskIntoConstraints:NO];
     id topGuide;
     NSString* verticalFormat;
-    @try {
-        topGuide = self.topLayoutGuide;
-        verticalFormat = @"V:[topGuide]-5-[_closeButton(30)]";
-    } @catch (NSException* exception) {
-        // iOS 6.0 doesn't support topLayoutGuide.
-        topGuide = [[UIView alloc] init];
-        verticalFormat = @"V:|-5-[_closeButton(30)]";
-    }
+    topGuide = self.topLayoutGuide;
+    verticalFormat = @"V:[topGuide]-5-[_closeButton(30)]";
     NSDictionary* viewsDictionary = NSDictionaryOfVariableBindings(_closeButton, topGuide);
     NSArray* consts = [NSLayoutConstraint constraintsWithVisualFormat:verticalFormat
                                                               options:0
@@ -172,25 +159,11 @@ BOOL isPad() {
 }
 
 - (void)addWebViewConstraints {
-    //Align webview to the top of the statusBar
-    @try {
-        [self.webView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    }@catch (NSException* exception) {
-        // iOS 5.0 doesn't support auto layout.
-        self.webView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
-        self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        return;
-    }
+    [self.webView setTranslatesAutoresizingMaskIntoConstraints:YES];
     id topGuide;
     NSString* verticalFormat;
-    @try {
-        topGuide = self.topLayoutGuide;
-        verticalFormat = @"V:[topGuide][webView]|";
-    } @catch (NSException* exception) {
-        // iOS 6.0 doesn't support topLayoutGuide.
-        topGuide = [[UIView alloc] init];
-        verticalFormat = @"V:|[webView]|";
-    }
+    topGuide = self.topLayoutGuide;
+    verticalFormat = @"V:[topGuide][webView]|";
     if (self.forcedOrientationWithNavController) {
         verticalFormat = @"V:|[webView]|";
     }
@@ -274,13 +247,29 @@ BOOL isPad() {
     }
 }
 
+- (void)viewDidDisappear:(BOOL)animated {
+    
+}
+
 - (void)closeWindow {
-    [self.presentingViewController dismissViewControllerAnimated:YES completion:^{
+    
+    [self.presentingViewController dismissViewControllerAnimated:NO completion:^{
+        // Cleanup all view subviews
+        NSArray *subviews = [self.view subviews];
+        for (UIView *sv in subviews) {
+            [sv removeFromSuperview];
+        }
+
+        // Do explicit ARC
+        self.webView.delegate = nil;
+        self.webView = nil;
+        self.betableLoader = nil;
+        self.spinner = nil;
+
         if (self.onCancel) {
             self.onCancel();
         }
-//        self.onCancel = nil;
-        self.webView.delegate = nil;
+        //        self.onCancel = nil;
     }];
 }
 

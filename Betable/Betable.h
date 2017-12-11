@@ -85,7 +85,7 @@ static NSString* const METHOD_POST = @"POST";
 // 
 //     http://developer.apple.com/library/ios/#documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/AdvancedAppTricks/AdvancedAppTricks.html#//apple_ref/doc/uid/TP40007072-CH7-SW50
 // 
-// It is suggested that your redirect protocol be "betable+<GAME_ID>"
+// It is suggested that your redirect protocol be "betable+<GAME_SLUG>"
 //
 // From your UIApplicationDelegate method application:handleOpenURL: you can
 // handle the response.

@@ -527,7 +527,7 @@ typedef enum heartbeatPeriods {
 
     BetableCompletionHandler onBetComplete = ^(NSDictionary* data){
         if (![credentials isUnbacked]) {
-            [self resetSessionAndOnComplete:^(NSDictionary* data){}
+            [self resetSession:NO andOnComplete:^(NSDictionary* data){}
                                andOnFailure:^(NSURLResponse* response, NSString* responseBody, NSError* error) {}
             ];
         }
@@ -614,7 +614,7 @@ typedef enum heartbeatPeriods {
 #pragma mark - Path getters
 
 + (NSString*)getGameURLPath:(NSString*)gameSlug {
-    return [NSString stringWithFormat:@"/application_manifests/slug/%@/play", gameSlug];
+    return [NSString stringWithFormat:@"/manifests/slug/%@/play", gameSlug];
 }
 
 + (NSString*)getBetPath:(NSString*)gameID {
@@ -836,7 +836,7 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
         return;
     }
 
-    [self resetSessionAndOnComplete:^(NSDictionary* data) { [self extendSessionIn:HEALTHY_PERIOD withBehaviour:HEARTBEAT]; }
+    [self resetSession:YES andOnComplete:^(NSDictionary* data) { [self extendSessionIn:HEALTHY_PERIOD withBehaviour:HEARTBEAT]; }
                        andOnFailure:^(NSURLResponse* response, NSString* responseBody, NSError* error) {
         // TODO explicit "session has expired" check instead of implicit assumption here
         [self logout];
@@ -853,18 +853,29 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
     [self performSelector:@selector(onHeartbeat) withObject:self afterDelay:seconds + 0.1];
 }
 
-- (void)resetSessionAndOnComplete:(BetableCompletionHandler)onSuccess andOnFailure:(BetableFailureHandler)onFailure {
+- (void)resetSession:(BOOL)extendRealityCheck andOnComplete:(BetableCompletionHandler)onSuccess andOnFailure:(BetableFailureHandler)onFailure {
     NSString* path = [Betable getResetSessionPath];
     NSString* method = METHOD_POST;
     if (nil == credentials) {
-        NSLog(@"faulty credentials--this shouldn't happen");
+        // The session has expired and cannot be extended (its likely waiting too long for the user to extend the reality check does this).
+        [self logout];
+        // Assume login is correct here here becase at *some* point credentials was valid
+        BOOL loginOverRegister = YES;
+        [self checkCredentials:_credentialCallbacks loginOverRegister:loginOverRegister];
         return;
     } else if ([credentials isUnbacked]) {
         NSLog(@"unbacked credentials--should not get reset");
         // TODO consider this might be a failure and report, or a detectable success for the given credentials and report
         return;
     }
-    NSDictionary* data = @{ @"keep_alive": @YES, @"reality_checked": @YES, @"session_id" : credentials.sessionID };
+    NSMutableDictionary* data = [@{ @"keep_alive": @YES, @"session_id" : credentials.sessionID } mutableCopy];
+    //  reality_checked has 3 states but we skip false and only apply 2
+    // ...true extends the check period,
+    // ...false terminates the check (business suggests we terminate the session entirely, and so this doesn't happen).
+    // ...Missing extends the session but not the RC
+    if (extendRealityCheck) {
+        data[@"reality_checked"] = @YES;
+    }
     [self fireGenericAsynchronousRequestWithPath:path method:method data:data onSuccess:onSuccess onFailure:onFailure ];
 
 }
@@ -888,10 +899,12 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
 
     NSString* path = [Betable getHeartbeatPath];
     NSString* method = METHOD_GET;
+    NSMutableDictionary* data = [self sessionParams];
 
     if (nextHeartbeatBehaviour == EXTEND_SESSION) {
         path = [Betable getResetSessionPath];
         method = METHOD_POST;
+        data[@"keep_alive"] = @"true";
         nextHeartbeatBehaviour = HEARTBEAT;
     }
 
@@ -933,7 +946,6 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
         [self logout];
     };
 
-    NSDictionary* data = [self sessionParams];
     [self fireGenericAsynchronousRequestWithPath:path method:method data:data onSuccess:onSuccess onFailure:onFailure ];
 
 }
@@ -989,7 +1001,7 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
     // Propose player's decision to continue playing after reality check interval
     void (^ onRealityCheckContinue)(UIAlertAction*) = ^(UIAlertAction* action){
         // reset reality checks on next heartbeat
-        [self resetSessionAndOnComplete:^(NSDictionary* data){
+        [self resetSession:YES andOnComplete:^(NSDictionary* data){
             [self performPostRealityCheck];
             _rcIsActive = false;
         }
@@ -1005,7 +1017,7 @@ id <BetableCredentialCallbacks> _credentialCallbacks;
     // Propose player's decision to check their wallet balance after reality check interval
     void (^ onRealityCheckWallet)(UIAlertAction*) = ^(UIAlertAction* action){
         // reset reality checks on next heartbeat, once session is extended, open the player's wallet
-        [self resetSessionAndOnComplete:^(NSDictionary* data){
+        [self resetSession:NO andOnComplete:^(NSDictionary* data){
             [self walletInViewController:[_credentialCallbacks currentGameView] onClose:^{
                 // User must decide whether to logout or continue; regardless of wallet experience
                 _rcIsActive = false;
