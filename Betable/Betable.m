@@ -389,7 +389,6 @@ typedef enum heartbeatPeriods {
 
     [currentWebView show];
 
-    currentWebView.portraitOnly = YES;
     currentWebView.onLoadState = goToLogin ? BETABLE_LOGIN_STATE : BETABLE_REGISTER_STATE;
 
     // and apply requested state in currentWebView

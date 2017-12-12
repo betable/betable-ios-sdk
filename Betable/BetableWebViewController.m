@@ -78,7 +78,6 @@ BOOL isPad() {
         _errorLoading = nil;
         _viewLoaded = NO;
         _errorShown = NO;
-        self.portraitOnly = NO;
         self.showInternalCloseButton = YES;
         _useWK = YES;
     }
@@ -168,9 +167,6 @@ BOOL isPad() {
     [self.webView setTranslatesAutoresizingMaskIntoConstraints:NO];
 
     NSString* verticalFormat = @"V:[topGuide][webView]|";
-    if (self.forcedOrientationWithNavController) {
-        verticalFormat = @"V:|[webView]|";
-    }
 
     // Dictionary keys by name...
     id topGuide = self.topLayoutGuide;
@@ -199,12 +195,6 @@ BOOL isPad() {
     self.view.frame = [[UIScreen mainScreen] bounds];
 
     [super viewDidLoad];
-
-    if (self.forcedOrientationWithNavController) {
-        UIView* clockBacker = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 20)];
-        clockBacker.backgroundColor = [UIColor whiteColor];
-        [self.view addSubview:clockBacker];
-    }
 
     self.betableLoader = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     self.betableLoader.backgroundColor = [UIColor colorWithRed:238.0/255.0 green:243.0/255.0 blue:347.9/255.0 alpha:1.0];
@@ -367,24 +357,6 @@ BOOL isPad() {
         [params setObject:[elts objectAtIndex:1] forKey:[elts objectAtIndex:0]];
     }
     return params;
-}
-
-#pragma mark - Orientation Stuff
-
-- (BOOL)shouldAutorotate {
-    if (isPad() || !self.portraitOnly) {
-        return YES;
-    } else {
-        return [[UIDevice currentDevice] orientation] != UIDeviceOrientationPortrait;
-    }
-}
-
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
-    if (isPad() || !self.portraitOnly) {
-        return UIInterfaceOrientationMaskAll;
-    } else {
-        return UIInterfaceOrientationMaskPortrait;
-    }
 }
 
 #pragma mark - commonalities for web delegate methods

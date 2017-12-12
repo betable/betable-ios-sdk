@@ -213,12 +213,4 @@ static NSString* const BetableURL = @"https://prospecthallcasino.com";
     return [self decorateTrackURLForClient:clientID withAction:action andParams:nil];
 }
 
-# pragma mark - UIAlertView delegate
-
-- (void)alertView:(UIAlertView*)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex != 0) {
-        [self removeProfile];
-    }
-}
-
 @end

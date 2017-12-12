@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreFoundation/CoreFoundation.h>
 
-@interface BetableProfile : NSObject <UIAlertViewDelegate>
+@interface BetableProfile : NSObject
 
 - (NSURL*)apiURL;
 

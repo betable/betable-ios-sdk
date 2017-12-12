@@ -10,8 +10,8 @@
 typedef void (^ BetableAccessTokenHandler)(NSString* accessToken);
 typedef void (^ BetableCompletionHandler)(NSDictionary* data);
 typedef void (^ BetableFailureHandler)(NSURLResponse* response, NSString* responseBody, NSError* error);
-typedef void (^ BetableCloseHandler)();
-typedef void (^ BetableLogoutHandler)();
+typedef void (^ BetableCloseHandler)(void);
+typedef void (^ BetableLogoutHandler)(void);
 
 // Game pust provide an implementation of this to betable to facilitate proper game event interactions
 @protocol BetableCredentialCallbacks<NSObject>

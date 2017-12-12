@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 #import <WebKit/WebKit.h>
 #import "BetableHandlers.h"
-#import "BetableProfile.h"
 
 // Acceptable values for onLoadState
 #define BETABLE_WALLET_STATE @"chrome.nux.wallet"
@@ -23,9 +22,7 @@
 @property (nonatomic, strong) NSString* onLoadState;
 @property BOOL showInternalCloseButton;
 @property BOOL finishedLoading;
-@property BOOL portraitOnly;
 @property BOOL loadCachedStateOnFinish;
-@property BOOL forcedOrientationWithNavController;
 
 - (id)initWithURL:(NSString*)url onClose:(BetableCloseHandler)onClose showInternalCloseButton:(BOOL)showInternalCloseButton renderUsingWebkit:(BOOL)useWK;
 
